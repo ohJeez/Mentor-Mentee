@@ -1,0 +1,278 @@
+/* ===============================
+   Common Styles for Mentor–Mentee
+   =============================== */
+:root {
+  --primary-green: #28a745;
+  --dark-green: #218838;
+  --vibrant-green: #28a745;
+  --light-gray: #f8f9fa;
+  --text-color: #000;
+  --border-color: #e0e0e0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #fff;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hide scrollbars */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #fff;
+  flex-shrink: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.header-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.rcss-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.rcss-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-color);
+  margin: 0;
+  font-weight: 400;
+}
+
+.main-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: center;
+  flex: 1;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.user-profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary-green);
+  border: 2px solid var(--primary-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.user-profile-icon i {
+  font-size: 1.2rem;
+}
+
+.logout-btn {
+  background-color: var(--primary-green);
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: var(--dark-green);
+}
+
+/* Layout */
+.container {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  padding: 1rem;
+  gap: 1rem;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--primary-green);
+  color: #fff;
+  width: 250px;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #fff;
+  text-decoration: none;
+  padding: 15px 20px;
+  transition: 0.3s;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.menu-item i {
+  font-size: 1.2rem;
+  width: 20px;
+  text-align: center;
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item.active {
+  background-color: var(--dark-green);
+  font-weight: 700;
+}
+
+.menu-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  margin: 0;
+  width: 100%;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  padding-bottom: 300px; /* Space for fixed footer */
+}
+
+.welcome-section {
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+
+.welcome-section strong {
+  font-weight: 700;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--primary-green);
+  color: #fff;
+  padding: 2rem;
+  padding-top: 1rem;
+  border-radius: 10px;
+  position: fixed;
+  bottom: 1rem;
+  left: calc(250px + 2rem + 1rem); /* sidebar width + container padding + gap */
+  right: 1rem;
+  z-index: 100;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.footer-column h3 {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.footer-column h3:first-child {
+  margin-top: 0;
+}
+
+.footer-column p {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: #fff;
+}
+
+.footer-column ul li::before {
+  content: "• ";
+  margin-right: 5px;
+}

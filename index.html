@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentor Mentee | RCSS</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <img src="images/logo.png" alt="RCSS Logo" class="header-logo" />
+      <div class="header-title">
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+      </div>
+    </div>
+    <h1 class="main-title">MENTOR MENTEE</h1>
+    <div class="header-right">
+      <div class="user-profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <button class="logout-btn">Log out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav class="menu">
+        <a href="#" class="menu-item">
+          <i class="fas fa-th-large"></i>
+          <span>Dashboard</span>
+        </a>
+        <hr class="menu-divider" />
+        <a href="#" class="menu-item active">
+          <i class="fas fa-graduation-cap"></i>
+          <span>Students</span>
+        </a>
+        <hr class="menu-divider" />
+        <a href="#" class="menu-item">
+          <i class="fas fa-file-alt"></i>
+          <span>Session Notes</span>
+        </a>
+        <hr class="menu-divider" />
+        <a href="#" class="menu-item">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section class="welcome-section">
+        <p>Welcome <strong>DILJITH K BENNY</strong></p>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-grid">
+          <div class="footer-column">
+            <h3>Academics</h3>
+            <ul>
+              <li>Dept. of Social Work</li>
+              <li>Dept. of Computer Science</li>
+              <li>Dept. of Library and Information Science</li>
+              <li>Dept. of Business Administration</li>
+              <li>Dept. of Personnel Management</li>
+              <li>Dept. of Commerce</li>
+              <li>Dept. of Psychology</li>
+              <li>Dept. of Biosciences</li>
+              <li>Dept. of Statistics</li>
+              <li>Business School</li>
+            </ul>
+            <h3>Useful Links</h3>
+            <ul>
+              <li>e-Contents</li>
+              <li>e-Payment Policy</li>
+              <li>Disclaimer & Privacy Policy</li>
+              <li>Careers</li>
+              <li>Placements</li>
+              <li>Research @ Rajagiri</li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>RCSS</h3>
+            <p>Rajagiri College of Social Sciences (Autonomous), Rajagiri P.O, Kalamassery, Cochin - 683104, Kerala, India.</p>
+            <h3>General Contacts</h3>
+            <ul>
+              <li>Email: admin@rajagiri.edu</li>
+              <li>Phone: +91 484 - 2911111 / 2911507</li>
+              <li>Fax: +91 484 - 2532862</li>
+            </ul>
+            <h3>Admission</h3>
+            <ul>
+              <li>Phone: +91 484 - 2660601</li>
+              <li>Mobile: +91-9645081287</li>
+              <li>Email: rcssadmission@rajagiri.edu</li>
+              <li>Contact Admission Counsellor (for calls from abroad): +91 95260 12784</li>
+            </ul>
+            <h3>Placement Contacts</h3>
+            <ul>
+              <li>Email: pcs@rajagiri.edu</li>
+              <li>Mob: +91-9809021102</li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>RCBS</h3>
+            <p>Rajagiri Centre for Business Studies, Rajagiri Valley P. O, Kakkanad, Kochi - 682039, Kerala, India.</p>
+            <h3>General Contacts:</h3>
+            <ul>
+              <li>Email: rsom@rajagiri.edu</li>
+              <li>Phone: +91 484 - 2660555 / 2660609</li>
+              <li>Fax: +91 484 - 2426578</li>
+            </ul>
+            <h3>Admission</h3>
+            <ul>
+              <li>Phone: +91 484 - 2660601</li>
+              <li>Mobile: +91-9645081287</li>
+              <li>Email: admission@rajagiri.edu</li>
+              <li>Contact Admission Counsellor (for calls from abroad): +91 95260 12784</li>
+            </ul>
+            <h3>Placement Contacts</h3>
+            <ul>
+              <li>Email: placement@rajagiri.edu</li>
+              <li>Mob: +91-9778345083</li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Handle menu item selection
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuItems = document.querySelectorAll('.menu-item');
+      
+      menuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Remove active class from all menu items
+          menuItems.forEach(menuItem => {
+            menuItem.classList.remove('active');
+          });
+          
+          // Add active class to clicked item
+          this.classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
