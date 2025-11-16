@@ -1,0 +1,129 @@
+
+     {%load static%}
+  <link rel="stylesheet" href="{% static '../static/styles/style.css' %}"/>
+     
+     <section class="students-section">
+
+        <!-- PAGE TITLE -->
+        <div class="students-header">
+          <h2>Students</h2>
+        </div>
+      
+        <!-- QUICK STATS -->
+        <div class="students-stats">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div>
+              <h4>Total Mentees</h4>
+              <p>15 Assigned</p>
+            </div>
+          </div>
+      
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div>
+              <h4>Last Session</h4>
+              <p>12 Feb 2025</p>
+            </div>
+          </div>
+      
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <h4>Next Meeting</h4>
+              <p>Not Scheduled</p>
+            </div>
+          </div>
+        </div>
+      
+        <!-- SEARCH + FILTERS -->
+        <div class="students-filters">
+          <input type="text" class="students-search" placeholder="Search by name or Reg No">
+      
+          <select class="students-filter">
+            <option>Department</option>
+            <option>Computer Science</option>
+            <option>Commerce</option>
+            <option>Psychology</option>
+          </select>
+      
+          <select class="students-filter">
+            <option>Course</option>
+            <option>BCA</option>
+            <option>BBA</option>
+            <option>BSW</option>
+          </select>
+      
+          <select class="students-filter">
+            <option>Year</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+          </select>
+        </div>
+      
+        <!-- STUDENTS TABLE -->
+        <div class="students-table-container">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Reg No</th>
+                <th>Department</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+      
+            <tbody>
+              
+              {%for i in students%}
+              <tr>
+                <td><img src="https://via.placeholder.com/50" alt={{i.name}} class="student-photo"></td>
+                <td>{{i.name}}</td>
+                <td>{{i.department_id}}</td>
+                <td>Computer Science</td>
+                <td>BCA</td>
+                <td>{{i.year}}</td>
+                <td><button class="view-btn">View Profile</button></td>
+              </tr>
+              {%endfor%}
+      
+              <!-- <tr>
+                <td><img src="https://via.placeholder.com/50" class="student-photo"></td>
+                <td>Ananya Singh</td>
+                <td>2021-CS-001</td>
+                <td>Computer Science</td>
+                <td>BCA</td>
+                <td>3rd</td>
+                <td><button class="view-btn">View Profile</button></td>
+              </tr>
+      
+              <tr>
+                <td><img src="https://via.placeholder.com/50" class="student-photo"></td>
+                <td>Rohan Iyer</td>
+                <td>2021-CS-012</td>
+                <td>Computer Science</td>
+                <td>BCA</td>
+                <td>3rd</td>
+                <td><button class="view-btn">View Profile</button></td>
+              </tr>
+      
+              <tr>
+                <td><img src="https://via.placeholder.com/50" class="student-photo"></td>
+                <td>Maria Jacob</td>
+                <td>2021-CO-022</td>
+                <td>Commerce</td>
+                <td>BCom</td>
+                <td>2nd</td>
+                <td><button class="view-btn">View Profile</button></td>
+              </tr>
+       -->
+            </tbody>
+          </table>
+        </div>
+      
+      </section>
+      
