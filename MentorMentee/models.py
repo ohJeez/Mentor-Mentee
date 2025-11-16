@@ -46,7 +46,6 @@ class Faculty(models.Model):
 class Student(models.Model):
     student_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    student_image = models.CharField(max_length=500,blank=True)
     email = models.EmailField(max_length=150,db_index=False)
     reg_no = models.CharField(max_length=10, unique=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
