@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Connect Dashboard</title>
+
+  <!-- Updated CSS -->
+  <link rel="stylesheet" href="admin.css">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <script src="https://kit.fontawesome.com/a2d9d6a4f2.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">COLLEGE CONNECT</div>
+
+    <nav>
+      <a class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+      <a><i class="fa-solid fa-book"></i> Assignments</a>
+      <a><i class="fa-solid fa-user-graduate"></i> Students</a>
+      <a><i class="fa-solid fa-upload"></i> MPOWER Upload</a>
+      <a><i class="fa-solid fa-handshake"></i> Meetings</a>
+      <a><i class="fa-solid fa-file"></i> Reports</a>
+      <a><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+  </aside>
+
+
+  <!-- MAIN DASHBOARD -->
+  <main class="main">
+
+    <!-- HEADER -->
+    <header class="topbar">
+      <h2 style="color:#0b8a3b; font-weight:800;">Admin Dashboard</h2>
+
+      <div class="top-right">
+        <i class="fa-regular fa-bell"></i>
+        <i class="fa-regular fa-circle-user"></i>
+        <span class="admin-name">Admin</span>
+      </div>
+    </header>
+
+
+    <!-- STAT CARDS -->
+    <section class="stats">
+      <div class="card">
+        <p>Total Students</p>
+        <h1>1,250 <span class="up">↑</span></h1>
+      </div>
+
+      <div class="card">
+        <p>Total Mentors</p>
+        <h1>85</h1>
+      </div>
+    </section>
+
+
+    <!-- CHART + ACTIVITY -->
+    <section class="grid">
+
+      <!-- DEPARTMENT CHART BOX -->
+      <div class="box chart-box">
+        <h3>Department Wise Student Count (2024)</h3>
+        <div class="chart-placeholder">
+          <p>[Chart Placeholder]</p>
+        </div>
+      </div>
+
+      <!-- ACTIVITY FEED -->
+      <div class="box activity-box">
+        <h3>Recent Activity Feed</h3>
+
+        <ul class="activity-list">
+          <li><span>5 min ago</span> John Doe uploaded MPOWER CSV</li>
+          <li><span>1 hr ago</span> Prof. Smith changed mentor for Roll 1</li>
+          <li><span>2 hrs ago</span> Admin exported Students Report</li>
+          <li><span>1 hr ago</span> Aulip updated details</li>
+        </ul>
+      </div>
+
+    </section>
+
+
+    <!-- BUTTONS -->
+    <div class="bottom-buttons">
+      <button class="btn primary">Upload MPOWER CSV</button>
+      <button class="btn">Bulk Import</button>
+      <button class="btn">Export Reports</button>
+    </div>
+
+  </main>
+
+</body>
+</html>
