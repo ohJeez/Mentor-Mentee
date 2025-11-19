@@ -1,0 +1,49 @@
+{% load static %}
+<link rel="stylesheet" href="{% static '../static/styles/style.css' %}"/>
+
+<!-- STAT CARDS -->
+    <section class="stats">
+      <div class="card">
+        <p>Total Students</p>
+        <h1>1,250 <span class="up">↑</span></h1>
+      </div>
+
+      <div class="card">
+        <p>Total Mentors</p>
+        <h1>85</h1>
+      </div>
+    </section>
+
+
+    <!-- CHART + ACTIVITY -->
+    <section class="grid">
+
+      <!-- DEPARTMENT CHART BOX -->
+      <div class="box chart-box">
+        <h3>Department Wise Student Count (2024)</h3>
+        <div class="chart-placeholder">
+          <p>[Chart Placeholder]</p>
+        </div>
+      </div>
+
+      <!-- ACTIVITY FEED -->
+      <div class="box activity-box">
+        <h3>Recent Activity Feed</h3>
+
+        <ul class="activity-list">
+          <li><span>5 min ago</span> John Doe uploaded MPOWER CSV</li>
+          <li><span>1 hr ago</span> Prof. Smith changed mentor for Roll 1</li>
+          <li><span>2 hrs ago</span> Admin exported Students Report</li>
+          <li><span>1 hr ago</span> Aulip updated details</li>
+        </ul>
+      </div>
+
+    </section>
+
+
+    <!-- BUTTONS -->
+    <div class="bottom-buttons">
+      <button class="btn primary">Upload MPOWER CSV</button>
+      <button class="btn">Bulk Import</button>
+      <button class="btn">Export Reports</button>
+    </div>
