@@ -1,0 +1,120 @@
+{% load static %}
+<link rel="stylesheet" href="{% static '../static/styles/style.css' %}" />
+
+<section class="students-section">
+
+  <!-- PAGE HEADER -->
+  <div class="students-header">
+    <h2>Manage Students</h2>
+    <p>View, filter and edit student information</p>
+  </div>
+
+  <!-- SEARCH + FILTERS -->
+  <div class="students-filters">
+    <input type="text" id="studentSearch" class="students-search" placeholder="Search by name or reg no...">
+
+    <select id="courseFilter" class="students-filter">
+      <option value="">Course</option>
+      <option value="BCA">BCA</option>
+      <option value="BBA">BBA</option>
+      <option value="BSW">BSW</option>
+      <option value="BCOM">BCom</option>
+    </select>
+
+    <select id="yearFilter" class="students-filter">
+      <option value="">Year</option>
+      <option value="1">1st Year</option>
+      <option value="2">2nd Year</option>
+      <option value="3">3rd Year</option>
+    </select>
+  </div>
+
+  <!-- STUDENTS TABLE -->
+  <div class="students-table-container">
+    <table class="students-table">
+      <thead>
+        <tr>
+          <th>Photo</th>
+          <th>Name</th>
+          <th>Reg No</th>
+          <th>Department</th>
+          <th>Course</th>
+          <th>Year</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="studentsList">
+        {% for s in students %}
+        <tr class="student-row"
+            data-name="{{ s.name }}"
+            data-course="{{ s.course }}"
+            data-year="{{ s.year }}">
+          
+          <td><img src="{{ s.photo_url|default:'https://via.placeholder.com/50' }}" class="student-photo" /></td>
+
+          <td>{{ s.name }}</td>
+          <td>{{ s.reg_no }}</td>
+          <td>{{ s.department.name }}</td>
+          <td>{{ s.course.course_name }}</td>
+          <td>{{ s.year }}</td>
+
+          <td>
+            {% if s.assigned %}
+              <span style="color: green; font-weight: 600;">Assigned</span>
+            {% else %}
+              <span style="color: red; font-weight: 600;">Not Assigned</span>
+            {% endif %}
+          </td>
+
+          <td>
+            <button class="view-btn">Edit</button>
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</section>
+
+
+<!-- BASIC SEARCH + FILTER SCRIPT -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const searchInput = document.getElementById("studentSearch");
+  const courseFilter = document.getElementById("courseFilter");
+  const yearFilter   = document.getElementById("yearFilter");
+  const rows = document.querySelectorAll(".student-row");
+
+  function applyFilters() {
+    const search = searchInput.value.toLowerCase();
+    const course = courseFilter.value;
+    const year   = yearFilter.value;
+
+    rows.forEach(r => {
+      const name = r.dataset.name.toLowerCase();
+      const c = r.dataset.course;
+      const y = r.dataset.year;
+
+      const matchesSearch = name.includes(search);
+      const matchesCourse = course === "" || course === c;
+      const matchesYear   = year === ""   || year === y;
+
+      if (matchesSearch && matchesCourse && matchesYear) {
+        r.style.display = "";
+      } else {
+        r.style.display = "none";
+      }
+    });
+  }
+
+  searchInput.addEventListener("input", applyFilters);
+  courseFilter.addEventListener("change", applyFilters);
+  yearFilter.addEventListener("change", applyFilters);
+
+});
+</script>

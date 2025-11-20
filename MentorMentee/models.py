@@ -19,6 +19,12 @@ class Department(models.Model):
     hod_name = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+#Courses
+class Courses(models.Model):
+    course_id = models.AutoField(primary_key=True)
+    course_name = models.CharField(max_length=20)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     
     #Admin
 class Admin(models.Model):
@@ -50,9 +56,11 @@ class Student(models.Model):
     reg_no = models.CharField(max_length=10, unique=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="students")
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE)
     year = models.IntegerField()
     faculty = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="students")
     created_at = models.DateTimeField(auto_now_add=True)
+    
     
     #Mentoring Session
 class MentoringSession(models.Model):
@@ -73,3 +81,7 @@ class MentorAssignmentLog(models.Model):
     new_faculty = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="new_assignments")
     changed_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    
+    
+    

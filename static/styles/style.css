@@ -39,6 +39,11 @@ body {
 *::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+.students-scroll-wrapper {
+  max-height: calc(100vh - 180px);  /* Adjust based on your header size */
+  overflow-y: auto;
+  padding-right: 8px; /* avoid clipping */
+}
 
 .admin-title {
   text-align: center;
