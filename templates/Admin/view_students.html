@@ -1,120 +1,218 @@
-{% load static %}
-<link rel="stylesheet" href="{% static '../static/styles/style.css' %}" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Batches | Mentor Mentee</title>
 
-<section class="students-section">
+  <!-- STYLES -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin_viewStudents.css' %}" />
 
-  <!-- PAGE HEADER -->
-  <div class="students-header">
-    <h2>Manage Students</h2>
-    <p>View, filter and edit student information</p>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+  <!-- ✅ HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+      <div class="header-title">
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+      </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+      <div class="user-profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <button class="logout-btn">Log out</button>
+    </div>
+  </header>
+
+
+  <!-- ✅ PAGE BODY -->
+  <div class="container">
+
+    <!-- ✅ SIDEBAR -->
+    <aside class="sidebar">
+      <nav class="menu">
+
+        <a href="/admin_dashboard" class="menu-item">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown open">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle active">
+            <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu" style="display:flex;">
+            <a href="/admin_addStudent" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Add Student</span>
+            </a>
+
+            <a href="/admin_ViewStudents" class="dropdown-item active">
+              <i class="fas fa-users"></i> <span>View Students</span>
+            </a>
+          </div>
+        </div>
+        <hr class="menu-divider" />
+        <div class="dropdown">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Faculty</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_addFaculty" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Add Faculty</span>
+            </a>
+
+            <a href="/admin_ViewStudents" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Students</span>
+            </a>
+          </div>
+        </div>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-user"></i> <span>Profile</span>
+        </a>
+
+      </nav>
+    </aside>
+
+
+    <!-- ✅ MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- ✅ BATCH CARDS -->
+      <section class="students-section">
+        <div class="students-header">
+          <h2>Available Batches</h2>
+        </div>
+
+        <div class="batch-grid">
+          {% for b in batches %}
+          <div class="batch-card">
+            <h3>{{ b.batch_name }}</h3>
+            <p>{{ b.course_name }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+
+      <!-- ✅ FILTER + STUDENT LIST -->
+      <section class="students-section">
+        <div class="students-header">
+          <h2>Students List</h2>
+        </div>
+
+        <!-- Filters -->
+        <div class="students-filters">
+          <input type="text" class="students-search" placeholder="Search by name, roll number..." />
+
+          <select class="students-filter">
+            <option value="">Filter by Batch</option>
+            {% for b in batch %}
+            <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
+            {% endfor %}
+          </select>
+
+          <select class="students-filter">
+            <option value="">Filter by Course</option>
+            {% for c in courses %}
+            <option value="{{ c.course_id }}">{{ c.course_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- ✅ Table -->
+        <div class="students-table-container">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Reg. No</th>
+                <th>Course</th>
+                <th>Batch</th>
+                <th>Assigned To</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for s in students %}
+              <tr>
+                <td><img src="./static/student_images/{{ s.student_image }}" class="student-photo" /></td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.reg_no }}</td>
+                <td>{{ s.course.course_name }}</td>
+                <td>{{ s.batch }}</td>
+
+                <!-- ✅ Assigned -->
+                <td>
+                  {% if s.faculty_name %}
+                    {{ s.faculty_name }}
+                  {% else %}
+                    <span style="color: #dc3545; font-weight:600;">Unassigned</span>
+                  {% endif %}
+                </td>
+
+                <!-- ✅ Action Buttons -->
+                <td>
+                  <button class="icon-btn view-btn" onclick="window.location.href='/student/{{ s.id }}'">
+                    <i class="fas fa-eye"></i>
+                  </button>
+
+                  <button class="icon-btn delete-btn" onclick="window.location.href='/delete_student/{{ s.id }}'">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
+
   </div>
 
-  <!-- SEARCH + FILTERS -->
-  <div class="students-filters">
-    <input type="text" id="studentSearch" class="students-search" placeholder="Search by name or reg no...">
 
-    <select id="courseFilter" class="students-filter">
-      <option value="">Course</option>
-      <option value="BCA">BCA</option>
-      <option value="BBA">BBA</option>
-      <option value="BSW">BSW</option>
-      <option value="BCOM">BCom</option>
-    </select>
+  <!-- ✅ FOOTER -->
+  <footer class="footer"></footer>
 
-    <select id="yearFilter" class="students-filter">
-      <option value="">Year</option>
-      <option value="1">1st Year</option>
-      <option value="2">2nd Year</option>
-      <option value="3">3rd Year</option>
-    </select>
-  </div>
-
-  <!-- STUDENTS TABLE -->
-  <div class="students-table-container">
-    <table class="students-table">
-      <thead>
-        <tr>
-          <th>Photo</th>
-          <th>Name</th>
-          <th>Reg No</th>
-          <th>Department</th>
-          <th>Course</th>
-          <th>Year</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-
-      <tbody id="studentsList">
-        {% for s in students %}
-        <tr class="student-row"
-            data-name="{{ s.name }}"
-            data-course="{{ s.course }}"
-            data-year="{{ s.year }}">
-          
-          <td><img src="{{ s.photo_url|default:'https://via.placeholder.com/50' }}" class="student-photo" /></td>
-
-          <td>{{ s.name }}</td>
-          <td>{{ s.reg_no }}</td>
-          <td>{{ s.department.name }}</td>
-          <td>{{ s.course.course_name }}</td>
-          <td>{{ s.year }}</td>
-
-          <td>
-            {% if s.assigned %}
-              <span style="color: green; font-weight: 600;">Assigned</span>
-            {% else %}
-              <span style="color: red; font-weight: 600;">Not Assigned</span>
-            {% endif %}
-          </td>
-
-          <td>
-            <button class="view-btn">Edit</button>
-          </td>
-
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-</section>
-
-
-<!-- BASIC SEARCH + FILTER SCRIPT -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const searchInput = document.getElementById("studentSearch");
-  const courseFilter = document.getElementById("courseFilter");
-  const yearFilter   = document.getElementById("yearFilter");
-  const rows = document.querySelectorAll(".student-row");
-
-  function applyFilters() {
-    const search = searchInput.value.toLowerCase();
-    const course = courseFilter.value;
-    const year   = yearFilter.value;
-
-    rows.forEach(r => {
-      const name = r.dataset.name.toLowerCase();
-      const c = r.dataset.course;
-      const y = r.dataset.year;
-
-      const matchesSearch = name.includes(search);
-      const matchesCourse = course === "" || course === c;
-      const matchesYear   = year === ""   || year === y;
-
-      if (matchesSearch && matchesCourse && matchesYear) {
-        r.style.display = "";
-      } else {
-        r.style.display = "none";
-      }
+  <!-- ✅ DROPDOWN SCRIPT -->
+  <script>
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        const dropdown = this.closest('.dropdown');
+        dropdown.classList.toggle('open');
+      });
     });
-  }
+  </script>
 
-  searchInput.addEventListener("input", applyFilters);
-  courseFilter.addEventListener("change", applyFilters);
-  yearFilter.addEventListener("change", applyFilters);
-
-});
-</script>
+</body>
+</html>

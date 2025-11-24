@@ -40,14 +40,6 @@ body {
   display: none; /* Chrome, Safari, Opera */
 }
 
-.admin-title {
-  text-align: center;
-  font-size: 24px;
-  font-weight: 700;
-  margin: 20px 0;
-  color: white;      /* or the color used for sidebar text */
-}
-
 /* Header */
 .header {
   display: flex;
@@ -147,7 +139,7 @@ body {
   display: flex;
   flex: 1;
   min-height: calc(100vh - 100px); /* header height approx */
-  padding: 1rem 1rem;
+  padding: 1rem 2rem;
   gap: 1.5rem;
   align-items: stretch;
 }
@@ -464,114 +456,69 @@ body {
       margin-bottom: 1rem;
     }
   }
-  * STAT CARDS */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-bottom: 25px;
-}
-
-.card {
-  background: white;
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  border-left: 4px solid #0b8a3b; /* green accent */
-}
-
-.card p {
-  color: #7a7a7a;
-  font-size: 14px;
-}
-
-.card h1 {
-  margin-top: 5px;
-  font-size: 30px;
-  color: #0b8a3b; /* green heading */
-}
-
-.card .up {
-  color: #0b8a3b;
-}
-
-/* GRID LAYOUT */
-.grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-}
-
-/* BOXES */
-.box {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.box h3 {
-  color: #0b8a3b;
-  font-weight: 700;
-}
-
-.chart-placeholder {
-  height: 230px;
-  background: #f0f6f2;
-  border-radius: 12px;
-  margin-top: 15px;
+  /* Dropdown wrapper */
+.dropdown {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Toggle behaves like a menu item */
+.dropdown-toggle {
+  display: flex;
   align-items: center;
-  color: #777;
-}
-
-/* ACTIVITY FEED */
-.activity-list {
-  margin-top: 15px;
-  list-style: none;
-}
-
-.activity-list li {
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-}
-
-.activity-list li span {
-  font-size: 12px;
-  color: #777;
-  margin-right: 10px;
-}
-
-/* BUTTONS */
-.bottom-buttons {
-  display: flex;
   gap: 15px;
-  margin-top: 25px;
-}
-
-.btn {
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  background: #dfeee6; /* light green */
-  color: #0b8a3b;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #fff;
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.3s;
+  font-size: 1rem;
+  font-weight: 400;
+  justify-content: space-between;
 }
 
-.btn:hover {
-  background: #cfe7d9;
+.dropdown-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.btn.primary {
-  background: #0b8a3b;
-  color: white;
+/* Arrow icon */
+.dropdown-icon {
+  font-size: 0.8rem;
+  margin-left: auto;
 }
 
-.btn.primary:hover {
-  background: #0a7a35;
+/* Hidden by default */
+.dropdown-menu {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 5px;
 }
 
-  
+/* Visible when .open is applied */
+.dropdown.open .dropdown-menu {
+  display: flex;
+}
+
+/* Dropdown items */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 55px; /* Indented under Students */
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.dropdown-item.active {
+  background-color: var(--dark-green);
+  font-weight: 600;
+}

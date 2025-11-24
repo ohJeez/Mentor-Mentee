@@ -1,50 +1,185 @@
 from django.shortcuts import render
 from django.http import *
 from . models import *
+from django.core.files.storage import FileSystemStorage
+import os
 
 # Create your views here.
 def home(request):
     if request.method =='POST':
-        uname = request.POST['uname']
-        pas = request.POST['password']
+        uname = request.POST.get('uname')
+        pas = request.POST.get('password')
         print(uname)
         try:
             res= Login.objects.get(username=uname,password=pas)
-            if res and res.userType == 'faculty':
-                data=Faculty.objects.get(login_id=res.login_id)
-                return render(request,'./Faculty/index.html',{'name':data.name})
-            elif res and res.userType == 'admin':
+            
+            if res and res.userType == 'admin':
                 admin_details=Admin.objects.get(login_id=res.login_id)
+                request.session['login_id']=admin_details.login_id
+                
                 total_students=Student.objects.filter(department_id=admin_details.department_id).count()
                 total_mentors=Faculty.objects.filter(department_id=admin_details.department_id).count()
+                
                 # debugging
                 print(f"Total Students: {total_students}")
                 print(f"Total Mentors: {total_mentors}")
-                print(f"Login:{res.login_id}")
-                data={'total_students':total_students,'total_mentors':total_mentors,'login':res.login_id}
+                # print(f"Login:{request.session.get['login_id']}")
+                data={'total_students':total_students,'total_mentors':total_mentors,'login':request.session.get('login_id')}
                 return render(request,'./Admin/admin.html',data)
             else:
                 return HttpResponse("<script>alert('Invalid Login Credentials!');</script>")
 
         except Exception as e:
-            print(f"{e}")
+            print(f"Error: {e}")
             return HttpResponse("<script>alert('Invalid Login Credentials!');</script>")
             
-    return render(request,'Login.html',) 
+    return render(request,'Login.html') 
 
 
 def admin_dashboard(request):
-    return render(request,'./Admin/admin_dashboard.html')
+    session_login = request.session.get('login_id')
+    if not session_login:
+        return HttpResponse("<script>alert('Session expired!'); window.location.href='/'</script>")
+
+    return render(request, './Admin/admin_dashboard.html')
+
 
 #StudentList
-def students_List(request,login):
-    try:
-        admin_det=Admin.objects.get(login_id=login)
-        print(f"admin_dept:{admin_det.department_id}")
-        students = Student.objects.select_related("department","course").filter(department_id=admin_det.department_id)
+# def students_List(request):
+#     try:
+#         admin_det=Admin.objects.get(login_id=login)
+#         print(f"admin_dept:{admin_det.department_id}")
+#         students = Student.objects.select_related("department","course").filter(department_id=admin_det.department_id)
 
-        content={'students':students}
-        print(students)
+#         content={'students':students}
+#         print(students)
+#     except Exception as e:
+#         print(f"Error: {e}")
+#     return render(request,'./Admin/view_students.html',content)
+
+#Admin add student
+def add_Student(request):
+
+    # ✅ Check session
+    session_login = request.session.get('login_id')
+    if not session_login:
+        return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>"
+        )
+    try:
+        admin_det = Admin.objects.get(login_id=session_login)
+
+        courses = Courses.objects.filter(
+            department_id=admin_det.department_id
+        ).order_by('course_name')
+
+        batches = Batches.objects.all()
+
+        contents = {
+            'courses': courses,
+            'batch': batches
+        }
+
+        if request.method == 'POST':
+            name = request.POST['name']
+            roll = request.POST['roll']
+            course = request.POST['department']
+            email = request.POST['email']
+            phone = request.POST['phone']
+            dob = request.POST['dob']
+            batch = request.POST['batch']
+            photo = request.FILES['photo']
+            
+            print(name)
+            print(roll)
+            print(course)
+            print(email)
+            print(phone)
+            print(dob)
+            print(batch)
+
+            photo_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                'static',
+                'student_images'
+            )
+
+            fs = FileSystemStorage(location=photo_path, base_url='../static/student_images/')
+            image = fs.save(photo.name, photo)
+
+            res=Student(
+                name=name,
+                email=email,
+                reg_no=roll,
+                phone=phone,
+                department_id=admin_det.department_id,
+                batch_id=batch,
+                course_id=course,
+                student_image=image,
+                year=1
+            )
+            res.save()
+            return HttpResponse(
+                "<script>alert('Student Added Successfully!'); window.location.href='/admin_addStudent'</script>")
+
     except Exception as e:
-        print(f"Error: {e}")
-    return render(request,'./Admin/view_students.html',content)
+        print("Error:", e)
+
+    return render(request, './Admin/admin_addStudent.html', contents)
+
+#View Students
+def admin_ViewStudents(request):
+    login_id=request.session.get('login_id')
+    if not login_id:
+        return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>"
+        )
+    try:
+        adm_dept=Admin.objects.get(login_id=login_id)
+        batches = Batches.objects.filter(course__department_id=adm_dept.department_id)
+        #all students
+        students=Student.objects.filter(department_id=adm_dept.department_id)
+        contents={'batches':batches,'students':students}
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Admin/view_students.html',contents)
+
+#Add faculty
+def admin_addFaculty(request):
+    contents={}
+    try:
+        login_id=request.session.get('login_id')
+        if not login_id:
+            return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+        adm_dept=Admin.objects.get(login_id=login_id)
+        dept=Department.objects.filter(dept_id=adm_dept.department_id)
+        contents={'department':dept}
+    except Exception as e:
+        print(f"Error! {e}")
+    if request.method=='POST':
+        name=request.POST['name']
+        email=request.POST['email']
+        phone=request.POST['phone']
+        department=request.POST['department']
+        designation=request.POST['designation']
+        username=request.POST['username']
+        passwd=request.POST['password']
+        faculty_image=request.FILES['faculty_image']
+        photo_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                'static',
+                'faculty_images'
+            )
+
+        fs = FileSystemStorage(location=photo_path, base_url='../static/faculty_images/')
+        image = fs.save(faculty_image.name, faculty_image)
+        
+        res1=Login(username=username,password=passwd,userType='faculty')
+        res1.save()
+        res2=Faculty(name=name,email=email,phone=phone,department_id=department,designation=designation,faculty_image=image,login_id=res1.login_id)
+        res2.save()
+        
+        return HttpResponse(
+                "<script>alert('Faculty Added Successfully!'); window.location.href='/admin_addFaculty'</script>")
+    return render(request,'./Admin/admin_addFaculty.html',contents)

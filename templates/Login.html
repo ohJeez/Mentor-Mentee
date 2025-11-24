@@ -172,6 +172,7 @@
 <body>
     <div class="login-container">
         <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
         <div class="logo">
             <div class="shield-bottom"></div>
         </div>

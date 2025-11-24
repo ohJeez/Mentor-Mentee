@@ -26,6 +26,13 @@ class Courses(models.Model):
     course_name = models.CharField(max_length=20)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     
+#Batches
+class Batches(models.Model):
+    batch_id = models.AutoField(primary_key=True)
+    batch_name = models.CharField(max_length=30,blank=True)
+    course = models.ForeignKey(Courses,on_delete=models.CASCADE)
+    
+    
     #Admin
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
@@ -39,14 +46,14 @@ class Admin(models.Model):
     #Faculty
 class Faculty(models.Model):
     faculty_id = models.AutoField(primary_key=True)
-    # user = models.OneToOneField(User, on_delete=models.CASCADE)
     login=models.ForeignKey(Login,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=150,db_index=False)
     phone = models.CharField(max_length=15, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="faculties")
     designation = models.CharField(max_length=100, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    faculty_image = models.CharField(max_length=500,blank=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
     
     #Student
 class Student(models.Model):
@@ -56,10 +63,12 @@ class Student(models.Model):
     reg_no = models.CharField(max_length=10, unique=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="students")
+    student_image = models.CharField(max_length=500,blank=True)
     course = models.ForeignKey(Courses, on_delete=models.CASCADE)
+    batch = models.ForeignKey(Batches,on_delete=models.CASCADE)
     year = models.IntegerField()
     faculty = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="students")
-    created_at = models.DateTimeField(auto_now_add=True)
+    dob = models.DateField(null=True, blank=True)
     
     
     #Mentoring Session
@@ -82,6 +91,5 @@ class MentorAssignmentLog(models.Model):
     changed_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-    
-    
+
     
