@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   {% load static %}
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="csrf-token" content="{{ csrf_token }}">
-  <title>Assign Students | Mentor Mentee</title>
+  <title>Assigned Students | Mentor Mentee</title>
 
   <!-- STYLES -->
   <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
-  <link rel="stylesheet" href="{% static '../static/styles/admin_AddAssignment.css' %}" />
+  <link rel="stylesheet" href="{% static '../static/styles/admin_ViewAssignments.css' %}" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -41,7 +40,7 @@
 <div class="container">
 
   <!-- ✅ SIDEBAR -->
- <aside class="sidebar">
+   <aside class="sidebar">
       <nav class="menu">
 
         <a href="/admin_dashboard" class="menu-item">
@@ -49,7 +48,6 @@
         </a>
 
         <hr class="menu-divider" />
-        
 
         <div class="dropdown">
           <a href="javascript:void(0)" class="menu-item dropdown-toggle">
@@ -67,36 +65,37 @@
             </a>
           </div>
         </div>
-         <hr class="menu-divider" />
+
+        <hr class="menu-divider" />
         <div class="dropdown">
           <a href="javascript:void(0)" class="menu-item dropdown-toggle">
             <i class="fas fa-chalkboard-teacher"></i> <span>Faculty</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
           </a>
 
-          <div class="dropdown-menu" style="display:flex;">
+          <div class="dropdown-menu">
             <a href="/admin_addFaculty" class="dropdown-item">
               <i class="fas fa-user-plus"></i> <span>Add Faculty</span>
             </a>
 
-            <a href="/admin_viewFaculty" class="dropdown-item">
-              <i class="fas fa-users"></i> <span>View Faculty</span>
+            <a href="/admin_ViewStudents" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Students</span>
             </a>
           </div>
         </div>
          <hr class="menu-divider" />
         <div class="dropdown open">
-          <a href="javascript:void(0)" class="menu-item dropdown-toggle active">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
             <i class="fas fa-chalkboard-teacher"></i> <span>Assignments</span>
             <i class="fas fa-chevron-down dropdown-icon"></i>
           </a>
 
           <div class="dropdown-menu">
-            <a href="/admin_AddAssignment" class="dropdown-item active">
+            <a href="/admin_AddAssignment" class="dropdown-item">
               <i class="fas fa-user-plus"></i> <span>Assign Student</span>
             </a>
 
-            <a href="/admin_ViewAssignments" class="dropdown-item">
+            <a href="/admin_ViewAssignments" class="dropdown-item active">
               <i class="fas fa-users"></i> <span>View Assignments</span>
             </a>
           </div>
@@ -117,104 +116,86 @@
       </nav>
     </aside>
 
+
   <!-- ✅ MAIN CONTENT -->
   <main class="main-content">
 
-    <!-- PAGE TITLE -->
     <section class="students-section">
+
       <div class="students-header">
-        <h2>Assign Students to Faculty</h2>
+        <h2>Assigned Students</h2>
       </div>
 
-      <!-- FILTER CONTROLS -->
-      <div class="students-filters">
-        <select id="facultySelect" class="students-filter">
-          <option value="">Select Faculty</option>
-          {% for f in faculties %}
-            <option value="{{ f.faculty_id }}">{{ f.name }} — {{ f.designation }}</option>
-          {% endfor %}
-        </select>
+<!-- ✅ FILTERS -->
+<div class="students-filters">
 
-        <select id="batchSelect" class="students-filter">
-          <option value="">Select Batch</option>
-          {% for b in batches %}
-            <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
-          {% endfor %}
-        </select>
+  <div class="filter-row">
+    <select id="facultySelect" class="students-filter">
+      <option value="">Select Faculty</option>
+      {% for f in faculties %}
+      <option value="{{ f.faculty_id }}">{{ f.name }} — {{ f.designation }}</option>
+      {% endfor %}
+    </select>
 
-        <button id="loadStudentsBtn" class="filter-btn">
-          <i class="fas fa-filter"></i> Load Students
-        </button>
-      </div>
+    <select id="batchSelect" class="students-filter">
+      <option value="">All Batches</option>
+      {% for b in batches %}
+      <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
+      {% endfor %}
+    </select>
 
-      <!-- ASSIGNMENT GRID -->
-      <div class="assign-grid">
-
-        <!-- LEFT LIST -->
-<div class="assign-box">
-  <h3>Unassigned Students</h3>
-
-  <!-- Auto Assign Tools placed BELOW heading -->
-  <div class="auto-assign-tools">
-    <input type="number" id="assignCount" placeholder="Count" min="1" />
-    <button id="randomAssignBtn" class="random-btn">
-      <i class="fas fa-magic"></i> Auto Assign
+    <button id="loadBtn" class="filter-btn">
+      <i class="fas fa-filter"></i> Load Records
     </button>
   </div>
 
-  <input type="text" id="unassignedSearch" placeholder="Search..." class="students-search" />
-
-  <ul id="unassignedList" class="assign-list"></ul>
+  <input type="text" id="searchInput" class="students-search full-search"
+    placeholder="Search by name or Reg No" />
 </div>
 
 
-        <!-- RIGHT LIST -->
-        <div class="assign-box">
-          <h3>Assigned Students</h3>
-
-          <input type="text" id="assignedSearch" placeholder="Search..." class="students-search" />
-
-          <ul id="assignedList" class="assign-list"></ul>
-        </div>
-
+      <!-- ✅ TABLE -->
+      <div class="students-table-container">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Reg. No</th>
+              <th>Course</th>
+              <th>Batch</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTableBody">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
       </div>
-
-      <!-- SAVE BUTTON -->
-      <button id="saveAssignmentsBtn" class="save-btn">
-        <i class="fas fa-save"></i> Save Assignments
-      </button>
 
     </section>
 
   </main>
+
 </div>
 
-<!-- FOOTER -->
 <footer class="footer"></footer>
+
+<!-- ✅ JS CONFIG -->
+<script>
+  window.getAssignedURL = "{% url 'get_assigned_students' %}";
+</script>
 
 <!-- ✅ DROPDOWN SCRIPT -->
 <script>
   document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
     toggle.addEventListener('click', function (e) {
       e.preventDefault();
-
-      const dropdown = this.closest('.dropdown');
-      dropdown.classList.toggle('open');
+      this.closest('.dropdown').classList.toggle('open');
     });
   });
 </script>
-<!-- ✅ CSRF Token made available to JS -->
-<input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 
-<!-- ✅ URL for AJAX -->
-<script>
-  window.getStudentsURL = "{% url 'get_batch_students' 999 999 %}".replace("999/999", "");
-  window.saveAssignmentsURL = "{% url 'save_assignments' %}";
-</script>
-
-<script src="{% static '../static/script/admin_AddAssignment.js' %}"></script>
-
-<!-- ✅ MAIN ASSIGNMENT SCRIPT -->
+<script src="{% static '../static/script/admin_ViewAssignments.js' %}"></script>
 
 </body>
 </html>

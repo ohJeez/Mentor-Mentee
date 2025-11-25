@@ -94,7 +94,7 @@
               <i class="fas fa-user-plus"></i> <span>Assign Student</span>
             </a>
 
-            <a href="/admin_ViewStudents" class="dropdown-item">
+            <a href="/admin_ViewAssignments" class="dropdown-item">
               <i class="fas fa-users"></i> <span>View Assignments</span>
             </a>
           </div>
@@ -183,12 +183,12 @@
                 <td>{{ s.name }}</td>
                 <td>{{ s.reg_no }}</td>
                 <td>{{ s.course.course_name }}</td>
-                <td>{{ s.batch }}</td>
+                <td>{{ s.batch.batch_name}}</td>
 
                 <!-- ✅ Assigned -->
                 <td>
-                  {% if s.faculty_name %}
-                    {{ s.faculty_name }}
+                  {% if s.faculty.name %}
+                    {{ s.faculty.name }}
                   {% else %}
                     <span style="color: #dc3545; font-weight:600;">Unassigned</span>
                   {% endif %}

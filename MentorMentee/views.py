@@ -5,6 +5,7 @@ from django.core.files.storage import FileSystemStorage
 import os
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.db.models import F
 
 # Create your views here.
 def home(request):
@@ -253,7 +254,7 @@ def get_batch_students(request, batch_id, faculty_id):
         print(f"Error in get_batch_students: {e}")
         return JsonResponse({"error": "Something went wrong"}, status=500)
 
-
+#Saving new assignments
 @csrf_exempt
 def save_assignments(request):
     if request.method == "POST":
@@ -274,3 +275,41 @@ def save_assignments(request):
             return JsonResponse({"error": "Server error"}, status=500)
 
     return JsonResponse({"error": "Invalid method"}, status=400)
+
+#Admin view assignments
+def admin_ViewAssignments(request):
+    login_id = request.session.get('login_id')
+    if not login_id:
+        return redirect('/')
+
+    admin = Admin.objects.get(login_id=login_id)
+    dept = admin.department_id
+
+    faculties = Faculty.objects.filter(department_id=dept)
+    batches = Batches.objects.filter(course__department_id=dept)
+
+    return render(request, './Admin/admin_ViewAssignments.html',
+                  {"faculties": faculties, "batches": batches})
+
+#Filtering students based on assignments
+def get_assigned_students(request):
+    faculty = request.GET.get("faculty")
+    batch = request.GET.get("batch")
+    students = Student.objects.filter(faculty_id=faculty)
+
+    if batch:
+        students = students.filter(batch_id=batch)
+    return JsonResponse({
+        "students": list(
+            students.annotate(
+                course_name=F("course__course_name"),
+                batch_name=F("batch__batch_name")
+            ).values(
+                "name",
+                "reg_no",
+                "student_image",
+                "course_name",
+                "batch_name",
+            )
+        )
+    })
