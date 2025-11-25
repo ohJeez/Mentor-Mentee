@@ -14,7 +14,11 @@ urlpatterns = [
     path('admin_addFaculty', views.admin_addFaculty),
     path('admin_viewFaculty', views.admin_viewFaculty),
     path('admin_FacultyDetails/<fac_id>', views.admin_FacultyDetails),
-    path('admin_AddAssignment', views.admin_AddAssignment),
+    path('admin_AddAssignment/', views.admin_AddAssignment, name='admin_AddAssignment'),
+    path('get_batch_students/<int:batch_id>/<int:faculty_id>', views.get_batch_students, name='get_batch_students'),
+    path('save_assignments', views.save_assignments, name='save_assignments'),
+
+    
     
     
     

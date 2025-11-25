@@ -3,6 +3,8 @@ from django.http import *
 from . models import *
 from django.core.files.storage import FileSystemStorage
 import os
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 def home(request):
@@ -212,5 +214,63 @@ def admin_FacultyDetails(request,fac_id):
     return render(request,'./Admin/admin_FacultyDetails.html',contents)
 
 #Add Assignments
+
 def admin_AddAssignment(request):
-    return render(request,'./Admin/admin_AddAssignment.html')
+    try:
+        login_id = request.session.get('login_id')
+        if not login_id:
+            return HttpResponse(
+                "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>"
+            )
+
+        admin = Admin.objects.get(login_id=login_id)
+        admin_dept = admin.department_id
+
+        faculties = Faculty.objects.filter(department_id=admin_dept)
+        batches = Batches.objects.filter(course__department_id=admin_dept)
+
+        context = {
+            'faculties': faculties,
+            'batches': batches,
+        }
+    except Exception as e:
+        print(f"Error in admin_AddAssignment: {e}")
+        context = {}
+
+    return render(request, './Admin/admin_AddAssignment.html', context)
+
+
+def get_batch_students(request, batch_id, faculty_id):
+    try:
+        assigned = Student.objects.filter(batch_id=batch_id, faculty_id=faculty_id)
+        unassigned = Student.objects.filter(batch_id=batch_id, faculty__isnull=True)
+
+        return JsonResponse({
+            "assigned": list(assigned.values("student_id", "name", "reg_no")),
+            "unassigned": list(unassigned.values("student_id", "name", "reg_no")),
+        })
+    except Exception as e:
+        print(f"Error in get_batch_students: {e}")
+        return JsonResponse({"error": "Something went wrong"}, status=500)
+
+
+@csrf_exempt
+def save_assignments(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            faculty_id = data.get("faculty")
+            student_ids = data.get("students", [])
+
+            # Clear old assignments for THIS faculty (you can also limit by batch if you want)
+            Student.objects.filter(faculty_id=faculty_id).update(faculty=None)
+
+            # Assign new students
+            Student.objects.filter(student_id__in=student_ids).update(faculty_id=faculty_id)
+
+            return JsonResponse({"status": "success", "message": "Assignments saved successfully ✅"})
+        except Exception as e:
+            print(f"Error in save_assignments: {e}")
+            return JsonResponse({"error": "Server error"}, status=500)
+
+    return JsonResponse({"error": "Invalid method"}, status=400)

@@ -11,81 +11,109 @@
   --shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
-/* Page Section */
+/* Page Section Wrapper */
 .students-section {
   background: #fff;
-  padding: 2.2rem;
+  padding: 2.5rem;
   border-radius: 14px;
   box-shadow: var(--shadow);
   margin-bottom: 3rem;
 }
 
-/* Header Text */
+/* Page Title */
 .students-header h2 {
   font-size: 2rem;
   font-weight: 700;
   color: var(--text-dark);
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 
-/* Filters */
+/* ✅ FULL-WIDTH, BEAUTIFUL FILTER BAR */
 .students-filters {
-  background: var(--light-gray);
-  padding: 1.2rem 1.4rem;
-  border-radius: 12px;
-  display: flex;
-  gap: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f4fdf7 100%);
+  padding: 1.5rem 2rem;
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 1.2rem;
   align-items: center;
-  flex-wrap: wrap;
   border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  width: 100%;
 }
 
-.students-filter {
-  padding: 12px 14px;
-  border-radius: 10px;
+/* Search Box */
+.students-search {
+  padding: 14px 18px;
+  width: 100%;
+  border-radius: 12px;
   border: 1px solid var(--border);
   font-size: 0.95rem;
-  min-width: 200px;
   transition: 0.25s ease;
 }
 
-.students-filter:focus {
-  border-color: var(--primary-green);
+.students-search:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(40,167,69,0.15);
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 4px rgba(40,167,69,0.15);
 }
 
+/* Dropdown Filters */
+.students-filter {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.students-filter:hover {
+  border-color: var(--primary-green);
+}
+
+.students-filter:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 4px rgba(40,167,69,0.15);
+}
+
+/* Apply Filters Button */
 .filter-btn {
   background: var(--primary-green);
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: 14px 26px;
+  border-radius: 12px;
   font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: 0.25s ease;
+  white-space: nowrap;
+  transition: 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .filter-btn:hover {
   background: var(--dark-green);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(40,167,69,0.28);
 }
 
-/* Assignment Grid */
+/* Grid Layout for Assignment Boxes */
 .assign-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2.2rem;
-  margin-top: 2rem;
+  margin-top: 2.2rem;
 }
 
-/* Assignment Card */
+/* Inside Boxes */
 .assign-box {
   background: #fff;
-  padding: 1.8rem;
+  padding: 2rem;
   border-radius: 14px;
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -98,63 +126,53 @@
 
 .assign-box h3 {
   font-weight: 600;
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+  font-size: 1.35rem;
+  margin-bottom: 1.3rem;
   color: var(--text-dark);
 }
 
-/* Search Bar Inside Box */
+/* Search Inside Lists */
 .students-search {
-  padding: 10px 14px;
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  margin-bottom: 12px;
-  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 
-.students-search:focus {
-  outline: none;
-  border-color: var(--primary-green);
-  box-shadow: 0 0 0 3px rgba(40,167,69,0.12);
-}
-
-/* Student List */
+/* Student Lists */
 .assign-list {
   list-style: none;
   padding: 0;
-  margin: 0.5rem 0 1rem;
-  max-height: 420px;
+  margin: 0.6rem 0 1rem;
+  max-height: 430px;
   overflow-y: auto;
 }
 
+/* Student List Item */
 .assign-list li {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #fafafa;
-  padding: 12px 14px;
-  border-radius: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
   margin-bottom: 10px;
   border: 1px solid var(--border);
-  transition: 0.2s ease;
+  transition: 0.25s ease;
 }
 
 .assign-list li:hover {
-  background: #f1fff5;
+  background: #eaffef;
   border-color: var(--primary-green);
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
-/* Student Action Button */
+/* Add/Remove Button */
 .assign-list li button {
   background: var(--primary-green);
   border: none;
-  padding: 7px 10px;
+  padding: 8px 12px;
   border-radius: 6px;
   color: #fff;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   transition: 0.2s ease;
 }
 
@@ -163,12 +181,12 @@
   transform: scale(1.12);
 }
 
-/* Random Button */
+/* Random Auto-Assign */
 .random-btn {
   width: 100%;
   background: #ffb300;
-  padding: 12px 16px;
-  border-radius: 10px;
+  padding: 13px 18px;
+  border-radius: 12px;
   color: #000;
   font-weight: 600;
   border: none;
@@ -182,27 +200,29 @@
   transform: translateY(-2px);
 }
 
-/* Final Save Button */
+/* Save Assignments */
+.save-btn,
 #saveAssignmentsBtn {
-  margin-top: 2.5rem;
+  margin-top: 3rem;
   width: 100%;
-  padding: 14px;
-  font-size: 1.1rem;
+  padding: 15px;
+  font-size: 1.15rem;
   font-weight: 600;
   background: var(--primary-green);
   color: white;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   transition: 0.25s ease;
 }
 
+.save-btn:hover,
 #saveAssignmentsBtn:hover {
   background: var(--dark-green);
   transform: translateY(-3px);
 }
 
-/* Scrollbar Styling */
+/* Scrollbar */
 .assign-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -214,9 +234,119 @@
   background: #eaeaea;
 }
 
-/* Mobile Responsive */
-@media (max-width: 900px) {
+/* Header inside assign box */
+.assign-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Count + Button alignment */
+.auto-assign-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Smaller input beside button */
+.auto-assign-tools input {
+  width: 85px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.auto-assign-tools input:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(40,167,69,0.15);
+}
+
+/* Make auto-assign button smaller & fit */
+.auto-assign-tools .random-btn {
+  margin-top: 0;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  width: auto;
+}
+/* Auto-assign tools beneath title */
+.auto-assign-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+  margin-top: 0.3rem;
+}
+
+/* Count input */
+#assignCount {
+  width: 90px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  font-size: 0.95rem;
+  transition: 0.25s ease;
+  text-align: center;
+  background: white;
+}
+
+#assignCount:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(40,167,69,0.15);
+}
+
+/* Auto-Assign Button */
+.random-btn {
+  background: #ffb300;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: #000;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.25s ease;
+  white-space: nowrap;
+}
+
+.random-btn:hover {
+  background: #e09c00;
+  transform: translateY(-2px);
+}
+
+/* Mobile view */
+@media (max-width: 600px) {
+  .auto-assign-tools {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #assignCount,
+  .random-btn {
+    width: 100%;
+  }
+}
+
+/* ✅ Responsive Layout */
+@media (max-width: 950px) {
+  .students-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
   .assign-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .students-filters {
     grid-template-columns: 1fr;
   }
 }

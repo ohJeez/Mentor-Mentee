@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   {% load static %}
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <title>Assign Students | Mentor Mentee</title>
 
   <!-- STYLES -->
@@ -83,7 +84,7 @@
             <i class="fas fa-users"></i> <span>View Faculty</span>
           </a>
 
-          <a href="/admin_AddAssignment" class="dropdown-item active">
+          <a href="/admin_AddAssignment/" class="dropdown-item active">
             <i class="fas fa-random"></i> <span>Assign Students</span>
           </a>
         </div>
@@ -126,19 +127,22 @@
       <div class="assign-grid">
 
         <!-- LEFT LIST -->
-        <div class="assign-box">
-          <h3>Unassigned Students</h3>
+<div class="assign-box">
+  <h3>Unassigned Students</h3>
 
-          <input type="text" id="unassignedSearch" placeholder="Search..." class="students-search" />
+  <!-- Auto Assign Tools placed BELOW heading -->
+  <div class="auto-assign-tools">
+    <input type="number" id="assignCount" placeholder="Count" min="1" />
+    <button id="randomAssignBtn" class="random-btn">
+      <i class="fas fa-magic"></i> Auto Assign
+    </button>
+  </div>
 
-          <ul id="unassignedList" class="assign-list">
-            <!-- Filled by JS -->
-          </ul>
+  <input type="text" id="unassignedSearch" placeholder="Search..." class="students-search" />
 
-          <button id="randomAssignBtn" class="random-btn">
-            <i class="fas fa-magic"></i> Auto Assign
-          </button>
-        </div>
+  <ul id="unassignedList" class="assign-list"></ul>
+</div>
+
 
         <!-- RIGHT LIST -->
         <div class="assign-box">
@@ -146,9 +150,7 @@
 
           <input type="text" id="assignedSearch" placeholder="Search..." class="students-search" />
 
-          <ul id="assignedList" class="assign-list">
-            <!-- Filled by JS -->
-          </ul>
+          <ul id="assignedList" class="assign-list"></ul>
         </div>
 
       </div>
@@ -176,8 +178,18 @@
     });
   });
 </script>
+<!-- ✅ CSRF Token made available to JS -->
+<input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 
-<!-- ✅ ASSIGNMENT SCRIPT -->
-<script src="{%static '../static/script/admin_AddAssignment.js' %}"></script>
+<!-- ✅ URL for AJAX -->
+<script>
+  window.getStudentsURL = "{% url 'get_batch_students' 999 999 %}".replace("999/999", "");
+  window.saveAssignmentsURL = "{% url 'save_assignments' %}";
+</script>
+
+<script src="{% static '../static/script/admin_AddAssignment.js' %}"></script>
+
+<!-- ✅ MAIN ASSIGNMENT SCRIPT -->
+
 </body>
 </html>
