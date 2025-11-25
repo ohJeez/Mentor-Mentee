@@ -1,0 +1,222 @@
+/* ================================
+   ASSIGN STUDENTS PAGE STYLES
+   ================================ */
+
+:root {
+  --primary-green: #28a745;
+  --dark-green: #218838;
+  --light-gray: #f8f9fa;
+  --border: #e5e7eb;
+  --text-dark: #2c3e50;
+  --shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* Page Section */
+.students-section {
+  background: #fff;
+  padding: 2.2rem;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  margin-bottom: 3rem;
+}
+
+/* Header Text */
+.students-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.2rem;
+}
+
+/* Filters */
+.students-filters {
+  background: var(--light-gray);
+  padding: 1.2rem 1.4rem;
+  border-radius: 12px;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+}
+
+.students-filter {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  min-width: 200px;
+  transition: 0.25s ease;
+}
+
+.students-filter:focus {
+  border-color: var(--primary-green);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(40,167,69,0.15);
+}
+
+.filter-btn {
+  background: var(--primary-green);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-btn:hover {
+  background: var(--dark-green);
+  transform: translateY(-2px);
+}
+
+/* Assignment Grid */
+.assign-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.2rem;
+  margin-top: 2rem;
+}
+
+/* Assignment Card */
+.assign-box {
+  background: #fff;
+  padding: 1.8rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: 0.25s ease;
+}
+
+.assign-box:hover {
+  transform: translateY(-4px);
+}
+
+.assign-box h3 {
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--text-dark);
+}
+
+/* Search Bar Inside Box */
+.students-search {
+  padding: 10px 14px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.students-search:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(40,167,69,0.12);
+}
+
+/* Student List */
+.assign-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.assign-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  transition: 0.2s ease;
+}
+
+.assign-list li:hover {
+  background: #f1fff5;
+  border-color: var(--primary-green);
+  transform: translateX(3px);
+}
+
+/* Student Action Button */
+.assign-list li button {
+  background: var(--primary-green);
+  border: none;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: 0.2s ease;
+}
+
+.assign-list li button:hover {
+  background: var(--dark-green);
+  transform: scale(1.12);
+}
+
+/* Random Button */
+.random-btn {
+  width: 100%;
+  background: #ffb300;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #000;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: 0.25s ease;
+}
+
+.random-btn:hover {
+  background: #e09c00;
+  transform: translateY(-2px);
+}
+
+/* Final Save Button */
+#saveAssignmentsBtn {
+  margin-top: 2.5rem;
+  width: 100%;
+  padding: 14px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--primary-green);
+  color: white;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+#saveAssignmentsBtn:hover {
+  background: var(--dark-green);
+  transform: translateY(-3px);
+}
+
+/* Scrollbar Styling */
+.assign-list::-webkit-scrollbar {
+  width: 6px;
+}
+.assign-list::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 10px;
+}
+.assign-list::-webkit-scrollbar-track {
+  background: #eaeaea;
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .assign-grid {
+    grid-template-columns: 1fr;
+  }
+}

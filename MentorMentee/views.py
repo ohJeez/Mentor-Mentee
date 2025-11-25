@@ -183,3 +183,34 @@ def admin_addFaculty(request):
         return HttpResponse(
                 "<script>alert('Faculty Added Successfully!'); window.location.href='/admin_addFaculty'</script>")
     return render(request,'./Admin/admin_addFaculty.html',contents)
+
+#View Faculties
+def admin_viewFaculty(request):
+    contents={}
+    try:
+        login_id=request.session.get('login_id')
+        if not login_id:
+            return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+        dept=Admin.objects.get(login_id=login_id)
+        faculty=Faculty.objects.filter(department_id=dept.department_id)
+        contents={'faculties':faculty}
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Admin/admin_viewFaculty.html',contents)
+
+#View faculty details
+def admin_FacultyDetails(request,fac_id):
+    contents={}
+    try:
+        fac_details=Faculty.objects.get(faculty_id=fac_id)
+        assigned_stu=Student.objects.filter(faculty_id=fac_id)
+        batches=Batches.objects.filter(course__department=fac_details.department_id)
+        contents={'faculty':fac_details,'students':assigned_stu,'batches':batches}
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Admin/admin_FacultyDetails.html',contents)
+
+#Add Assignments
+def admin_AddAssignment(request):
+    return render(request,'./Admin/admin_AddAssignment.html')
