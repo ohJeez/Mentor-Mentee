@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.home, name='home'),
 
     # ✅ No login in URL
+    path('logout', views.logout, name='logout'),
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('admin_addStudent', views.add_Student, name='admin_addStudent'),
     path('admin_ViewStudents', views.admin_ViewStudents),

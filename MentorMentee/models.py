@@ -42,6 +42,7 @@ class Admin(models.Model):
     email = models.EmailField(max_length=150,db_index=False)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    admin_image = models.CharField(max_length=500,blank=True)
 
     #Faculty
 class Faculty(models.Model):

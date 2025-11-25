@@ -31,10 +31,11 @@
     <h1 class="main-title">MENTOR MENTEE</h1>
 
     <div class="header-right">
+      <h3>{{admin.name}}</h3>
       <div class="user-profile-icon">
-        <i class="fas fa-user"></i>
+        <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
       </div>
-      <button class="logout-btn">Log out</button>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
     </div>
   </header>
 
@@ -112,7 +113,7 @@
         <hr class="menu-divider" />
 
         <a href="#" class="menu-item">
-          <i class="fas fa-user"></i> <span>Profile</span>
+          <i class="fas fa-user">Diljith</i> <span>Profile</span>
         </a>
 
       </nav>
@@ -121,9 +122,9 @@
     <!-- MAIN CONTENT -->
     <main class="main-content">
 
-      <div class="welcome-section">
+      <!-- <div class="welcome-section">
         <p>Welcome <strong>DILJITH K BENNY</strong></p>
-      </div>
+      </div> -->
 
       <!-- ✅ YOUR DASHBOARD SECTION -->
       {% load static %}

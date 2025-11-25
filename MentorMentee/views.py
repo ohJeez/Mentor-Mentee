@@ -6,13 +6,13 @@ import os
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.db.models import F
+from django.shortcuts import redirect
 
 # Create your views here.
 def home(request):
     if request.method =='POST':
         uname = request.POST.get('uname')
         pas = request.POST.get('password')
-        print(uname)
         try:
             res= Login.objects.get(username=uname,password=pas)
             
@@ -22,13 +22,9 @@ def home(request):
                 
                 total_students=Student.objects.filter(department_id=admin_details.department_id).count()
                 total_mentors=Faculty.objects.filter(department_id=admin_details.department_id).count()
-                
-                # debugging
-                print(f"Total Students: {total_students}")
-                print(f"Total Mentors: {total_mentors}")
-                # print(f"Login:{request.session.get['login_id']}")
-                data={'total_students':total_students,'total_mentors':total_mentors,'login':request.session.get('login_id')}
-                return render(request,'./Admin/admin.html',data)
+                print(admin_details.name)
+                data={'total_students':total_students,'total_mentors':total_mentors,'login':request.session.get('login_id'),'admin':admin_details}
+                return render(request,'./Admin/admin_dashboard.html',data)
             else:
                 return HttpResponse("<script>alert('Invalid Login Credentials!');</script>")
 
@@ -60,9 +56,13 @@ def admin_dashboard(request):
 #         print(f"Error: {e}")
 #     return render(request,'./Admin/view_students.html',content)
 
+#Logout
+def logout(request):
+    request.session.flush()   # clears session completely
+    return redirect('/')  
+
 #Admin add student
 def add_Student(request):
-
     # ✅ Check session
     session_login = request.session.get('login_id')
     if not session_login:
@@ -71,17 +71,9 @@ def add_Student(request):
         )
     try:
         admin_det = Admin.objects.get(login_id=session_login)
-
-        courses = Courses.objects.filter(
-            department_id=admin_det.department_id
-        ).order_by('course_name')
-
-        batches = Batches.objects.all()
-
-        contents = {
-            'courses': courses,
-            'batch': batches
-        }
+        courses = Courses.objects.filter(department_id=admin_det.department_id).order_by('course_name')
+        batches = Batches.objects.filter(course__department_id=admin_det.department_id)
+        contents = {'courses': courses,'batch': batches,'admin':admin_det}
 
         if request.method == 'POST':
             name = request.POST['name']
@@ -92,14 +84,6 @@ def add_Student(request):
             dob = request.POST['dob']
             batch = request.POST['batch']
             photo = request.FILES['photo']
-            
-            print(name)
-            print(roll)
-            print(course)
-            print(email)
-            print(phone)
-            print(dob)
-            print(batch)
 
             photo_path = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -142,7 +126,7 @@ def admin_ViewStudents(request):
         batches = Batches.objects.filter(course__department_id=adm_dept.department_id)
         #all students
         students=Student.objects.filter(department_id=adm_dept.department_id)
-        contents={'batches':batches,'students':students}
+        contents={'batches':batches,'students':students,'admin':adm_dept}
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Admin/view_students.html',contents)
@@ -157,7 +141,7 @@ def admin_addFaculty(request):
             "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
         adm_dept=Admin.objects.get(login_id=login_id)
         dept=Department.objects.filter(dept_id=adm_dept.department_id)
-        contents={'department':dept}
+        contents={'department':dept,'admin':adm_dept}
     except Exception as e:
         print(f"Error! {e}")
     if request.method=='POST':
@@ -197,7 +181,7 @@ def admin_viewFaculty(request):
             "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
         dept=Admin.objects.get(login_id=login_id)
         faculty=Faculty.objects.filter(department_id=dept.department_id)
-        contents={'faculties':faculty}
+        contents={'faculties':faculty,'admin':dept}
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Admin/admin_viewFaculty.html',contents)
@@ -206,16 +190,20 @@ def admin_viewFaculty(request):
 def admin_FacultyDetails(request,fac_id):
     contents={}
     try:
+        login_id=request.session.get('login_id')
+        if not login_id:
+            return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+        admin=Admin.objects.get(login_id=login_id)
         fac_details=Faculty.objects.get(faculty_id=fac_id)
         assigned_stu=Student.objects.filter(faculty_id=fac_id)
         batches=Batches.objects.filter(course__department=fac_details.department_id)
-        contents={'faculty':fac_details,'students':assigned_stu,'batches':batches}
+        contents={'faculty':fac_details,'students':assigned_stu,'batches':batches,'admin':admin}
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Admin/admin_FacultyDetails.html',contents)
 
 #Add Assignments
-
 def admin_AddAssignment(request):
     try:
         login_id = request.session.get('login_id')
@@ -226,21 +214,15 @@ def admin_AddAssignment(request):
 
         admin = Admin.objects.get(login_id=login_id)
         admin_dept = admin.department_id
-
         faculties = Faculty.objects.filter(department_id=admin_dept)
         batches = Batches.objects.filter(course__department_id=admin_dept)
-
-        context = {
-            'faculties': faculties,
-            'batches': batches,
-        }
+        context = {'faculties': faculties,'batches': batches,'admin':admin}
     except Exception as e:
         print(f"Error in admin_AddAssignment: {e}")
         context = {}
-
     return render(request, './Admin/admin_AddAssignment.html', context)
 
-
+#Filter students based on batch and faculty
 def get_batch_students(request, batch_id, faculty_id):
     try:
         assigned = Student.objects.filter(batch_id=batch_id, faculty_id=faculty_id)
@@ -281,15 +263,13 @@ def admin_ViewAssignments(request):
     login_id = request.session.get('login_id')
     if not login_id:
         return redirect('/')
-
     admin = Admin.objects.get(login_id=login_id)
     dept = admin.department_id
-
     faculties = Faculty.objects.filter(department_id=dept)
     batches = Batches.objects.filter(course__department_id=dept)
-
     return render(request, './Admin/admin_ViewAssignments.html',
-                  {"faculties": faculties, "batches": batches})
+                  {"faculties": faculties, "batches": batches,"admin":admin}
+    )
 
 #Filtering students based on assignments
 def get_assigned_students(request):

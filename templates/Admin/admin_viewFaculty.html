@@ -29,8 +29,11 @@
     <h1 class="main-title">MENTOR MENTEE</h1>
 
     <div class="header-right">
-      <div class="user-profile-icon"><i class="fas fa-user"></i></div>
-      <button class="logout-btn">Log out</button>
+      <h3>{{admin.name}}</h3>
+      <div class="user-profile-icon">
+        <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
+      </div>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
     </div>
   </header>
 
