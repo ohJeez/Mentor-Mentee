@@ -1,0 +1,132 @@
+/* ✅ Natural full-width form layout */
+.student-form-container {
+    max-width: 1000px;
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background: none;      /* ✅ Remove background box */
+    border: none;          /* ✅ Remove border */
+    box-shadow: none;      /* ✅ Remove shadow */
+}
+
+/* ✅ Clean title */
+.student-form-container h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: left;      /* ✅ Looks natural with page layout */
+}
+
+/* ✅ Wider grid so form fills space */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px 35px;
+    width: 100%;
+}
+
+/* ✅ Full-row elements */
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ✅ Clean input styling */
+.form-group label {
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group input[type="password"],
+.form-group select {
+    padding: 12px 14px;
+    border: 1.5px solid #d0d6de;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    width: 100%;
+}
+
+/* ✅ Focus styling */
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3498db;
+    background: #f8fbff;
+}
+
+/* ✅ Upload Area stays same */
+/* ✅ Ultra Minimal Upload Bar */
+.photo-upload-area {
+    border: 1.5px dashed #3498db;
+    border-radius: 6px;
+    padding: 10px 14px;         /* ✅ Very low height */
+    width: 100%;
+    display: flex;              /* ✅ Everything in one row */
+    align-items: center;        /* ✅ Vertically centered */
+    gap: 10px;                  /* ✅ Small space between icon and text */
+    cursor: pointer;
+    background: rgba(52,152,219,0.03);
+    transition: 0.2s ease;
+}
+
+/* ✅ Slim hover effect */
+.photo-upload-area:hover {
+    background: rgba(52,152,219,0.08);
+    border-color: #2980b9;
+}
+
+/* ✅ Tiny icon */
+.upload-icon {
+    width: 20px;
+    height: 20px;
+    color: #3498db;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+/* ✅ Single-line text */
+.upload-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2c3e50;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* ✅ Remove extra hint text */
+.upload-hint {
+    display: none;   /* ✅ Hidden for ultra minimal look */
+}
+
+
+/* ✅ Full-width but clean button */
+.save-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: 0.2s;
+}
+
+.save-btn:hover {
+    background: #2980b9;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

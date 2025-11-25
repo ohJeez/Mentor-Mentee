@@ -1,0 +1,123 @@
+    {% load static %}
+     <section class="students-section">
+
+        <!-- PAGE TITLE -->
+        <div class="students-header">
+          <h2>Students</h2>
+        </div>
+      
+        <!-- QUICK STATS -->
+        <div class="students-stats">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div>
+              <h4>Total Mentees</h4>
+              <p>{{ students|length }} Assigned</p>
+            </div>
+          </div>
+      
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div>
+              <h4>Last Session</h4>
+              <p>12 Feb 2025</p>
+            </div>
+          </div>
+      
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <h4>Next Meeting</h4>
+              <p>Not Scheduled</p>
+            </div>
+          </div>
+        </div>
+      
+        <!-- SEARCH + FILTERS -->
+        <div class="students-filters">
+          <input type="text" class="students-search" placeholder="Search by name or Reg No" id="studentSearch">
+      
+          <select class="students-filter" id="departmentFilter">
+            <option value="">Department</option>
+            {% for department in departments %}
+              <option value="{{ department.name }}">{{ department.name }}</option>
+            {% endfor %}
+          </select>
+      
+          <select class="students-filter">
+            <option>Course</option>
+            <option>BCA</option>
+            <option>BBA</option>
+            <option>BSW</option>
+          </select>
+      
+          <select class="students-filter">
+            <option>Year</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+          </select>
+        </div>
+
+        <script>
+          document.getElementById('studentSearch').addEventListener('keyup', function(e) {
+            const searchValue = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('.students-table tbody tr');
+            
+            tableRows.forEach(row => {
+              if (row.innerHTML.includes('No students assigned')) {
+                return;
+              }
+              
+              const name = row.cells[1].textContent.toLowerCase();
+              const regNo = row.cells[2].textContent.toLowerCase();
+              
+              if (name.includes(searchValue) || regNo.includes(searchValue)) {
+                row.style.display = '';
+              } else {
+                row.style.display = 'none';
+              }
+            });
+          });
+
+        </script>
+      
+        <!-- STUDENTS TABLE -->
+        <div class="students-table-container">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Reg No</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+            {% if students %}
+              {% for student in students %}
+                <tr>
+                  <td><img src="{% static 'images/avatar-placeholder.png' %}" class="student-photo" alt="photo"></td>
+                  <td>{{ student.name }}</td>
+                  <td>{{ student.reg_no }}</td>
+                  <td>{{ student.department.name }}</td>
+                  <td>{{ student.year }}</td>
+                  {% comment %} <td><a class="view-btn">View Profile</a></td> {% endcomment %}
+                  <td>
+                    <a class="view-btn" href="{% url 'student_profile' student.student_id %}" data-student-id="{{ student.student_id }}" role="button" aria-label="View profile of {{ student.name }}">View Profile</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="6">No students assigned.</td></tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+      
+      </section>
+      

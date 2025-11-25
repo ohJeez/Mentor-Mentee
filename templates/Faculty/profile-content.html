@@ -1,0 +1,11 @@
+{% load static %}
+<section class="profile-section">
+  <div class="profile-card">
+    <img src="{% static 'images/avatar-placeholder.png' %}" class="profile-photo" alt="photo" />
+    <h2>{{ faculty.name }}</h2>
+    <p><strong>Email:</strong> {{ faculty.email }}</p>
+    <p><strong>Department:</strong> {{ faculty.department.name }}</p>
+    <p><strong>Phone:</strong> {{ faculty.phone}}</p>
+    <!-- Add more faculty fields as needed -->
+  </div>
+</section>

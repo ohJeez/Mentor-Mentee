@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Faculty | Mentor Mentee</title>
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+  <link rel="stylesheet" href="{% static '../static/styles/admin_viewFaculty.css' %}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static '../static/Assets/logo.png' %}" class="header-logo" />
+      <div class="header-title">
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+      </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+      <h3>{{admin.name}}</h3>
+      <div class="user-profile-icon">
+        <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
+      </div>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+    </div>
+  </header>
+
+  <!-- ================= PAGE BODY ================= -->
+  <div class="container">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <nav class="menu">
+
+        <a href="/admin_dashboard" class="menu-item">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
+            <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_addStudent" class="dropdown-item"><i class="fas fa-user-plus"></i> Add Student</a>
+            <a href="/admin_ViewStudents" class="dropdown-item"><i class="fas fa-users"></i> View Students</a>
+          </div>
+        </div>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown open">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle active">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Faculties</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu" style="display:flex;">
+            <a href="/admin_addFaculty" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> Add Faculty
+            </a>
+
+            <a href="/admin_viewFaculty" class="dropdown-item active">
+              <i class="fas fa-users"></i> View Faculty
+            </a>
+          </div>
+        </div>
+         <hr class="menu-divider" />
+        <div class="dropdown">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Assignments</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_AddAssignment" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Assign Student</span>
+            </a>
+
+            <a href="/admin_ViewAssignments" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Assignments</span>
+            </a>
+          </div>
+        </div>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-user"></i> <span>Profile</span>
+        </a>
+
+      </nav>
+    </aside>
+
+    <!-- =============== MAIN CONTENT =============== -->
+    <main class="main-content">
+
+     <section class="faculty-section">
+  <h2>Faculty Members</h2>
+
+  <div class="faculty-grid">
+    {% for f in faculties %}
+    <a href="admin_FacultyDetails/{{ f.faculty_id }}" class="faculty-card">
+      <img src="../static/faculty_images/{{ f.faculty_image }}" class="faculty-photo" />
+      <h3 class="faculty-name">{{ f.name }}</h3>
+      <p class="faculty-designation">{{ f.designation }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+    </main>
+
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer"></footer>
+
+  <!-- DROPDOWN SCRIPT -->
+   <script>
+  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>
