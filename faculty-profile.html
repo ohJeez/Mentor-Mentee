@@ -4,41 +4,165 @@
 
   <div class="profile-card">
 
-    <div class="profile-photo">
-      <img src="https://rajagiri.edu/uploads/faculty-profile/165/image.jpg" alt="Faculty Photo">
-    </div>
-
-    <div class="profile-details">
-      <h3>DILJITH K BENNY</h3>
-      <p class="profile-subtitle">Faculty Mentor | Dept. of Computer Science</p>
-
-      <div class="profile-info-grid">
-        <div>
-          <p>Email</p>
-          <p>diljith@rajagiri.edu</p>
-        </div>
-        <div>
-          <p>Phone</p>
-          <p>+91 9876543210</p>
-        </div>
-        <div>
-          <p>Designation</p>
-          <p>Assistant Professor</p>
-        </div>
-        <div>
-          <p>Total Mentees</p>
-          <p>15 Assigned</p>
-        </div>
-        <div>
-          <p>Department</p>
-          <p>Computer Science</p>
-        </div>
+    <div class="profile-header">
+      <div class="profile-photo">
+        <img src="https://rajagiri.edu/uploads/faculty-profile/165/image.jpg" alt="Faculty Photo">
       </div>
 
-      <button class="edit-profile-btn">Edit Profile</button>
+      <div class="profile-details">
+        <h3 data-field="name">DILJITH K BENNY</h3>
+        <p class="profile-subtitle" data-field="title">Faculty Mentor | Dept. of Computer Science</p>
+      </div>
     </div>
+
+    <div class="profile-info-grid">
+      <div>
+        <p>Email</p>
+        <p data-field="email">diljith@rajagiri.edu</p>
+      </div>
+      <div>
+        <p>Phone</p>
+        <p data-field="phone">+91 9876543210</p>
+      </div>
+      <div>
+        <p>Designation</p>
+        <p data-field="designation">Assistant Professor</p>
+      </div>
+      <div>
+        <p>Total Mentees</p>
+        <p data-field="mentees">15 Assigned</p>
+      </div>
+      <div>
+        <p>Department</p>
+        <p data-field="department">Computer Science</p>
+      </div>
+    </div>
+
+    <button class="edit-profile-btn" id="editProfileBtn">Edit Profile</button>
 
   </div>
 
+  <section class="profile-edit-section" id="profileEditSection" hidden>
+    <h3>Edit Profile</h3>
+
+    <form id="editProfileForm">
+      <div class="profile-form-grid">
+
+        <div class="profile-form-group">
+          <label for="profileName">Full Name</label>
+          <input type="text" id="profileName" name="name" value="DILJITH K BENNY" required />
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profileTitle">Title / Role</label>
+          <input type="text" id="profileTitle" name="title" value="Faculty Mentor | Dept. of Computer Science" required />
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profileEmail">Email</label>
+          <input type="email" id="profileEmail" name="email" value="diljith@rajagiri.edu" required />
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profilePhone">Phone</label>
+          <input type="text" id="profilePhone" name="phone" value="+91 9876543210" required />
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profileDesignation">Designation</label>
+          <input type="text" id="profileDesignation" name="designation" value="Assistant Professor" required />
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profileDepartment">Department</label>
+          <input type="text" id="profileDepartment" name="department" value="Computer Science" required />
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profileMentees">Total Mentees</label>
+          <input type="number" id="profileMentees" name="mentees" value="15" min="0" required />
+        </div>
+
+      </div>
+
+      <div class="profile-form-actions">
+        <button type="button" class="btn-secondary" id="cancelEditBtn">Cancel</button>
+        <button type="submit" class="edit-profile-btn">Save Changes</button>
+      </div>
+    </form>
+  </section>
+
 
 </section>
+
+<script>
+  (function () {
+    const editBtn = document.getElementById("editProfileBtn");
+    const editSection = document.getElementById("profileEditSection");
+    const cancelBtn = document.getElementById("cancelEditBtn");
+    const editForm = document.getElementById("editProfileForm");
+
+    if (!editBtn || !editForm) return;
+
+    const fieldTargets = {
+      name: document.querySelector("[data-field='name']"),
+      title: document.querySelector("[data-field='title']"),
+      email: document.querySelector("[data-field='email']"),
+      phone: document.querySelector("[data-field='phone']"),
+      designation: document.querySelector("[data-field='designation']"),
+      department: document.querySelector("[data-field='department']"),
+      mentees: document.querySelector("[data-field='mentees']")
+    };
+
+    const formControls = {
+      name: editForm.querySelector("[name='name']"),
+      title: editForm.querySelector("[name='title']"),
+      email: editForm.querySelector("[name='email']"),
+      phone: editForm.querySelector("[name='phone']"),
+      designation: editForm.querySelector("[name='designation']"),
+      department: editForm.querySelector("[name='department']"),
+      mentees: editForm.querySelector("[name='mentees']")
+    };
+
+    function populateForm() {
+      formControls.name.value = fieldTargets.name.textContent.trim();
+      formControls.title.value = fieldTargets.title.textContent.trim();
+      formControls.email.value = fieldTargets.email.textContent.trim();
+      formControls.phone.value = fieldTargets.phone.textContent.trim();
+      formControls.designation.value = fieldTargets.designation.textContent.trim();
+      formControls.department.value = fieldTargets.department.textContent.trim();
+      const menteeText = fieldTargets.mentees.textContent.trim();
+      const menteeNumber = parseInt(menteeText, 10);
+      formControls.mentees.value = Number.isFinite(menteeNumber) ? menteeNumber : menteeText;
+    }
+
+    function toggleForm(show) {
+      editSection.hidden = !show;
+      editBtn.disabled = show;
+      if (show) {
+        populateForm();
+        editSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    editBtn.addEventListener("click", () => toggleForm(true));
+    cancelBtn.addEventListener("click", () => toggleForm(false));
+
+    editForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const formData = new FormData(editForm);
+
+      fieldTargets.name.textContent = formData.get("name");
+      fieldTargets.title.textContent = formData.get("title");
+      fieldTargets.email.textContent = formData.get("email");
+      fieldTargets.phone.textContent = formData.get("phone");
+      fieldTargets.designation.textContent = formData.get("designation");
+      fieldTargets.department.textContent = formData.get("department");
+
+      const menteeValue = formData.get("mentees") || "0";
+      fieldTargets.mentees.textContent = `${menteeValue} Assigned`;
+
+      toggleForm(false);
+    });
+  })();
+</script>
