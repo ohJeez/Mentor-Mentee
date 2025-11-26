@@ -14,12 +14,16 @@ body {
 
 /* SIDEBAR */
 .sidebar {
-  width: 240px;
-  background: #0b8a3b;   /* RCSS green */
-  height: 100vh;
-  padding: 25px 20px;
-  border-right: 1px solid #0a7a35;
-  color: white;
+  background-color: var(--primary-green);
+  color: #fff;
+  width: 250px;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-radius: 10px;
+  height: 100%;
+  min-height: 100%;
 }
 
 .logo {

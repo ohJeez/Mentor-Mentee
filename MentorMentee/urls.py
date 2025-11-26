@@ -20,6 +20,13 @@ urlpatterns = [
     path('save_assignments', views.save_assignments, name='save_assignments'),
     path("admin_ViewAssignments", views.admin_ViewAssignments),
     path("get_assigned_students", views.get_assigned_students, name="get_assigned_students"),
+    path("admin_profile", views.admin_profile, name="admin_profile"),
+    path('admin_StudentDetails/<int:s_id>', views.admin_StudentDetails, name="admin_StudentDetails"),
+    path("admin_uploadStudents", views.admin_uploadStudents, name="admin_uploadStudents"),
+
+
+    
+    
 
     
     

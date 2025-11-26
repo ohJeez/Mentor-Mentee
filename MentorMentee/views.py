@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.db.models import F
 from django.shortcuts import redirect
+import csv
+from datetime import datetime
 
 # Create your views here.
 def home(request):
@@ -42,19 +44,6 @@ def admin_dashboard(request):
 
     return render(request, './Admin/admin_dashboard.html')
 
-
-#StudentList
-# def students_List(request):
-#     try:
-#         admin_det=Admin.objects.get(login_id=login)
-#         print(f"admin_dept:{admin_det.department_id}")
-#         students = Student.objects.select_related("department","course").filter(department_id=admin_det.department_id)
-
-#         content={'students':students}
-#         print(students)
-#     except Exception as e:
-#         print(f"Error: {e}")
-#     return render(request,'./Admin/view_students.html',content)
 
 #Logout
 def logout(request):
@@ -293,3 +282,107 @@ def get_assigned_students(request):
             )
         )
     })
+
+#Admin Profile
+def admin_profile(request):
+    contents={}
+    try:
+        login_id = request.session.get('login_id')
+        if not login_id:
+            return redirect('/')
+        admin=Admin.objects.get(login_id=login_id)
+        contents={'admin':admin}
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Admin/admin_profile.html',contents)
+
+#Student Details
+def admin_StudentDetails(request, s_id):
+    try:
+        login_id = request.session.get('login_id')
+        if not login_id:
+            return redirect('/')
+        admin = Admin.objects.get(login_id=login_id)
+        student = Student.objects.get(student_id=s_id)
+        return render(request, './Admin/admin_StudentDetails.html', {
+            'student': student,
+            'admin': admin
+        })
+    except Exception as e:
+        print("Error:", e)
+        return redirect('/admin_ViewStudents')
+
+#Upload students via CSV
+import csv, io
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+
+def admin_uploadStudents(request):
+    try:
+        login_id = request.session.get("login_id")
+        if not login_id:
+            return redirect("/")
+
+        admin = Admin.objects.get(login_id=login_id)
+        admin_department = admin.department  # logged-in admin dept
+
+        if request.method == "POST" and request.FILES.get("csv_file"):
+            csv_file = request.FILES["csv_file"]
+
+            # ✅ Validate file type
+            if not csv_file.name.endswith(".csv"):
+                messages.error(request, "Please upload a valid CSV file!")
+                return redirect("admin_addStudent")
+
+            # ✅ Decode and read CSV
+            data = csv_file.read().decode("utf-8")
+            io_string = io.StringIO(data)
+            reader = csv.DictReader(io_string)
+
+            added, skipped = 0, 0
+
+            for row in reader:
+                reg_no = row.get("reg_no")
+
+                # ✅ Prevent duplicates
+                if Student.objects.filter(reg_no=reg_no).exists():
+                    skipped += 1
+                    continue
+
+                # ✅ Get foreign key references
+                course = Courses.objects.filter(course_name=row.get("course")).first()
+                batch = Batches.objects.filter(batch_name=row.get("batch")).first()
+
+                if not course or not batch:
+                    skipped += 1
+                    continue
+
+                # ✅ Create student record
+                Student.objects.create(
+                    name=row.get("name"),
+                    email=row.get("email"),
+                    reg_no=reg_no,
+                    phone=row.get("phone"),
+                    dob=row.get("dob") or None,
+                    year=row.get("year") or 1,
+                    department=admin_department,
+                    course=course,
+                    batch=batch,
+                    student_image="",     # optional or handle separately
+                )
+
+                added += 1
+
+            messages.success(
+                request,
+                f"✅ Upload complete — {added} added, {skipped} skipped (duplicates/invalid)."
+            )
+
+            return redirect("admin_addStudent")
+
+    except Exception as e:
+        print("CSV Upload Error:", e)
+        messages.error(request, "Something went wrong during CSV upload!")
+
+    return redirect("admin_addStudent")
