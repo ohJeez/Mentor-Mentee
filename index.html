@@ -6,9 +6,6 @@
   <title>Mentor Mentee | RCSS</title>
 
   <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
@@ -17,7 +14,7 @@
   <!-- HEADER -->
   <header class="header">
     <div class="header-left">
-      <img src="images/logo.png" alt="RCSS Logo" class="header-logo" />
+      <img src="images/logo.png" class="header-logo" />
       <div class="header-title">
         <h2 class="rcss-title">RCSS</h2>
         <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
@@ -27,9 +24,7 @@
     <h1 class="main-title">MENTOR MENTEE</h1>
 
     <div class="header-right">
-      <div class="user-profile-icon">
-        <i class="fas fa-user"></i>
-      </div>
+      <div class="user-profile-icon"><i class="fas fa-user"></i></div>
       <button class="logout-btn">Log out</button>
     </div>
   </header>
@@ -40,26 +35,21 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <nav class="menu">
-        <a href="#" class="menu-item active" data-frame="dashboard">
-          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+
+        <a href="#" class="menu-item" data-file="dashboard-content.html">
+          <i class="fas fa-th-large"></i><span>Dashboard</span>
         </a>
 
-        <hr class="menu-divider" />
-
-        <a href="#" class="menu-item" data-frame="students">
-          <i class="fas fa-graduation-cap"></i> <span>Students</span>
+        <a href="#" class="menu-item" data-file="students-content.html">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
         </a>
 
-        <hr class="menu-divider" />
-
-        <a href="#" class="menu-item" data-frame="session-notes">
-          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+        <a href="#" class="menu-item" data-file="session-notes-content.html">
+          <i class="fas fa-file-alt"></i><span>Session Notes</span>
         </a>
 
-        <hr class="menu-divider" />
-
-        <a href="#" class="menu-item" data-frame="profile">
-          <i class="fas fa-user"></i> <span>Profile</span>
+        <a href="#" class="menu-item active" data-file="faculty-profile.html">
+          <i class="fas fa-user"></i><span>Profile</span>
         </a>
 
       </nav>
@@ -68,39 +58,9 @@
     <!-- MAIN CONTENT -->
     <main class="main-content">
 
-      <!-- COMMON WELCOME TEXT -->
-      <div class="welcome-section">
-        <p>Welcome <strong>DILJITH K BENNY</strong></p>
-      </div>
+      <!-- CONTENT LOADED HERE -->
+      <div id="frame-container"></div>
 
-      <!-- CONTENT FRAME WRAPPER -->
-      <div class="content-frame">
-
-        <!-- DASHBOARD -->
-        <div class="frame-content active" id="dashboard-frame">
-          <h2>Dashboard</h2>
-          <p>This is the dashboard area.</p>
-        </div>
-
-        <!-- STUDENTS -->
-        <div class="frame-content" id="students-frame">
-          <h2>Students</h2>
-          <div id="students-content-placeholder"></div>
-        </div>
-
-        <!-- SESSION NOTES -->
-        <div class="frame-content" id="session-notes-frame">
-          <h2>Session Notes</h2>
-          <p>This is the session notes area.</p>
-        </div>
-
-        <!-- PROFILE -->
-        <div class="frame-content" id="profile-frame">
-          <h2>Profile</h2>
-          <p>This is the profile area.</p>
-        </div>
-
-      </div>
     </main>
 
   </div>
@@ -191,38 +151,35 @@
   </footer>
 
 
-  <!-- JS FRAME SWITCHER -->
+  <!-- JS LOADER -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener("DOMContentLoaded", () => {
 
-      const menuItems = document.querySelectorAll('.menu-item');
-      const frames = document.querySelectorAll('.frame-content');
+      const menuItems = document.querySelectorAll(".menu-item");
+      const frameContainer = document.getElementById("frame-container");
 
+      function loadFrame(file) {
+        fetch(file)
+          .then(res => res.text())
+          .then(html => frameContainer.innerHTML = html)
+          .catch(err => console.error("Error loading frame:", err));
+      }
+
+      // Load default dashboard
+      loadFrame("faculty-profile.html");
+
+      // Sidebar click events
       menuItems.forEach(item => {
-        item.addEventListener('click', function (e) {
+        item.addEventListener("click", e => {
           e.preventDefault();
 
-          menuItems.forEach(i => i.classList.remove('active'));
-          this.classList.add('active');
+          menuItems.forEach(i => i.classList.remove("active"));
+          item.classList.add("active");
 
-          const frameId = this.dataset.frame + '-frame';
-
-          frames.forEach(f => f.classList.remove('active'));
-
-          const activeFrame = document.getElementById(frameId);
-          if (activeFrame) activeFrame.classList.add('active');
+          const file = item.dataset.file;
+          loadFrame(file);
         });
       });
-
-      /* Load students-content.html INTO the students placeholder */
-      fetch("./students-content.html")
-        .then(response => response.text())
-         .then(html => {
-          document.getElementById("students-content-placeholder").innerHTML = html;
-        })
-        .catch(error => {
-          console.error("Error loading students-content.html:", error);
-        });
 
     });
   </script>

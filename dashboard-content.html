@@ -1,0 +1,129 @@
+<!-- DASHBOARD CONTENT -->
+
+<style>
+    /* ============================
+       DASHBOARD SECTION STYLES
+       ============================ */
+    
+    .dashboard-section {
+      padding: 20px 30px;
+    }
+    
+    .dashboard-section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+    
+    .dashboard-welcome {
+      margin-bottom: 25px;
+    }
+    
+    .dashboard-welcome p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    /* Dashboard Cards Grid */
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding-top: 10px;
+    }
+    
+    /* Card Styles */
+    .dashboard-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      transition: 0.2s ease-in-out;
+    }
+    
+    .dashboard-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    
+    .dashboard-card h3 {
+      font-size: 18px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #000;
+    }
+    
+    .dashboard-card p {
+      font-size: 14px;
+      color: #333;
+    }
+    
+    /* Card Icons */
+    .card-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      background: #28a745;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .dashboard-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+    </style>
+    
+    <section class="dashboard-section">
+    
+      <h2>Dashboard</h2>
+    
+      <div class="dashboard-welcome">
+        <p>Welcome back, <strong>DILJITH K BENNY</strong></p>
+        <p>Here’s a quick overview of your mentoring activity.</p>
+      </div>
+    
+      <!-- DASHBOARD CARDS -->
+      <div class="dashboard-cards">
+    
+        <div class="dashboard-card">
+          <div class="card-icon"><i class="fas fa-users"></i></div>
+          <h3>Total Mentees</h3>
+          <p>15 Students Assigned</p>
+        </div>
+    
+        <div class="dashboard-card">
+          <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+          <h3>Recent Session</h3>
+          <p>12 Feb 2025</p>
+        </div>
+    
+        <div class="dashboard-card">
+          <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+          <h3>Pending Notes</h3>
+          <p>3 Sessions</p>
+        </div>
+    
+        <div class="dashboard-card">
+          <div class="card-icon"><i class="fas fa-clock"></i></div>
+          <h3>Upcoming Meetings</h3>
+          <p>None Scheduled</p>
+        </div>
+    
+      </div>
+    
+    </section>
+    
