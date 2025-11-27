@@ -7,8 +7,17 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.db.models import F
 from django.shortcuts import redirect
+from django.urls import reverse
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from functools import wraps
 import csv
-from datetime import datetime
+from datetime import datetime,timedelta,date
+from django.conf import settings
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet
 
 # Create your views here.
 def home(request):
@@ -502,69 +511,100 @@ def generate_report_pdf(request):
     start = request.GET.get("start")
     end = request.GET.get("end")
 
-    # Reuse the filter logic
-    fake_request = request
-    sessions = filter_sessions(fake_request).json()["sessions"]
+    # Fetch JSON data from filter function
+    filtered = filter_sessions(request)
+    response_data = json.loads(filtered.content)
+    sessions = response_data.get("sessions", [])
 
-    # Build PDF response
+    # Create PDF Response
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = "inline; filename=Mentoring_Report.pdf"
 
-    pdf = SimpleDocTemplate(response, pagesize=A4)
+    pdf = SimpleDocTemplate(response, pagesize=A4,
+                            rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
+
     styles = getSampleStyleSheet()
     elements = []
 
-    # Logo
+    # -------------------- HEADER --------------------
     logo_path = os.path.join(settings.BASE_DIR, "static", "Assets", "logo.png")
     if os.path.exists(logo_path):
-        logo = Image(logo_path, width=60, height=60)
-        elements.append(logo)
+        elements.append(Image(logo_path, width=60, height=60))
+        elements.append(Spacer(1, 10))
 
-    # Title
-    title = f"<para align='center'><b>MENTORING SESSION REPORT</b></para>"
-    elements.append(Paragraph(title, styles["Title"]))
-    elements.append(Spacer(1, 12))
+    title = Paragraph("<b>MENTORING SESSION REPORT</b>", styles["Title"])
+    elements.append(title)
+    elements.append(Spacer(1, 10))
 
-    # Subtitle
-    subtitle = f"<b>Report Type:</b> {report_type.capitalize()} &nbsp;&nbsp; <b>Date Range:</b> {time_range.capitalize()}"
-    elements.append(Paragraph(subtitle, styles["Normal"]))
-    elements.append(Spacer(1, 12))
+    # Get Display Label
+    detail_label = ""
+    if report_type == "student" and record_id:
+        from MentorMentee.models import Student
+        detail_label = f"Student: {Student.objects.get(student_id=record_id).name}"
+    elif report_type == "faculty" and record_id:
+        from MentorMentee.models import Faculty
+        detail_label = f"Faculty: {Faculty.objects.get(faculty_id=record_id).name}"
+    elif report_type == "batch" and record_id:
+        from MentorMentee.models import Batches
+        detail_label = f"Batch: {Batches.objects.get(batch_id=record_id).batch_name}"
 
-    # Table Headers
+    header_details = f"""
+        <b>Report Type:</b> {report_type.capitalize()}<br/>
+        <b>{detail_label}</b><br/>
+        <b>Date Range:</b> {time_range.capitalize()}
+    """
+
+    elements.append(Paragraph(header_details, styles["Normal"]))
+    elements.append(Spacer(1, 20))
+
+    # -------------------- TABLE --------------------
+
+    # Wrap each cell value to avoid overflow
+    def wrap(text):
+        return Paragraph(str(text), styles["BodyText"])
+
     table_data = [
-        ["Date", "Student", "Faculty", "Batch", "Topics", "Remarks"]
+        [
+            wrap("Date"),
+            wrap("Student"),
+            wrap("Faculty"),
+            wrap("Batch"),
+            wrap("Topics Discussed"),
+            wrap("Remarks")
+        ]
     ]
 
-    # Table Rows
     for s in sessions:
         table_data.append([
-            s["date"],
-            s["student"],
-            s["faculty"],
-            s["batch"],
-            s["topics"],
-            s["remarks"]
+            wrap(s["date"]),
+            wrap(s["student"]),
+            wrap(s["faculty"]),
+            wrap(s["batch"]),
+            wrap(s["topics"]),
+            wrap(s["remarks"]),
         ])
 
-    # Table Styling
-    table = Table(table_data, colWidths=[70, 80, 80, 50, 140, 100])
+    # Better column widths
+    col_widths = [70, 80, 80, 60, 150, 120]
+
+    table = Table(table_data, colWidths=col_widths)
+
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#28a745")),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("GRID", (0, 0), (-1, -1), 0.7, colors.grey),
         ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
     ]))
 
     elements.append(table)
     elements.append(Spacer(1, 20))
 
-    # Footer
-    footer = "<para align='center'><i>Generated by Mentor Mentee System</i></para>"
-    elements.append(Paragraph(footer, styles["Italic"]))
+    footer = Paragraph("<i>Generated by Mentor Mentee System</i>", styles["Italic"])
+    elements.append(footer)
 
     pdf.build(elements)
 
     return response
-
