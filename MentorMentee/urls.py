@@ -23,6 +23,10 @@ urlpatterns = [
     path("admin_profile", views.admin_profile, name="admin_profile"),
     path('admin_StudentDetails/<int:s_id>', views.admin_StudentDetails, name="admin_StudentDetails"),
     path("admin_uploadStudents", views.admin_uploadStudents, name="admin_uploadStudents"),
+    path("admin_reports", views.admin_Reports, name="admin_reports"),
+    path("admin_reports_data", views.filter_sessions, name="admin_reports_data"),
+    path("admin_reports_pdf", views.generate_report_pdf, name="admin_reports_pdf"),
+
 
 
     

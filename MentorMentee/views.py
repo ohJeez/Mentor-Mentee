@@ -104,10 +104,9 @@ def add_Student(request):
                 batch_id=batch,
                 course_id=course,
                 student_image=image,
-                year=1
-                application_form=saved_application_name
-                assessment_form = saved_assessment_name
-                student_image=image
+                year=1,
+                application_form=saved_application_name,
+                assessment_form = saved_assessment_name,
             )
             res.save()
             return HttpResponse(
@@ -421,3 +420,151 @@ def admin_uploadStudents(request):
         messages.error(request, "Something went wrong during CSV upload!")
 
     return redirect("admin_addStudent")
+
+#Reports
+
+def admin_Reports(request):
+    contents={}
+    try:
+        login_id = request.session.get("login_id")
+        if not login_id:
+            return redirect("/")
+        admin=Admin.objects.get(login_id=login_id)
+        faculty = Faculty.objects.filter(department_id=admin.department_id)
+        students = Student.objects.filter(department_id=admin.department_id)
+        batches = Batches.objects.filter(course__department_id=admin.department_id)
+
+        contents = {
+            "admin": admin,
+            "faculty": faculty,
+            "students": students,
+            "batches": batches
+        }
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Admin/admin_reports.html',contents)
+
+def filter_sessions(request):
+    report_type = request.GET.get("type")
+    record_id = request.GET.get("id")
+    time_range = request.GET.get("range")
+    start = request.GET.get("start")
+    end = request.GET.get("end")
+
+    sessions = MentoringSession.objects.all()
+
+    # FILTER: TYPE
+    if report_type == "student":
+        sessions = sessions.filter(student_id=record_id)
+
+    elif report_type == "faculty":
+        sessions = sessions.filter(faculty_id=record_id)
+
+    elif report_type == "batch":
+        sessions = sessions.filter(student__batch_id=record_id)
+
+    # FILTER: TIME RANGE
+    today = date.today()
+
+    if time_range == "daily":
+        sessions = sessions.filter(session_date=today)
+
+    elif time_range == "weekly":
+        start_week = today - timedelta(days=today.weekday())
+        end_week = start_week + timedelta(days=6)
+        sessions = sessions.filter(session_date__range=[start_week, end_week])
+
+    elif time_range == "monthly":
+        sessions = sessions.filter(session_date__month=today.month)
+
+    elif time_range == "custom" and start and end:
+        sessions = sessions.filter(session_date__range=[start, end])
+
+    # RETURN JSON FOR TABLE
+    data = [
+        {
+            "date": str(s.session_date),
+            "student": s.student.name,
+            "faculty": s.faculty.name,
+            "batch": s.student.batch.batch_name,
+            "topics": s.topics_discussed,
+            "remarks": s.remarks or "",
+        }
+        for s in sessions
+    ]
+
+    return JsonResponse({"sessions": data})
+
+def generate_report_pdf(request):
+    report_type = request.GET.get("type")
+    record_id = request.GET.get("id")
+    time_range = request.GET.get("range")
+    start = request.GET.get("start")
+    end = request.GET.get("end")
+
+    # Reuse the filter logic
+    fake_request = request
+    sessions = filter_sessions(fake_request).json()["sessions"]
+
+    # Build PDF response
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = "inline; filename=Mentoring_Report.pdf"
+
+    pdf = SimpleDocTemplate(response, pagesize=A4)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # Logo
+    logo_path = os.path.join(settings.BASE_DIR, "static", "Assets", "logo.png")
+    if os.path.exists(logo_path):
+        logo = Image(logo_path, width=60, height=60)
+        elements.append(logo)
+
+    # Title
+    title = f"<para align='center'><b>MENTORING SESSION REPORT</b></para>"
+    elements.append(Paragraph(title, styles["Title"]))
+    elements.append(Spacer(1, 12))
+
+    # Subtitle
+    subtitle = f"<b>Report Type:</b> {report_type.capitalize()} &nbsp;&nbsp; <b>Date Range:</b> {time_range.capitalize()}"
+    elements.append(Paragraph(subtitle, styles["Normal"]))
+    elements.append(Spacer(1, 12))
+
+    # Table Headers
+    table_data = [
+        ["Date", "Student", "Faculty", "Batch", "Topics", "Remarks"]
+    ]
+
+    # Table Rows
+    for s in sessions:
+        table_data.append([
+            s["date"],
+            s["student"],
+            s["faculty"],
+            s["batch"],
+            s["topics"],
+            s["remarks"]
+        ])
+
+    # Table Styling
+    table = Table(table_data, colWidths=[70, 80, 80, 50, 140, 100])
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#28a745")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+    ]))
+
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+    # Footer
+    footer = "<para align='center'><i>Generated by Mentor Mentee System</i></para>"
+    elements.append(Paragraph(footer, styles["Italic"]))
+
+    pdf.build(elements)
+
+    return response
+

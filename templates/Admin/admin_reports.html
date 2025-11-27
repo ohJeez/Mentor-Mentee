@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentoring Reports | Mentor Mentee</title>
+
+  <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/admin_reports.css' %}">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="header-left">
+    <img src="{% static 'Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+    <div class="header-title">
+      <h2 class="rcss-title">RCSS</h2>
+      <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+    </div>
+  </div>
+
+  <h1 class="main-title">MENTOR MENTEE</h1>
+
+  <div class="header-right">
+    <h3>{{ admin.name }}</h3>
+
+    <div class="user-profile-icon">
+      {% if admin.admin_image %}
+      <img src="/static/admin_image/{{ admin.admin_image }}" alt="Profile">
+      {% else %}
+      <i class="fas fa-user"></i>
+      {% endif %}
+    </div>
+
+    <button class="logout-btn" onclick="window.location.href='{% url 'logout' %}'">Log out</button>
+  </div>
+</header>
+
+
+<!-- ================= PAGE BODY ================= -->
+<div class="container">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+      <nav class="menu">
+
+        <a href="/admin_dashboard" class="menu-item">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown">
+          <a class="menu-item dropdown-toggle">
+            <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_addStudent" class="dropdown-item"><i class="fas fa-user-plus"></i>Add Student</a>
+            <a href="/admin_ViewStudents" class="dropdown-item"><i class="fas fa-users"></i>View Students</a>
+          </div>
+        </div>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown">
+          <a class="menu-item dropdown-toggle">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Faculty</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_addFaculty" class="dropdown-item"><i class="fas fa-user-plus"></i>Add Faculty</a>
+            <a href="/admin_ViewFaculty" class="dropdown-item"><i class="fas fa-users"></i>View Faculty</a>
+          </div>
+        </div>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown">
+          <a class="menu-item dropdown-toggle">
+            <i class="fas fa-link"></i> <span>Assignments</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_AddAssignment" class="dropdown-item"><i class="fas fa-user-plus"></i>Assign Student</a>
+            <a href="/admin_ViewAssignments" class="dropdown-item"><i class="fas fa-users"></i>View Assignments</a>
+          </div>
+        </div>
+
+        <hr class="menu-divider" />
+
+        <a class="menu-item active" href="/admin_reports">
+          <i class="fas fa-file-alt"></i><span>Reports</span>
+        </a>
+
+      </nav>
+  </aside>
+
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <section class="reports-section">
+
+      <div class="reports-header">
+        <h2>Mentoring Reports</h2>
+        <p>Generate PDF / View Reports based on Students, Faculty, or Batches</p>
+      </div>
+
+      <!-- ========== FILTER CARD ========== -->
+      <div class="report-filter-card">
+
+        <h3><i class="fas fa-filter"></i> Filter Reports</h3>
+
+        <div class="filter-grid">
+
+          <!-- Report Type -->
+          <div class="filter-group">
+            <label>Report Type</label>
+            <select id="reportType">
+              <option value="">Select Type</option>
+              <option value="student">Student-wise</option>
+              <option value="faculty">Faculty-wise</option>
+              <option value="batch">Batch-wise</option>
+            </select>
+          </div>
+
+          <!-- Student Selector -->
+          <div class="filter-group student-field hidden">
+            <label>Select Student</label>
+            <select id="studentSelect">
+              <option value="">Choose Student</option>
+              {% for s in students %}
+              <option value="{{ s.student_id }}">{{ s.name }} ({{ s.reg_no }})</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Faculty Selector -->
+          <div class="filter-group faculty-field hidden">
+            <label>Select Faculty</label>
+            <select id="facultySelect">
+              <option value="">Choose Faculty</option>
+              {% for f in faculty %}
+              <option value="{{ f.faculty_id }}">{{ f.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Batch Selector -->
+          <div class="filter-group batch-field hidden">
+            <label>Select Batch</label>
+            <select id="batchSelect">
+              <option value="">Choose Batch</option>
+              {% for b in batches %}
+              <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Time Range -->
+          <div class="filter-group">
+            <label>Time Range</label>
+            <select id="timeRange">
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+
+          <!-- Custom Dates -->
+          <div class="filter-group custom-dates hidden">
+            <label>From</label>
+            <input type="date" id="startDate" />
+
+            <label>To</label>
+            <input type="date" id="endDate" />
+          </div>
+
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="report-btn-row">
+          <button id="viewReportBtn" class="view-btn">
+            <i class="fas fa-eye"></i> View Report
+          </button>
+
+          <button id="downloadPDFBtn" class="pdf-btn">
+            <i class="fas fa-file-pdf"></i> Download PDF
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ========== REPORT DISPLAY AREA ========== -->
+      <div class="report-table-container">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Student</th>
+              <th>Faculty</th>
+              <th>Topics Discussed</th>
+              <th>Remarks</th>
+              <th>Action Plan</th>
+            </tr>
+          </thead>
+          <tbody id="reportTableBody">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- ================= JS ================= -->
+<script src="{% static 'script/admin_reports.js' %}"></script>
+
+<script>
+  // Dropdown logic
+  document.querySelectorAll('.dropdown-toggle').forEach(drop => {
+    drop.addEventListener('click', function(e) {
+      e.preventDefault();
+      this.closest('.dropdown').classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>
