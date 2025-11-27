@@ -1,11 +1,56 @@
 {% load static %}
-<section class="profile-section">
-  <div class="profile-card">
-    <img src="{% static 'images/avatar-placeholder.png' %}" class="profile-photo" alt="photo" />
-    <h2>{{ faculty.name }}</h2>
-    <p><strong>Email:</strong> {{ faculty.email }}</p>
-    <p><strong>Department:</strong> {{ faculty.department.name }}</p>
-    <p><strong>Phone:</strong> {{ faculty.phone}}</p>
-    <!-- Add more faculty fields as needed -->
+
+{% include 'Faculty/header.html' %}
+
+<!-- PAGE BODY -->
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="menu">
+      <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+        <i class="fas fa-th-large"></i> <span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="{% url 'students-content' %}" class="menu-item">
+        <i class="fas fa-graduation-cap"></i> <span>Students</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="#" class="menu-item" data-frame="session-notes">
+        <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="{% url 'profile_content' %}" class="menu-item active">
+        <i class="fas fa-user"></i> <span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <div class="main-content">
+
+    <!-- PAGE TITLE -->
+    <div class="students-header">
+    <h2><strong>Faculty Profile</strong></h2>
+    <br>
+    </div>
+    <section class="profile-section">
+      <div class="profile-card">
+        <img src="{% static 'images/avatar-placeholder.png' %}" class="profile-photo" alt="photo" />
+        <h2>{{ faculty.name }}</h2>
+        <p><strong>Email:</strong> {{ faculty.email }}</p>
+        <p><strong>Department:</strong> {{ faculty.department.name }}</p>
+        <p><strong>Phone:</strong> {{ faculty.phone}}</p>
+        <!-- Add more faculty fields as needed -->
+      </div>
+    </section>
   </div>
-</section>
+</div>
+
+{% include 'Faculty/footer.html' %}

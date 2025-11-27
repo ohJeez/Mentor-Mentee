@@ -1,0 +1,126 @@
+{% load static %}
+
+{% include 'Faculty/header.html' %}
+
+<link rel="stylesheet" href="{% static 'css/session.css' %}">
+
+<!-- PAGE BODY -->
+<div class="container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="menu">
+      <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+        <i class="fas fa-th-large"></i> <span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="{% url 'students-content' %}" class="menu-item active">
+        <i class="fas fa-graduation-cap"></i> <span>Students</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="#" class="menu-item" data-frame="session-notes">
+        <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="{% url 'profile_content' %}" class="menu-item">
+        <i class="fas fa-user"></i> <span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <h2>Mentoring Sessions for {{ student.name }}</h2>
+
+    <!-- QUICK STATS -->
+    <div class="students-stats">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div>
+          <h4>Total Mentees</h4>
+          <p>{{ students|length }} Assigned</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <h4>Last Session</h4>
+          <p>12 Feb 2025</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div>
+          <h4>Next Meeting</h4>
+          <p>Not Scheduled</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="students-stats">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="pdf-downloads">
+          {% if student.application_form %}
+          <a href="{{ student.application_form.url }}" target="_blank">Download Application Form</a>
+          {% else %}
+              <span>No Application Form</span>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="pdf-downloads">
+            {% if student.assessment_file %}
+                <a href="{{ student.assessment_file.url }}" target="_blank">Download Assessment File</a>
+            {% else %}
+                <span>No Assessment File</span>
+            {% endif %}
+          </div>
+      </div>
+      <!-- New Session button -->
+      <div class="new-session-container">
+        <a href="{% url 'new_session' student.student_id %}" class="view-btn">New Session +</a>
+      </div>
+
+      <div class="students-table-container">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Title</th>
+              <th>Actions</th>
+          </tr>
+          </thead>
+
+          <input type="hidden" id="student-profile-url" value="{% url 'student_profile' 0 %}">
+
+          <tbody>
+            {% for session in sessions %}
+            <tr>
+              <td>{{ session.date }}</td>
+              <td>{{ session.title }}</td>
+              <td>
+                <a href="{% url 'view_session' session.session_id %}" class="view-btn">View Details</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No sessions yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </main>
+</div>
+
+{% include 'Faculty/footer.html' %}

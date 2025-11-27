@@ -71,18 +71,20 @@ class Student(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="students")
     dob = models.DateField(null=True, blank=True)
     
+    application_form = models.FileField(upload_to='application_forms/', null=True, blank=True)
+    assessment_file = models.FileField(upload_to='assessments/', null=True, blank=True)
+    
     
     #Mentoring Session
 class MentoringSession(models.Model):
     session_id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="sessions")
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name="sessions")
-    session_date = models.DateField()
-    topics_discussed = models.TextField()
-    remarks = models.TextField(blank=True, null=True)
-    action_plan = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sessions')
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='sessions')
+    date = models.DateTimeField(default=timezone.now)
+    title = models.TextField(blank=True, null=True)
+    academic_details = models.TextField(blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
+
     #MentorAssignments
 class MentorAssignmentLog(models.Model):
     log_id = models.AutoField(primary_key=True)

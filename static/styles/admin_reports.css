@@ -1,0 +1,149 @@
+/* ===============================
+   Reports Page Styling
+   =============================== */
+
+.reports-section {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.reports-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.reports-header p {
+    margin-top: 5px;
+    color: gray;
+}
+
+/* Filter Card */
+.report-filter-card {
+    background: #f8f9fb;
+    padding: 1.8rem;
+    border-radius: 14px;
+    margin-top: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.report-filter-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #000;
+}
+
+/* Grid Layout */
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.3rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.filter-group select, 
+.filter-group input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #bcc2c9;
+}
+
+/* Hidden utility */
+.hidden {
+    display: none !important;
+}
+
+/* Custom date range */
+.custom-dates {
+    grid-column: span 2;
+}
+
+/* Buttons Row */
+.report-btn-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.report-btn-row button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.view-btn {
+    background: var(--primary-green);
+    color: white;
+}
+
+.view-btn:hover {
+    background: #1c7e33;
+}
+
+.pdf-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.pdf-btn:hover {
+    background: #b92c3a;
+}
+
+/* Table Styling */
+.report-table-container {
+    margin-top: 2rem;
+    border-radius: 12px;
+    background: #fff;
+    overflow-x: auto;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th {
+    background: var(--primary-green);
+    color: #fff;
+    padding: 14px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.report-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.report-table tr:hover {
+    background: #f6f6f6;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    .filter-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+}
