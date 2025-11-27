@@ -73,6 +73,8 @@ def add_Student(request):
             dob = request.POST['dob']
             batch = request.POST['batch']
             photo = request.FILES['photo']
+            application = request.FILES['application_form']
+            assessment = request.FILES['assessment_file']
 
             photo_path = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -82,6 +84,16 @@ def add_Student(request):
 
             fs = FileSystemStorage(location=photo_path, base_url='../static/student_images/')
             image = fs.save(photo.name, photo)
+            
+            #Application form
+            application_path = os.path.join(BASE_DIR, 'static', 'student_applications')
+            fs_app = FileSystemStorage(location=application_path, base_url='../static/student_applications/')
+            saved_application_name = fs_app.save(application.name, application)
+            #Assessment 
+            assessment_path = os.path.join(BASE_DIR, 'static', 'student_assessment')
+            fs_assessment = FileSystemStorage(location=assessment_path, base_url='../static/student_assessment/')
+            saved_assessment_name = fs_assessment.save(assessment.name, assessment)
+
 
             res=Student(
                 name=name,
@@ -93,6 +105,9 @@ def add_Student(request):
                 course_id=course,
                 student_image=image,
                 year=1
+                application_form=saved_application_name
+                assessment_form = saved_assessment_name
+                student_image=image
             )
             res.save()
             return HttpResponse(
