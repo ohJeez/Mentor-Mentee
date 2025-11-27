@@ -70,6 +70,8 @@ class Student(models.Model):
     year = models.IntegerField()
     faculty = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="students")
     dob = models.DateField(null=True, blank=True)
+    application_form = models.CharField(max_length=100,blank=True)
+    assessment_form = models.CharField(max_length=100,blank=True)
     
     
     #Mentoring Session
