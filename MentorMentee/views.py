@@ -624,6 +624,9 @@ def generate_report_pdf(request):
 
     return response
 
+#===============================================================================================
+
+
 ##FACULTY SIDE VIEWS##
 
 from django.shortcuts import render
@@ -785,3 +788,36 @@ def session_details(request, id):
 def view_session(request, session_id):
     session = MentoringSession.objects.get(session_id=session_id)
     return render(request, 'Faculty/view_session.html', {'session': session})
+
+#==============================================================================================
+
+
+# Student Views
+
+def signup(request):
+    contents={}
+    try:
+        department=Department.objects.all()
+        batches=Batches.objects.all()
+        courses=Courses.objects.all()
+        contents={'departments':department,'courses':courses,'batches':batches}
+        if request.method == 'POST':
+            name = request.POST['name']
+            reg_no = request.POST['reg_no']
+            email = request.POST['email']
+            phone = request.POST['phone']
+            dob = request.POST['dob']
+            department = request.POST['department']
+            course = request.POST['course']
+            batch = request.POST['batch']
+            password = request.POST['password']
+            confirm_password = request.POST['confirm_password']
+            photo = request.FILES['photo']
+            application_form = request.FILES['application_form']
+            #Password and EMail Validation
+            if password!=confirm_password or not email.endswith('@rajagiri.edu'):
+                messages.error(request, "Only rajagiri.edu email is allowed")
+                return redirect("/student_signup")
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'Student_SignUp.html',contents)

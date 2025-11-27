@@ -40,6 +40,10 @@ path('logout', views.logout, name='logout'),
     path('profile/', views.profile_content, name='profile_content'),
     path('filter-students/', views.filter_students, name='filter_students'),
     path('session/<int:session_id>/', views.view_session, name='view_session'),
+    
+    #Student url's
+    path('signup', views.signup, name='signup'),
+    
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     

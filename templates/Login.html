@@ -16,6 +16,7 @@
       --text-dark: #1b1b1b;
       --border: #dcdcdc;
       --light-bg: #f8f9fa;
+      --signup-bg: #eef8ef;
     }
 
     * {
@@ -48,7 +49,6 @@
       width: 85px;
       height: 85px;
       border-radius: 50%;
-      /* background: var(--primary-green); */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -126,10 +126,29 @@
       font-weight: 600;
       cursor: pointer;
       transition: 0.3s ease;
+      margin-bottom: 1rem;
     }
 
     .login-btn:hover {
       background: var(--dark-green);
+    }
+
+    /* Sign Up Button */
+    .signup-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--signup-bg);
+      border: 1.5px solid var(--primary-green);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--primary-green);
+      transition: 0.3s ease;
+    }
+
+    .signup-btn:hover {
+      background: #dff0e0;
     }
 
     .footer-note {
@@ -170,13 +189,18 @@
       </div>
 
       <button type="submit" class="login-btn">Sign In</button>
-
-      <p class="footer-note">Internal use only — secure login required.</p>
-
     </form>
+
+    <!-- Signup Button -->
+    <button class="signup-btn" onclick="window.location.href='/signup'">
+      <i class="fas fa-user-plus"></i> Create New Account
+    </button>
+
+    <!-- <p class="footer-note">Internal use only — secure login required.</p> -->
+
   </div>
 
-  <!-- ✅ Password Toggle Script -->
+  <!-- Toggle password -->
   <script>
     const toggle = document.getElementById("togglePassword");
     const password = document.getElementById("password");
