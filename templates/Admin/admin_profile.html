@@ -4,22 +4,24 @@
   <meta charset="UTF-8" />
   {% load static %}
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profile | Mentor Mentee</title>
+  <title>Admin Profile | Mentor Mentee</title>
 
-  <!-- STYLES -->
+  <!-- BASE THEME -->
   <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+
+  <!-- PAGE STYLE -->
   <link rel="stylesheet" href="{% static '../static/styles/admin_profile.css' %}" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
 
-<!-- ✅ HEADER -->
+<!-- HEADER -->
 <header class="header">
   <div class="header-left">
-    <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+    <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
     <div class="header-title">
       <h2 class="rcss-title">RCSS</h2>
       <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
@@ -30,208 +32,204 @@
 
   <div class="header-right">
     <h3>{{ admin.name }}</h3>
+
     <div class="user-profile-icon">
-      <img src="{% static '../static/admin_images/{{ admin.admin_image }}' %}" alt="Profile" />
+      <img src="../static/admin_images/{{ admin.admin_image }}" alt="">
     </div>
-    <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+
+    <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
   </div>
 </header>
 
-<!-- ✅ PAGE BODY -->
 <div class="container">
 
-  <!-- ✅ SIDEBAR -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
-      <nav class="menu">
+    <nav class="menu">
 
-        <a href="/admin_dashboard" class="menu-item">
-          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
         </a>
-
-        <hr class="menu-divider" />
-
-        <!-- Students Dropdown -->
-        <div class="dropdown">
-          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
-            <i class="fas fa-graduation-cap"></i> <span>Students</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-
-          <div class="dropdown-menu">
-            <a href="/admin_addStudent" class="dropdown-item">
-              <i class="fas fa-user-plus"></i> <span>Add Student</span>
-            </a>
-
-            <a href="/admin_ViewStudents" class="dropdown-item">
-              <i class="fas fa-users"></i> <span>View Students</span>
-            </a>
-          </div>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
         </div>
+      </div>
 
-        <hr class="menu-divider" />
+      <hr class="menu-divider">
 
-        <!-- Faculties Dropdown -->
-        <div class="dropdown">
-          <a href="javascript:void(0)" class="menu-item dropdown-toggle active">
-            <i class="fas fa-chalkboard-teacher"></i> <span>Faculties</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-
-          <div class="dropdown-menu" style="display:flex;">
-            <a href="/admin_addFaculty" class="dropdown-item">
-              <i class="fas fa-user-plus"></i> <span>Add Faculty</span>
-            </a>
-
-            <a href="/admin_ViewFaculty" class="dropdown-item ">
-              <i class="fas fa-users"></i> <span>View Faculty</span>
-            </a>
-          </div>
-        </div>
-         <hr class="menu-divider" />
-        <div class="dropdown">
-          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
-            <i class="fas fa-chalkboard-teacher"></i> <span>Assignments</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-
-          <div class="dropdown-menu">
-            <a href="/admin_AddAssignment" class="dropdown-item">
-              <i class="fas fa-user-plus"></i> <span>Assign Student</span>
-            </a>
-
-            <a href="/admin_ViewAssignments" class="dropdown-item">
-              <i class="fas fa-users"></i> <span>View Assignments</span>
-            </a>
-          </div>
-        </div>
-
-        <hr class="menu-divider" />
-
-        <a href="#" class="menu-item">
-          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-chalkboard-teacher"></i><span>Faculty</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
         </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addFaculty"><i class="fas fa-user-plus"></i>Add Faculty</a>
+          <a class="dropdown-item" href="/admin_viewFaculty"><i class="fas fa-users"></i>View Faculty</a>
+        </div>
+      </div>
 
-        <hr class="menu-divider" />
+      <hr class="menu-divider">
 
-        <a href="/admin_profile" class="menu-item active">
-          <i class="fas fa-user"></i> <span>Profile</span>
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
         </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
 
-      </nav>
-    </aside>
+      <hr class="menu-divider">
+
+      <a class="menu-item active" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
 
 
-  <!-- ✅ MAIN CONTENT -->
-  <main class="main-content">
 
-    <section class="profile-section">
+  <!-- MAIN CONTENT -->
+  <main class="profile-area">
 
-      <div class="profile-card">
+    <!-- HERO BANNER -->
+    <div class="profile-banner">
+      <div class="banner-overlay"></div>
 
-        <div class="profile-header">
-          <div class="profile-photo">
-            <img src="{% static '../static/admin_images/{{ admin.admin_image }}' %}" alt="Profile Photo">
-          </div>
+      <div class="banner-content">
+        <h1>Hello, {{ admin.name }}</h1>
+        <p>Your administrator account overview</p>
+      </div>
+    </div>
 
-          <div class="profile-details">
-            <h2 data-field="name">{{ admin.name }}</h2>
-            <p class="profile-subtitle" data-field="designation">{{ admin.designation }}</p>
-          </div>
+
+    <!-- PROFILE MAIN CARD -->
+    <div class="profile-main-card">
+
+      <!-- LEFT -->
+      <div class="profile-left">
+        <div class="profile-photo-frame">
+          <img src="../static/admin_images/{{ admin.admin_image }}" alt="">
         </div>
 
-        <div class="profile-info-grid">
-          <div>
-            <span>Email</span>
-            <p data-field="email">{{ admin.email }}</p>
-          </div>
+        <h2 class="profile-name">{{ admin.name }}</h2>
+        <p class="profile-role">{{ admin.designation|default:"Department Administrator" }}</p>
 
-          <div>
-            <span>Phone</span>
-            <p data-field="phone">{{ admin.phone }}</p>
-          </div>
+        <button class="edit-btn" id="openEditModal">
+          <i class="fas fa-pen"></i> Edit Profile
+        </button>
+      </div>
 
-          <div>
-            <span>Department</span>
-            <p data-field="department">{{ admin.department.name }}</p>
-          </div>
 
-          <div>
-            <span>Total Mentors</span>
-            <p>{{ total_mentors }}</p>
-          </div>
+      <!-- RIGHT -->
+      <div class="profile-right">
 
-          <div>
-            <span>Total Students</span>
-            <p>{{ total_students }}</p>
-          </div>
+        <div class="info-group">
+          <label>Email</label>
+          <p>{{ admin.email }}</p>
         </div>
 
-        <button class="edit-profile-btn" id="editProfileBtn">Edit Profile</button>
+        <div class="info-group">
+          <label>Phone</label>
+          <p>{{ admin.phone|default:"Not added" }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Department</label>
+          <p>{{ admin.department.name }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Total Students</label>
+          <p>{{ total_students }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Total Mentors</label>
+          <p>{{ total_mentors }}</p>
+        </div>
 
       </div>
 
-      <!-- ✅ EDIT FORM -->
-      <section class="profile-edit-section" id="profileEditSection" hidden>
-        <h3>Edit Profile</h3>
+    </div>
 
-        <form id="editProfileForm" method="POST" enctype="multipart/form-data">
+
+    <!-- EDIT MODAL -->
+    <div class="modal" id="editModal">
+      <div class="modal-content">
+
+        <h2>Edit Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data">
           {% csrf_token %}
-          <div class="profile-form-grid">
 
-            <div class="profile-form-group">
+          <div class="modal-grid">
+            <div>
               <label>Name</label>
-              <input type="text" name="name" value="{{ admin.name }}" required />
+              <input type="text" name="name" value="{{ admin.name }}" required>
             </div>
 
-            <div class="profile-form-group">
+            <div>
               <label>Email</label>
-              <input type="email" name="email" value="{{ admin.email }}" required />
+              <input type="email" name="email" value="{{ admin.email }}" required>
             </div>
 
-            <div class="profile-form-group">
+            <div>
               <label>Phone</label>
-              <input type="text" name="phone" value="{{ admin.phone }}" required />
+              <input type="text" name="phone" value="{{ admin.phone }}">
             </div>
 
-            <div class="profile-form-group">
+            <div>
               <label>Designation</label>
-              <input type="text" name="designation" value="{{ admin.designation }}" required />
+              <input type="text" name="designation" value="{{ admin.designation }}">
             </div>
 
-            <div class="profile-form-group">
+            <div class="full">
               <label>Profile Photo</label>
-              <input type="file" name="admin_image" accept="image/*" />
+              <input type="file" name="admin_image" accept="image/*">
             </div>
-
           </div>
 
-          <div class="profile-form-actions">
-            <button type="button" class="btn-secondary" id="cancelEditBtn">Cancel</button>
-            <button type="submit" class="edit-profile-btn">Save Changes</button>
+          <div class="modal-actions">
+            <button type="button" class="cancel" id="closeEditModal">Cancel</button>
+            <button type="submit" class="save">Save Changes</button>
           </div>
 
         </form>
-      </section>
 
-    </section>
+      </div>
+    </div>
 
   </main>
 
 </div>
 
-<!-- <footer class="footer"></footer> -->
 
-<!-- ✅ JS -->
-<script src="{% static '../static/script/admin_profile.js' %}"></script>
- <script>
-    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-      toggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        const dropdown = this.closest('.dropdown');
-        dropdown.classList.toggle('open');
-      });
+<script>
+  // Dropdown
+  document.querySelectorAll('.dropdown-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      el.parentNode.classList.toggle('open');
     });
-    </script>
+  });
+
+  // Modal
+  const modal = document.getElementById("editModal");
+  document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
+  document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
+</script>
 
 </body>
 </html>

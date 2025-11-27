@@ -42,81 +42,59 @@
 
   <!-- ✅ SIDEBAR -->
    <aside class="sidebar">
-      <nav class="menu">
+    <nav class="menu">
 
-        <a href="/admin_dashboard" class="menu-item">
-          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
         </a>
-
-        <hr class="menu-divider" />
-
-        <div class="dropdown">
-          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
-            <i class="fas fa-graduation-cap"></i> <span>Students</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-
-          <div class="dropdown-menu">
-            <a href="/admin_addStudent" class="dropdown-item">
-              <i class="fas fa-user-plus"></i> <span>Add Student</span>
-            </a>
-
-            <a href="/admin_ViewStudents" class="dropdown-item">
-              <i class="fas fa-users"></i> <span>View Students</span>
-            </a>
-          </div>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
         </div>
+      </div>
 
-        <hr class="menu-divider" />
-        <div class="dropdown">
-          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
-            <i class="fas fa-chalkboard-teacher"></i> <span>Faculty</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
+      <hr class="menu-divider">
 
-          <div class="dropdown-menu">
-            <a href="/admin_addFaculty" class="dropdown-item">
-              <i class="fas fa-user-plus"></i> <span>Add Faculty</span>
-            </a>
-
-            <a href="/admin_ViewStudents" class="dropdown-item">
-              <i class="fas fa-users"></i> <span>View Students</span>
-            </a>
-          </div>
-        </div>
-         <hr class="menu-divider" />
-        <div class="dropdown open">
-          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
-            <i class="fas fa-chalkboard-teacher"></i> <span>Assignments</span>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-
-          <div class="dropdown-menu">
-            <a href="/admin_AddAssignment" class="dropdown-item">
-              <i class="fas fa-user-plus"></i> <span>Assign Student</span>
-            </a>
-
-            <a href="/admin_ViewAssignments" class="dropdown-item active">
-              <i class="fas fa-users"></i> <span>View Assignments</span>
-            </a>
-          </div>
-        </div>
-
-        <hr class="menu-divider" />
-
-        <a href="#" class="menu-item">
-          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-chalkboard-teacher"></i><span>Faculty</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
         </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addFaculty"><i class="fas fa-user-plus"></i>Add Faculty</a>
+          <a class="dropdown-item" href="/admin_viewFaculty"><i class="fas fa-users"></i>View Faculty</a>
+        </div>
+      </div>
 
-        <hr class="menu-divider" />
+      <hr class="menu-divider">
 
-        <a href="/admin_profile" class="menu-item">
-          <i class="fas fa-user"></i> <span>Profile</span>
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
         </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
 
-      </nav>
-    </aside>
+      <hr class="menu-divider">
 
+      <a class="menu-item active" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
 
   <!-- ✅ MAIN CONTENT -->
   <main class="main-content">

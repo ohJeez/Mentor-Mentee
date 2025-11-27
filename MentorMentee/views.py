@@ -113,9 +113,10 @@ def admin_ViewStudents(request):
     try:
         adm_dept=Admin.objects.get(login_id=login_id)
         batches = Batches.objects.filter(course__department_id=adm_dept.department_id)
+        courses=Courses.objects.filter(department_id=adm_dept.department_id)
         #all students
         students=Student.objects.filter(department_id=adm_dept.department_id)
-        contents={'batches':batches,'students':students,'admin':adm_dept}
+        contents={'batches':batches,'students':students,'admin':adm_dept,'courses':courses}
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Admin/view_students.html',contents)
@@ -286,12 +287,31 @@ def get_assigned_students(request):
 #Admin Profile
 def admin_profile(request):
     contents={}
+
     try:
         login_id = request.session.get('login_id')
         if not login_id:
             return redirect('/')
         admin=Admin.objects.get(login_id=login_id)
         contents={'admin':admin}
+        
+        #Editing data
+        if request.method == 'POST':
+            admin.name = request.POST['name']
+            admin.email = request.POST['email']
+            admin.phone = request.POST['phone']
+            if "admin_image" in request.FILES:
+                admin_imag = request.POST['admin_image']
+                photo_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                'static',
+                'faculty_images'
+            )
+            fs = FileSystemStorage(location=photo_path, base_url='../static/faculty_images/')
+            admin.admin_image = fs.save(admin_imag.name, admin_imag)
+            admin.save()
+            return redirect ('admin_profile')
+            
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Admin/admin_profile.html',contents)
