@@ -58,6 +58,7 @@ class Faculty(models.Model):
     
     #Student
 class Student(models.Model):
+    login = models.ForeignKey(Login, on_delete=models.CASCADE, null=True, blank=True)
     student_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=150,db_index=False)
@@ -70,7 +71,6 @@ class Student(models.Model):
     year = models.IntegerField()
     faculty = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="students")
     dob = models.DateField(null=True, blank=True)
-    
     application_form = models.FileField(upload_to='application_forms/', null=True, blank=True)
     assessment_file = models.FileField(upload_to='assessments/', null=True, blank=True)
     

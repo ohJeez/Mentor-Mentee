@@ -815,9 +815,46 @@ def signup(request):
             photo = request.FILES['photo']
             application_form = request.FILES['application_form']
             #Password and EMail Validation
-            if password!=confirm_password or not email.endswith('@rajagiri.edu'):
-                messages.error(request, "Only rajagiri.edu email is allowed")
-                return redirect("/student_signup")
+            if password != confirm_password:
+                 return HttpResponse("<script>alert('Passwords Unmatch!'); window.location.href='/signup'</script>")
+            
+            #Student Image
+            photo_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                'static',
+                'student_images'
+            )
+            fs = FileSystemStorage(location=photo_path, base_url='../static/student_images/')
+            st_image = fs.save(photo.name, photo)
+            
+            #Application Form
+            app_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                'static',
+                'Application_Forms'
+            )
+            fs = FileSystemStorage(location=app_path, base_url='../static/Application_Forms/')
+            app_form = fs.save(application_form.name, application_form)
+            #Login
+            res1=Login(username=reg_no,password=password,userType='student')
+            res1.save()
+            res2=Student(
+                        login_id=res1.login_id,
+                        name=name,
+                        email=email,
+                        reg_no=reg_no,
+                        phone=phone,
+                        department_id=department,
+                        course_id=course,
+                        batch_id=batch,
+                        year=1,
+                        dob=dob,
+                        student_image=st_image,
+                        application_form=app_form,
+                        )
+            res2.save()
+            return HttpResponse("<script>alert('Account created successfully. Login to continue :)'); window.location.href='/'</script>")
+            
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'Student_SignUp.html',contents)
