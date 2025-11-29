@@ -1,0 +1,147 @@
+/* Google Font */
+/* @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'); */
+
+/* Theme Colors */
+:root {
+  --primary: #28a745;
+  --primary-light: #218838;
+  --body-color: LightGreen;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--body-color);
+  font-family: 'Roboto', sans-serif;
+}
+
+.svg-top {
+  position: absolute;
+  top: -900px;
+  right: -300px;
+}
+
+.svg-bottom {
+  position: absolute;
+  bottom: -500px;
+  left: -200px;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.wrapper {
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 20px;
+  width: 350px;
+  z-index: 1;
+}
+
+header {
+  margin-bottom: 40px;
+}
+
+.logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50px;
+  background-color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo span {
+  font-size: 18px;
+  color: #fff;
+}
+
+header h1 {
+  color: var(--primary);
+  font-size: 35px;
+  font-weight: 500;
+  margin-bottom: 0;
+  margin-top: 40px;
+}
+
+header p {
+  color: var(--primary);
+  font-size: 18px;
+  font-weight: 300;
+  margin: 5px 0 0 0;
+}
+
+.main-content input {
+  border: none;
+  display: block;
+  width: 100%;
+  height: 50px;
+  margin: 15px 0;
+  font-size: 18px;
+  color: #999;
+}
+
+.main-content input::placeholder {
+  color: #999;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.main-content input:focus {
+  outline: none;
+}
+
+.line {
+  width: 100%;
+  height: 2px;
+  background-color: #99999955;
+}
+
+button {
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
+  border: none;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 300;
+  color: #fff;
+  display: block;
+  width: 100px;
+  height: 40px;
+  margin: 0 auto;
+  outline: none;
+  cursor: pointer;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 60px;
+}
+
+footer p {
+  margin: 0;
+  font-weight: 100;
+}
+
+footer a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .wrapper {
+    margin: 0 10px !important;
+    padding: 30px;
+  }
+
+  header h1 {
+    font-size: 30px;
+  }
+}

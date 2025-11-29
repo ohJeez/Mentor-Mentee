@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Signup | Mentor Mentee</title>
+
+    <link rel="stylesheet" href="{% static 'styles/student_signup.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="signup-card">
+
+    <div class="top-logo">
+        <img src="{% static 'Assets/logo.png' %}" alt="RCSS Logo">
+        <h2>Student Signup</h2>
+        <p>Create your Mentor–Mentee account</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <div>
+                <label>Full Name</label>
+                <input type="text" name="name" required>
+            </div>
+
+            <div>
+                <label>Register Number</label>
+                <input type="text" name="reg_no" required>
+            </div>
+
+            <div>
+                <label>Email</label>
+                <input type="email" id="email" name="email" placeholder="name@rajagiri.edu" required>
+            </div>
+
+            <div>
+                <label>Phone</label>
+                <input type="text" name="phone" required>
+            </div>
+
+            <div>
+                <label>Date of Birth</label>
+                <input type="date" name="dob" required>
+            </div>
+
+            <!-- DEPARTMENT -->
+            <div>
+                <label>Department</label>
+                <select id="department" name="department" required>
+                    <option value="">Select Department</option>
+                    {% for d in departments %}
+                    <option value="{{d.dept_id}}">{{d.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- COURSE -->
+            <div>
+                <label>Course</label>
+                <select id="course" name="course" required>
+                    <option value="">Select Course</option>
+                    {% for c in courses %}
+                    <option value="{{c.course_id}}" data-dept="{{c.department.dept_id}}">
+                        {{c.course_name}}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- BATCH -->
+            <div>
+                <label>Batch</label>
+                <select id="batch" name="batch" required>
+                    <option value="">Select Batch</option>
+                    {% for b in batches %}
+                    <option value="{{b.batch_id}}" data-course="{{b.course.course_id}}">
+                        {{b.batch_name}}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" required>
+                    <i class="fas fa-eye toggle-password" data-target="password"></i>
+                </div>
+            </div>
+
+            <div>
+                <label>Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                    <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+                </div>
+            </div>
+
+            <div class="full">
+                <label>Student Photo</label>
+                <label class="file-upload-box">
+                    <i class="fas fa-upload"></i>
+                    <p>Click to upload image</p>
+                    <input type="file" name="photo" accept="image/*" required>
+                </label>
+            </div>
+
+            <div class="full">
+                <label>Application Form (PDF)</label>
+                <label class="file-upload-box">
+                    <i class="fas fa-file-pdf"></i>
+                    <p>Click to upload PDF</p>
+                    <input type="file" name="application_form" accept="application/pdf" required>
+                </label>
+            </div>
+
+        </div>
+
+        <button type="submit" class="signup-btn">Create Account</button>
+
+        <p class="login-link">Already registered? <a href="/">Login here</a></p>
+
+    </form>
+
+</div>
+
+<script>
+/* PASSWORD TOGGLE */
+document.querySelectorAll(".toggle-password").forEach(icon => {
+    icon.addEventListener("click", () => {
+        const inputID = icon.getAttribute("data-target");
+        const input = document.getElementById(inputID);
+
+        input.type = input.type === "password" ? "text" : "password";
+
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
+    });
+});
+
+/* EMAIL VALIDATION */
+document.getElementById("email").addEventListener("input", function () {
+    const email = this.value;
+    if (!email.endsWith("@rajagiri.edu")) {
+        this.setCustomValidity("Email must end with @rajagiri.edu");
+    } else {
+        this.setCustomValidity("");
+    }
+});
+
+/* DYNAMIC DROPDOWNS */
+document.addEventListener("DOMContentLoaded", () => {
+
+    const deptSelect = document.getElementById("department");
+    const courseSelect = document.getElementById("course");
+    const batchSelect = document.getElementById("batch");
+
+    const allCourses = Array.from(courseSelect.options);
+    const allBatches = Array.from(batchSelect.options);
+
+    courseSelect.innerHTML = `<option value="">Select Course</option>`;
+    batchSelect.innerHTML = `<option value="">Select Batch</option>`;
+
+    deptSelect.addEventListener("change", () => {
+        const deptID = deptSelect.value;
+
+        courseSelect.innerHTML = `<option value="">Select Course</option>`;
+        batchSelect.innerHTML = `<option value="">Select Batch</option>`;
+
+        if (!deptID) return;
+
+        const filteredCourses = allCourses.filter(opt => opt.dataset.dept === deptID);
+        filteredCourses.forEach(opt => courseSelect.appendChild(opt.cloneNode(true)));
+    });
+
+    courseSelect.addEventListener("change", () => {
+        const courseID = courseSelect.value;
+
+        batchSelect.innerHTML = `<option value="">Select Batch</option>`;
+
+        if (!courseID) return;
+
+        const filteredBatches = allBatches.filter(opt => opt.dataset.course === courseID);
+        filteredBatches.forEach(opt => batchSelect.appendChild(opt.cloneNode(true)));
+    });
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ student.name }} | Student Details</title>
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+    <link rel="stylesheet" href="{% static '../static/styles/admin_StudentDetails.css' %}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+  --text-dark: #222;
+  --shadow: 0 3px 12px rgba(0,0,0,0.12);
+}
+
+.student-section {
+  background: #fff;
+  padding: 2.2rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+}
+
+.back-btn i {
+  margin-right: 6px;
+}
+
+.student-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.student-header {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  margin-bottom: 1.8rem;
+}
+
+.student-photo {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--primary-green);
+}
+
+.student-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-details h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.student-subtitle {
+  font-size: 1rem;
+  color: gray;
+}
+
+.student-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem;
+}
+
+.student-info-grid span {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.mentor-card {
+  padding: 1.8rem;
+  background: #f8f9fa;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.mentor-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mentor-item img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.no-mentor {
+  color: gray;
+  font-style: italic;
+}
+
+@media(max-width: 900px) {
+  .student-info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media(max-width: 600px) {
+  .student-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+
+<!-- ✅ HEADER -->
+<header class="header">
+  <div class="header-left">
+    <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+    <div class="header-title">
+      <h2 class="rcss-title">RCSS</h2>
+      <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+    </div>
+  </div>
+
+  <h1 class="main-title">MENTOR MENTEE</h1>
+
+  <div class="header-right">
+    <h3>{{ admin.name }}</h3>
+    <div class="user-profile-icon">
+      <i class="fas fa-user"></i>
+    </div>
+    <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+  </div>
+</header>
+
+<!-- ✅ PAGE BODY -->
+<div class="container">
+
+  <!-- ✅ SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown open">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap active"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users active"></i>View Students</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-chalkboard-teacher"></i><span>Faculty</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addFaculty"><i class="fas fa-user-plus"></i>Add Faculty</a>
+          <a class="dropdown-item" href="/admin_viewFaculty"><i class="fas fa-users"></i>View Faculty</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Reports</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item active" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+  <!-- ✅ MAIN CONTENT -->
+  <main class="main-content">
+
+    <section class="student-section">
+
+      <!-- <button onclick="history.back()" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back
+      </button> -->
+
+      <!-- ✅ STUDENT PROFILE -->
+      <div class="student-card">
+
+        <div class="student-header">
+          <div class="student-photo">
+            <img src="{% static 'student_images/' %}{{ student.student_image }}" alt="Photo">
+          </div>
+
+          <div class="student-details">
+            <h2>{{ student.name }}</h2>
+            <p class="student-subtitle">{{ student.course.course_name }} — {{ student.batch.batch_name }}</p>
+          </div>
+        </div>
+
+        <!-- ✅ INFO GRID -->
+        <div class="student-info-grid">
+          <div>
+            <span>Registration No</span>
+            <p>{{ student.reg_no }}</p>
+          </div>
+
+          <div>
+            <span>Email</span>
+            <p>{{ student.email }}</p>
+          </div>
+
+          <div>
+            <span>Phone</span>
+            <p>{{ student.phone }}</p>
+          </div>
+
+          <div>
+            <span>Department</span>
+            <p>{{ student.department.name }}</p>
+          </div>
+
+          <div>
+            <span>Year</span>
+            <p>{{ student.year }}</p>
+          </div>
+
+          <div>
+            <span>Date of Birth</span>
+            <p>{{ student.dob }}</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ✅ MENTOR CARD -->
+      <div class="mentor-card">
+        <h3>Assigned Mentor</h3>
+
+        {% if student.faculty %}
+        <div class="mentor-item">
+          <img src="{% static 'faculty_images/' %}{{ student.faculty.faculty_image }}" alt="">
+          <div>
+            <h4>{{ student.faculty.name }}</h4>
+            <p>{{ student.faculty.designation }}</p>
+          </div>
+        </div>
+        {% else %}
+        <p class="no-mentor">No mentor assigned</p>
+        {% endif %}
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- <footer class="footer"></footer> -->
+
+</body>
+<script>
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        const dropdown = this.closest('.dropdown');
+        dropdown.classList.toggle('open');
+      });
+    });
+    </script>
+</html>
