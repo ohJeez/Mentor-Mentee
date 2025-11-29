@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Profile | Mentor Mentee</title>
+
+    <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/student_profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+<!-- =================== HEADER =================== -->
+<header class="header">
+    <div class="header-left">
+        <img src="{% static 'Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+        <div class="header-title">
+            <h2 class="rcss-title">RCSS</h2>
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+        </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+        <h3>{{ student.name }}</h3>
+        <div class="user-profile-icon">
+            {% if student.student_image %}
+                <img src="/media/{{ student.student_image }}" alt="profile">
+            {% else %}
+                <i class="fas fa-user"></i>
+            {% endif %}
+        </div>
+
+        <button class="logout-btn" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+    </div>
+</header>
+
+
+
+<!-- =================== BODY =================== -->
+<div class="container">
+
+    <!-- ========= SIDEBAR ========== -->
+    <aside class="sidebar">
+        <nav class="menu">
+
+            <a href="/student_dashboard" class="menu-item">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider">
+
+            <a href="/student_profile" class="menu-item active">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+
+            <hr class="menu-divider">
+
+            <a href="/student_sessions" class="menu-item">
+                <i class="fas fa-comments"></i> <span>Mentoring Sessions</span>
+            </a>
+
+            <hr class="menu-divider">
+
+            <a href="/student_documents" class="menu-item">
+                <i class="fas fa-file-alt"></i> <span>Documents</span>
+            </a>
+
+        </nav>
+    </aside>
+
+
+
+    <!-- =================== MAIN CONTENT =================== -->
+    <main class="main-content">
+
+        <div class="profile-header">
+            <h2>Student Profile</h2>
+            <p>Your personal and academic information</p>
+        </div>
+
+        <div class="profile-card">
+
+            <div class="profile-left">
+                <div class="profile-photo-box">
+                    {% if student.student_image %}
+                        <img src="/media/{{ student.student_image }}" class="profile-photo" alt="">
+                    {% else %}
+                        <div class="empty-photo"><i class="fas fa-user"></i></div>
+                    {% endif %}
+                </div>
+
+                <h3 class="student-name">{{ student.name }}</h3>
+                <p class="student-reg">{{ student.reg_no }}</p>
+            </div>
+
+            <div class="profile-right">
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Email</label>
+                        <p>{{ student.email }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Phone</label>
+                        <p>{{ student.phone }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Date of Birth</label>
+                        <p>{{ student.dob }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Department</label>
+                        <p>{{ student.department.name }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Course</label>
+                        <p>{{ student.course.course_name }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Batch</label>
+                        <p>{{ student.batch.batch_name }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Mentor</label>
+                        {% if student.faculty %}
+                            <p>{{ student.faculty.name }}</p>
+                        {% else %}
+                            <p style="color: gray;">Not Assigned</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="info-item">
+                        <label>Application Form</label>
+                        {% if student.application_form %}
+                            <a href="/media/{{ student.application_form }}" class="download-btn" target="_blank">
+                                <i class="fas fa-file-pdf"></i> Download
+                            </a>
+                        {% else %}
+                            <p style="color: gray;">Not Uploaded</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+    // Sidebar dropdown script (if used)
+    document.querySelectorAll('.dropdown-toggle').forEach(drop => {
+        drop.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.closest('.dropdown').classList.toggle('open');
+        });
+    });
+</script>
+
+</body>
+</html>

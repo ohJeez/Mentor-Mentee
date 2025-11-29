@@ -94,5 +94,12 @@ class MentorAssignmentLog(models.Model):
     changed_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-
-    
+#Scheduling Sessions
+class Schedule(models.Model):
+    schedule_id = models.AutoField(primary_key=True)
+    batch = models.ForeignKey(Batches,on_delete=models.CASCADE)
+    created_by = models.ForeignKey(Admin,on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    status = models.CharField(max_length=25,default="Active",choices=[("active","Active"),("completed","Completed"),("incomplete","Incomplete"),("cancelled","Cancelled")])
+    created_at = models.DateField(auto_now_add=True)

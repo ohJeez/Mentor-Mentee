@@ -18,6 +18,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
+from django.utils.dateparse import parse_date
 
 # Create your views here.
 def home(request):
@@ -62,12 +63,122 @@ def home(request):
 
 
 def admin_dashboard(request):
-    session_login = request.session.get('login_id')
+    session_login = request.session.get("login_id")
     if not session_login:
-        return HttpResponse("<script>alert('Session expired!'); window.location.href='/'</script>")
+        return HttpResponse("<script>alert('Session expired!');window.location.href='/'</script>")
 
-    return render(request, './Admin/admin_dashboard.html')
+    admin = Admin.objects.get(login_id=session_login)
 
+    # Today sessions
+    today = date.today()
+    today_list = Schedule.objects.filter(start_date__lte=today, end_date__gte=today)
+
+    # Pending = future start dates
+    pending_list = Schedule.objects.filter(start_date__gt=today)
+
+    context = {
+        "admin": admin,
+        "today_list": today_list,
+        "pending_list": pending_list,
+    }
+
+    return render(request, "./Admin/admin_dashboard.html", context)
+
+
+
+# API: FULL CALENDAR EVENTS
+def api_get_sessions(request):
+    schedules = Schedule.objects.all()
+    events = []
+
+    colors = {
+        "active": "#4f46e5",
+        "completed": "#16a34a",
+        "incomplete": "#ca8a04",
+        "cancelled": "#dc2626",
+    }
+
+    for s in schedules:
+        events.append({
+            "title": s.batch.batch_name,
+            "start": str(s.start_date),
+            "end": (str(s.end_date + timedelta(days=1))),  # FullCalendar uses end-exclusive
+            "color": colors.get(s.status, "#4f46e5")
+        })
+
+    return JsonResponse(events, safe=False)
+
+
+
+# API: SESSIONS FOR A PARTICULAR DAY
+def api_get_day_sessions(request, date_str):
+    day = date.fromisoformat(date_str)
+
+    sessions = Schedule.objects.filter(
+        start_date__lte=day,
+        end_date__gte=day
+    )
+
+    data = [
+        {
+            "batch": s.batch.batch_name,
+            "status": s.status,
+            "start": str(s.start_date),
+            "end": str(s.end_date)
+        }
+        for s in sessions
+    ]
+
+    return JsonResponse(data, safe=False)
+
+#Admin Create Session
+def admin_createSession(request):
+    contents={}
+    login_id = request.session.get('login_id')
+    if not login_id:
+        return HttpResponse("""
+    <html>
+    <head>
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    </head>
+    <body>
+        <script>
+            Swal.fire({
+                title: 'Session Expired!',
+                text: 'Please login again.',
+                icon: 'warning'
+            }).then(() => {
+                window.location.href = '/';
+            });
+        </script>
+    </body>
+    </html>
+""")
+    try:   
+        admin = Admin.objects.get(login_id=login_id)
+        batches = Batches.objects.filter(course__department_id=admin.department_id)
+        contents={'admin':admin,'batches':batches}
+        if request.method == 'POST':
+            batch = request.POST['batch']
+            start_date = request.POST['start_date']
+            end_date = request.POST['end_date']
+            status = request.POST['status']
+            if start_date > end_date:
+                return HttpResponse("<script>alert('Invalid Date Selection!');window.location.href='admin_createSession'</script>")
+            
+            res = Schedule(
+                start_date=start_date,
+                end_date=end_date,
+                status=status,
+                created_at=date.today(),
+                batch_id=batch,
+                created_by_id=login_id
+                )
+            res.save()
+            return HttpResponse("<script>alert('Mentoring Session Created!');window.location.href='admin_createSession'</script>")
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Admin/admin_createSession.html',contents)
 
 #Logout
 def logout(request):

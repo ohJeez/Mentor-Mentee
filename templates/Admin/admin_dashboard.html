@@ -1,52 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  {% load static %}
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mentor Mentee | RCSS</title>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- MAIN STYLES -->
-  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
-  <link rel="stylesheet" href="{% static '../static/styles/style.css' %}" />
+    <title>Admin Dashboard | Mentor Mentee</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
+    <link rel="stylesheet" href="{% static '../static/styles/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.css" rel="stylesheet">
+
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-left">
-      <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
-      <div class="header-title">
-        <h2 class="rcss-title">RCSS</h2>
-        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
-      </div>
-    </div>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+            <div class="header-title">
+                <h2 class="rcss-title">RCSS</h2>
+                <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+            </div>
+        </div>
 
-    <h1 class="main-title">MENTOR MENTEE</h1>
+        <h1 class="main-title">MENTOR MENTEE</h1>
 
-    <div class="header-right">
-      <h3>{{admin.name}}</h3>
-      <div class="user-profile-icon">
-        <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
-      </div>
-      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
-    </div>
-  </header>
+        <div class="header-right">
+            <div class="user-profile-icon"><i class="fas fa-user"></i></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
 
-  <!-- PAGE BODY -->
-  <div class="container">
+        </div>
+    </header>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <!-- MAIN BODY -->
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
     <nav class="menu">
 
-      <a class="menu-item active" href="/admin_dashboard">
+      <a class="menu-item" href="/admin_dashboard">
         <i class="fas fa-th-large"></i><span>Dashboard</span>
       </a>
 
@@ -88,10 +85,24 @@
           <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
         </div>
       </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
       <hr class="menu-divider">
 
       <a class="menu-item" href="/admin_reports">
-        <i class="fas fa-user"></i><span>Reports</span>
+        <i class="fas fa-user"></i><span>Report</span>
       </a>
 
       <hr class="menu-divider">
@@ -103,80 +114,135 @@
     </nav>
   </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
 
-      <div class="welcome-section">
-        <p>Welcome <strong>DILJITH K BENNY</strong></p>
-      </div>
+            <!-- WELCOME -->
+            <div class="welcome-section">
+                <p>Welcome <strong>{{ admin.name }}</strong></p>
+            </div>
 
-      <!-- ✅ YOUR DASHBOARD SECTION -->
+            <div style="display:flex; width:100%;">
 
-      <link rel="stylesheet" href="{%static '../static/styles/style.css'%}"/>
+                <!-- CALENDAR -->
+                <div class="calendar-card">
+                    <div id="calendar"></div>
+                </div>
 
-      <!-- STAT CARDS -->
-      <section class="stats">
-        <div class="card">
-          <p>Total Students</p>
-          <h1>1,250 <span class="up">↑</span></h1>
+                <!-- RIGHT SIDE NOTIFICATIONS -->
+                <div class="side-info">
+
+                    <!-- TODAY -->
+                    <div class="info-box">
+                        <h3>Today's Sessions</h3>
+                        {% if today_list %}
+                        <ul>
+                            {% for s in today_list %}
+                                <li>{{ s.batch.batch_name }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>No sessions today.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- PENDING -->
+                    <div class="info-box">
+                        <h3>Upcoming Sessions</h3>
+                        {% if pending_list %}
+                        <ul>
+                            {% for p in pending_list %}
+                                <li>{{ p.batch.batch_name }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>No upcoming sessions.</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- POPUP MODAL -->
+    <div class="modal-bg" id="sessionModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeModal()">X</span>
+            <h3 id="modal-date"></h3>
+            <ul id="modal-session-list"></ul>
+
+            <div id="addSessionContainer" style="margin-top:10px;"></div>
         </div>
+    </div>
 
-        <div class="card">
-          <p>Total Mentors</p>
-          <h1>85</h1>
-        </div>
-      </section>
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
 
-      <!-- CHART + ACTIVITY -->
-      <section class="grid">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-        <div class="box chart-box">
-          <h3>Department Wise Student Count (2024)</h3>
-          <div class="chart-placeholder">
-            <p>[Chart Placeholder]</p>
-          </div>
-        </div>
+            var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+                initialView: "dayGridMonth",
+                height: 650,
 
-        <div class="box activity-box">
-          <h3>Recent Activity Feed</h3>
+                events: "/api/get_sessions/",
 
-          <ul class="activity-list">
-            <li><span>5 min ago</span> John Doe uploaded MPOWER CSV</li>
-            <li><span>1 hr ago</span> Prof. Smith changed mentor for Roll 1</li>
-            <li><span>2 hrs ago</span> Admin exported Students Report</li>
-            <li><span>1 hr ago</span> Aulip updated details</li>
-          </ul>
-        </div>
+                dateClick: function(info) {
+                    let date = info.dateStr;
 
-      </section>
+                    fetch(`/api/get_day_sessions/${date}`)
+                    .then(res => res.json())
+                    .then(data => {
 
-      <!-- BUTTONS -->
-      <div class="bottom-buttons">
-        <button class="btn primary">Upload MPOWER CSV</button>
-        <button class="btn">Bulk Import</button>
-        <button class="btn">Export Reports</button>
-      </div>
+                        document.getElementById("modal-date").innerHTML = 
+                            new Date(date).toDateString();
 
-    </main>
+                        let ul = document.getElementById("modal-session-list");
+                        ul.innerHTML = "";
 
-  </div>
+                        if (data.length === 0) {
+                            ul.innerHTML = "<li>No sessions scheduled.</li>";
+                        } else {
+                            data.forEach(item => {
+                                ul.innerHTML += `<li>${item.batch} – ${item.status}</li>`;
+                            });
+                        }
 
-  <!-- FOOTER -->
-  <!-- <footer class="footer">
-    
-  </footer> -->
+                        // ADD SESSION BUTTON (only for today or future)
+                        let today = new Date().toISOString().split("T")[0];
+                        let addContainer = document.getElementById("addSessionContainer");
 
-  <!-- DROPDOWN SCRIPT -->
-  <script>
-  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-    toggle.addEventListener('click', function (e) {
+                        if (date >= today) {
+                            addContainer.innerHTML = `
+                                <button class="add-btn" onclick="window.location.href='/admin_createSession'">
+                                    + Add Session
+                                </button>`;
+                        } else {
+                            addContainer.innerHTML = "";
+                        }
+
+                        document.getElementById("sessionModal").style.display = "flex";
+                    });
+                }
+            });
+
+            calendar.render();
+        });
+
+        function closeModal() {
+            document.getElementById("sessionModal").style.display = "none";
+        }
+
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function (e) {
       e.preventDefault();
-
       const dropdown = this.closest('.dropdown');
       dropdown.classList.toggle('open');
     });
   });
-</script>
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Session | Admin</title>
+
+    <!-- Base Theme Styles -->
+    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Page Style -->
+    <style>
+        /* Card container */
+        .page-container {
+            width: 100%;
+            /* padding: 10px; */
+        }
+
+        .session-card {
+            background: #ffffff;
+            width: 90%;
+            margin: auto;
+            margin-top: 10px;
+            padding: 32px;
+            border-radius: 14px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.12);
+            border-left: 6px solid #28a745;
+        }
+
+        /* Title */
+        .session-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .session-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 25px;
+        }
+
+        /* Form Grid */
+        .session-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #28a745;
+            background: #ffffff;
+            box-shadow: 0px 0px 4px #28a746ab;
+        }
+
+        .full-row {
+            grid-column: span 2;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            margin-top: 25px;
+            width: 200px;
+            padding: 14px;
+            border: none;
+            background: #28a745;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+            <div class="header-title">
+                <h2 class="rcss-title">RCSS</h2>
+                <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+            </div>
+        </div>
+
+        <h1 class="main-title">MENTOR MENTEE</h1>
+
+        <div class="header-right">
+            <div class="user-profile-icon"><i class="fas fa-user"></i></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <!-- BODY -->
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-chalkboard-teacher"></i><span>Faculty</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addFaculty"><i class="fas fa-user-plus"></i>Add Faculty</a>
+          <a class="dropdown-item" href="/admin_viewFaculty"><i class="fas fa-users"></i>View Faculty</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown open">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus active"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <div class="page-container">
+
+                <div class="session-card">
+
+                    <h2 class="session-title">Create New Mentoring Session</h2>
+                    <p class="session-subtitle">Schedule a new mentoring session for a batch</p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="session-grid">
+
+                            <div class="form-group full-row">
+                                <label>Batch</label>
+                                <select name="batch" required>
+                                    <option value="">Select Batch</option>
+                                    {% for b in batches %}
+                                        <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <input type="date" name="start_date" id="start_date" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>End Date</label>
+                                <input type="date" name="end_date" required>
+                            </div>
+
+                            <div class="form-group full-row">
+                                <label>Status</label>
+                                <select name="status">
+                                    <option value="active">Active</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="incomplete">Incomplete</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <button class="submit-btn" type="submit">Create Session</button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Auto-fill start_date if URL includes ?date=
+        const params = new URLSearchParams(window.location.search);
+        const d = params.get("date");
+        if (d) {
+            document.getElementById("start_date").value = d;
+        }
+    </script>
+
+</body>
+</html>

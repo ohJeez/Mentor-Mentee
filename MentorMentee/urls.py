@@ -40,6 +40,11 @@ path('logout', views.logout, name='logout'),
     path('profile/', views.profile_content, name='profile_content'),
     path('filter-students/', views.filter_students, name='filter_students'),
     path('session/<int:session_id>/', views.view_session, name='view_session'),
+    path('admin_createSession',views.admin_createSession),
+    
+    #Dashboard calendar
+    path("api/get_sessions/", views.api_get_sessions),
+    path("api/get_day_sessions/<date_str>", views.api_get_day_sessions),
     
     #Student url's
     path('signup', views.signup, name='signup'),

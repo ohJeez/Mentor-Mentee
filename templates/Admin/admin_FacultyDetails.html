@@ -38,7 +38,8 @@
       <div class="user-profile-icon">
         <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
       </div>
-      <button class="logout-btn">Log out</button>
+        <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+
     </div>
   </header>
 
