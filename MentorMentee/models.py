@@ -101,5 +101,27 @@ class Schedule(models.Model):
     created_by = models.ForeignKey(Admin,on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
-    status = models.CharField(max_length=25,default="Active",choices=[("active","Active"),("completed","Completed"),("incomplete","Incomplete"),("cancelled","Cancelled")])
+    status = models.CharField(max_length=25,default="Active",choices=[
+        ("active","Active"),
+        ("completed","Completed"),
+        ("incomplete","Incomplete"),
+        ("cancelled","Cancelled")
+        ])
     created_at = models.DateField(auto_now_add=True)
+    
+    #Session Requests
+class SessionRequest(models.Model):
+    request_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student,on_delete=models.CASCADE)
+    faculty = models.ForeignKey(Faculty,on_delete=models.CASCADE)
+    request_date = models.DateField(default=timezone.now)
+    status = models.CharField(max_length=25,default="Pending",choices=[
+        ("pending","Pending"),
+        ("accepted","Accepted"),
+        ("completed","Completed"),
+        ("rejected","Rejected"),
+        ("cancelled","Cancelled")
+        ])
+    session_date = models.DateField(null=True,blank=True)
+    session_time = models.TimeField(null=True,blank=True)
+    
