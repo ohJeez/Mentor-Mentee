@@ -52,6 +52,7 @@ path('logout', views.logout, name='logout'),
     path('student_api_get_sessions',views.student_api_get_sessions),
     path("get_sessions/", views.student_api_get_sessions),
     path("get_day_sessions/<str:date_str>", views.student_api_get_day_sessions),
+    path('student_RequestSession',views.student_RequestSession),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

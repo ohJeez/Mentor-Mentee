@@ -124,4 +124,4 @@ class SessionRequest(models.Model):
         ])
     session_date = models.DateField(null=True,blank=True)
     session_time = models.TimeField(null=True,blank=True)
-    
+    comments = models.CharField(max_length=200,blank=True,null=True)

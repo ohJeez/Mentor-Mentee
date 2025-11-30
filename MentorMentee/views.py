@@ -1067,3 +1067,36 @@ def student_api_get_day_sessions(request, date_str):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    
+    #Student Request Session
+def student_RequestSession(request):
+    contents={}
+    login_id = request.session.get('login_id')
+    if not login_id:
+        return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+    try:
+        student=Student.objects.get(login_id=login_id)
+        contents={'student':student}
+        
+        if request.method == 'POST':
+            request_date_str = request.POST['request_date']
+            reason = request.POST['reason']
+            status = 'Pending'
+            request_date = datetime.strptime(request_date_str, "%Y-%m-%d").date()
+            if request_date < date.today():
+                return HttpResponse(
+            "<script>alert('Invalid date selection!'); window.location.href='/student_RequestSession'</script>")
+            res = SessionRequest(
+                request_date=request_date_str,
+                status = status,
+                faculty_id = student.faculty_id,
+                student_id=student.student_id,
+                comments = reason
+                )
+            res.save()
+            return HttpResponse(
+            "<script>alert('Request sent successfully'); window.location.href='/student_dashboard'</script>")
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Student/student_RequestSession.html',contents)
