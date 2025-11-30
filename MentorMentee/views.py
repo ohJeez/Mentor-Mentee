@@ -52,6 +52,31 @@ def home(request):
                 
                 return render(request, 'Faculty/index.html', {'name': data.name, 'students': students, 'faculty': data, 'departments': departments, 'courses': courses, 'years': years, 'courses': courses, "batches": batches,})
             
+            elif res and res.userType == 'student':
+                student=Student.objects.get(login_id=res.login_id)
+                request.session['login_id']=student.login_id
+                dept = student.department
+                today = date.today()
+                active_sessions = Schedule.objects.filter(
+                    batch__course__department=dept,
+                    start_date__lte=today,
+                    end_date__gte=today
+                )
+                pending_sessions = Schedule.objects.filter(
+                    batch__course__department=dept,
+                    start_date__gt=today
+                )
+                missed_sessions = Schedule.objects.filter(
+                    batch__course__department=dept,
+                    end_date__lt=today
+                )
+                return render(request, "./Student/student_dashboard.html", {
+                    "student": student,
+                    "active_sessions": active_sessions,
+                    "pending_sessions": pending_sessions,
+                    "missed_sessions": missed_sessions,
+                })
+            
             else:
                 return HttpResponse("<script>alert('Invalid Login Credentials!');</script>")
 
@@ -81,7 +106,6 @@ def admin_dashboard(request):
         "today_list": today_list,
         "pending_list": pending_list,
     }
-
     return render(request, "./Admin/admin_dashboard.html", context)
 
 
@@ -969,3 +993,77 @@ def signup(request):
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'Student_SignUp.html',contents)
+
+# Student Dashboard
+def student_dashboard(request):
+    session_login = request.session.get("login_id")
+    
+    student = Student.objects.get(login_id=session_login)
+    dept = student.department
+
+    today = date.today()
+
+    active_sessions = Schedule.objects.filter(
+        batch__course__department=dept,
+        start_date__lte=today,
+        end_date__gte=today
+    )
+
+    pending_sessions = Schedule.objects.filter(
+        batch__course__department=dept,
+        start_date__gt=today
+    )
+
+    missed_sessions = Schedule.objects.filter(
+        batch__course__department=dept,
+        end_date__lt=today
+    )
+
+    return render(request, "./Student/student_dashboard.html", {
+        "student": student,
+        "active_sessions": active_sessions,
+        "pending_sessions": pending_sessions,
+        "missed_sessions": missed_sessions,
+    })
+
+#Dashboard Calendar
+def student_api_get_sessions(request):
+    student = Student.objects.get(login_id=request.session["login_id"])
+    dept = student.department
+    schedules = Schedule.objects.filter(batch__course__department=dept)
+    events = []
+    for s in schedules:
+        events.append({
+            "title": s.batch.batch_name,
+            "start": str(s.start_date),
+            "end": str(s.end_date + timedelta(days=1))
+        })
+    return JsonResponse(events, safe=False)
+
+# API: Get sessions for a specific day
+def student_api_get_day_sessions(request, date_str):
+    try:
+        session_login = request.session.get("login_id")
+        student = Student.objects.get(login_id=session_login)
+        dept = student.department
+        selected_date = date.fromisoformat(date_str)
+
+        # Sessions where this date is between start and end
+        sessions = Schedule.objects.filter(
+            batch__course__department=dept,
+            start_date__lte=selected_date,
+            end_date__gte=selected_date
+        )
+        data = [
+            {
+                "batch": s.batch.batch_name,
+                "status": s.status,
+                "start_date": str(s.start_date),
+                "end_date": str(s.end_date),
+            }
+            for s in sessions
+        ]
+        return JsonResponse(data, safe=False)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)

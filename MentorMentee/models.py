@@ -20,13 +20,13 @@ class Department(models.Model):
     email = models.EmailField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-#Courses
+    #Courses
 class Courses(models.Model):
     course_id = models.AutoField(primary_key=True)
     course_name = models.CharField(max_length=20)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     
-#Batches
+    #Batches
 class Batches(models.Model):
     batch_id = models.AutoField(primary_key=True)
     batch_name = models.CharField(max_length=30,blank=True)
@@ -94,7 +94,7 @@ class MentorAssignmentLog(models.Model):
     changed_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-#Scheduling Sessions
+    #Scheduling Sessions
 class Schedule(models.Model):
     schedule_id = models.AutoField(primary_key=True)
     batch = models.ForeignKey(Batches,on_delete=models.CASCADE)

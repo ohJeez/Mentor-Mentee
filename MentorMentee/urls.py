@@ -48,7 +48,11 @@ path('logout', views.logout, name='logout'),
     
     #Student url's
     path('signup', views.signup, name='signup'),
-    
+    path('student_dashboard',views.student_dashboard),
+    path('student_api_get_sessions',views.student_api_get_sessions),
+    path("get_sessions/", views.student_api_get_sessions),
+    path("get_day_sessions/<str:date_str>", views.student_api_get_day_sessions),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     
