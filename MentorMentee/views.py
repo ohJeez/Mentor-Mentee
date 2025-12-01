@@ -1100,3 +1100,17 @@ def student_RequestSession(request):
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Student/student_RequestSession.html',contents)
+
+#Student Profile
+def student_Profile(request):
+    contents={}
+    login=request.session.get('login_id')
+    if not login:
+        return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+    try:
+        student=Student.objects.get(login_id=login)
+        contents={'student':student}
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Student/student_profile.html',contents)
