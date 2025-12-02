@@ -125,3 +125,9 @@ class SessionRequest(models.Model):
     session_date = models.DateField(null=True,blank=True)
     session_time = models.TimeField(null=True,blank=True)
     comments = models.CharField(max_length=200,blank=True,null=True)
+    
+    #Student Uploads
+class StudentUploads(models.Model):
+    upload_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student,on_delete=models.CASCADE)
+    upload_file = models.CharField(max_length=500)
