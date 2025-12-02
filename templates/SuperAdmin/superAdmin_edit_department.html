@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Department</title>
+
+    <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Poppins, sans-serif;
+            background: #f4f7fb;
+            display: flex;
+        }
+
+        /* Sidebar stays fixed */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #1e9b48;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 30px;
+            color: white;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar a:hover {
+            background: #157a39;
+        }
+
+        /* Main page content */
+        .content {
+            margin-left: 260px; /* Space for sidebar */
+            width: calc(100% - 260px);
+            padding: 40px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .edit-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 600px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-top: 12px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 6px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .save-btn {
+            background: #1e9b48;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+
+        .cancel-btn {
+            background: #555;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- FIXED SIDEBAR -->
+    <div class="sidebar">
+        <h2 style="text-align:center; margin-bottom:25px;">RCSS</h2>
+        <a href="/superAdmin_dashboard/">Dashboard</a>
+        <a href="/superAdmin_departments/" style="background:#157a39;">Departments</a>
+        <a href="/superAdmin_courses/">Courses</a>
+        <a href="/superAdmin_batches/">Batches</a>
+        <a href="/superAdmin_faculty_admins/">Faculty Admins</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+
+        <h1 class="page-title">Edit Department</h1>
+
+        <div class="edit-box">
+            <form action="{% url 'superAdmin_edit_department' department.dept_id %}" method="POST">
+                {% csrf_token %}
+
+                <label>Department Name</label>
+                <input type="text" name="name" value="{{ department.name }}" required>
+
+                <label>Department Code</label>
+                <input type="text" name="code" value="{{ department.code }}" required>
+
+                <label>HOD Name</label>
+                <input type="text" name="hod_name" value="{{ department.hod_name }}">
+
+                <label>Email</label>
+                <input type="email" name="email" value="{{ department.email }}">
+
+                <button class="save-btn">Save Changes</button>
+                <a href="{% url 'superAdmin_departments' %}">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </a>
+
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>

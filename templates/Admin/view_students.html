@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Students | Mentor Mentee</title>
+
+  <!-- STYLES -->
+-  <link rel="stylesheet" href="{% static '../static/styles/admin_viewStudents.css' %}" />
++  <link rel="stylesheet" href="{% static 'styles/admin_viewStudents.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+
+<!-- ✅ HEADER -->
+<header class="header">
+  <div class="header-left">
+    <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+    <div class="header-title">
+      <h2 class="rcss-title">RCSS</h2>
+      <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+    </div>
+  </div>
+
+  <h1 class="main-title">MENTOR MENTEE</h1>
+
+  <div class="header-right">
+    <h3>{{admin.name}}</h3>
+    <div class="user-profile-icon">
+      <img src="{% static 'admin/admin_image/' %}{{admin.admin_image}}" alt="admin profile">
+    </div>
+    <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+  </div>
+</header>
+
+<!-- ✅ PAGE BODY -->
+<div class="container">
+
+  <!-- ✅ SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown open">
+        <a class="menu-item dropdown-toggle active">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users active"></i>View Students</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-chalkboard-teacher"></i><span>Faculty</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addFaculty"><i class="fas fa-user-plus"></i>Add Faculty</a>
+          <a class="dropdown-item" href="/admin_viewFaculty"><i class="fas fa-users"></i>View Faculty</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item active" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Reports</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+
+  <!-- ✅ MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ✅ FILTER + STUDENT LIST -->
+    <section class="students-section">
+      <div class="students-header">
+        <h2>Students List</h2>
+      </div>
+
+      <!-- ✅ Filters -->
+      <div class="students-filters">
+        <input type="text" id="searchInput" class="students-search" placeholder="Search by name or reg no..." />
+
+        <select id="batchFilter" class="students-filter">
+          <option value="">Filter by Batch</option>
+          {% for b in batches %}
+          <option value="{{ b.batch_name }}">{{ b.batch_name }}</option>
+          {% endfor %}
+        </select>
+
+        <select id="courseFilter" class="students-filter">
+          <option value="">Filter by Course</option>
+          {% for c in courses %}
+          <option value="{{ c.course_name }}">{{ c.course_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- ✅ Student Table -->
+      <div class="students-table-container">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Reg. No</th>
+              <th>Course</th>
+              <th>Batch</th>
+              <th>Assigned To</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for s in students %}
+            <tr data-name="{{ s.name|lower }}"
+                data-reg="{{ s.reg_no|lower }}"
+                data-batch="{{ s.batch.batch_name|lower }}"
+                data-course="{{ s.course.course_name|lower }}">
+
+              <td><img src="/static/student_images/{{ s.student_image }}" class="student-photo" /></td>
+              <td>{{ s.name }}</td>
+              <td>{{ s.reg_no }}</td>
+              <td>{{ s.course.course_name }}</td>
+              <td>{{ s.batch.batch_name }}</td>
+
+              <td>
+                {% if s.faculty %}
+                  {{ s.faculty.name }}
+                {% else %}
+                  <span style="color: #dc3545; font-weight: 600;">Unassigned</span>
+                {% endif %}
+              </td>
+
+              <td>
+                <button class="icon-btn view-btn"
+                        onclick="window.location.href='/admin_StudentDetails/{{ s.student_id }}'">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<!-- ✅ DROPDOWN SCRIPT -->
+<script>
+  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+</script>
+
+<!-- ✅ FILTERING SCRIPT -->
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const batchFilter = document.getElementById("batchFilter");
+  const courseFilter = document.getElementById("courseFilter");
+  const tableRows = document.querySelectorAll(".students-table tbody tr");
+
+  function applyFilters() {
+    const searchText = searchInput.value.toLowerCase();
+    const batchValue = batchFilter.value.toLowerCase();
+    const courseValue = courseFilter.value.toLowerCase();
+
+    tableRows.forEach(row => {
+      const name = row.dataset.name;
+      const reg = row.dataset.reg;
+      const batch = row.dataset.batch;
+      const course = row.dataset.course;
+
+      const matchesSearch = name.includes(searchText) || reg.includes(searchText);
+      const matchesBatch = !batchValue || batch === batchValue;
+      const matchesCourse = !courseValue || course === courseValue;
+
+      row.style.display = (matchesSearch && matchesBatch && matchesCourse) ? "" : "none";
+    });
+  }
+
+  searchInput.addEventListener("input", applyFilters);
+  batchFilter.addEventListener("change", applyFilters);
+  courseFilter.addEventListener("change", applyFilters);
+</script>
+
+</body>
+</html>

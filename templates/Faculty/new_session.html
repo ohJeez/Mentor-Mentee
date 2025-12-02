@@ -1,0 +1,40 @@
+{% include "Faculty/header.html" %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/session_form.css' %}">
+
+{% block content %}
+
+<div class="session-container">
+
+    <h2 class="title">Create New Session for {{ student.name }}</h2>
+
+    <div class="session-card">
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Title -->
+            <div class="input-group">
+                <label>Title</label>
+                <textarea name="title" required></textarea>
+            </div>
+
+            <!-- Academic_Details -->
+            <div class="input-group">
+                <label>Academic_Details</label>
+                <textarea name="academic_details" required></textarea>
+            </div>
+
+            <!-- Details -->
+            <div class="input-group">
+                <label>Details</label>
+                <textarea name="details"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Save Session</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

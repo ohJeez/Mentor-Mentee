@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Super Admin | Departments</title>
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+    <style>
+
+        body {
+            background:#f4f7fb;
+            font-family: Poppins, sans-serif;
+        }
+
+        /* ---------- Sidebar Icons ---------- */
+        .sidebar-item i {
+            margin-right:10px;
+            width:18px;
+        }
+
+        /* ---------- Header Spacing ---------- */
+        .page-container {
+            margin-left: 330px; /* for sidebar */
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;  /* centers table + form */
+        }
+
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        /* ---------- Add Button ---------- */
+        .add-btn {
+            background:#1e9b48;
+            color:white;
+            border:none;
+            padding:10px 18px;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:600;
+            transition:0.3s;
+        }
+        .add-btn:hover {
+            background:#157a39;
+        }
+
+        /* ---------- Table ---------- */
+        .table-box {
+            margin-top:20px;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.08);
+            width:750px;
+        }
+
+        table {
+            width:100%;
+            border-collapse: collapse;
+            margin-top:10px;
+        }
+
+        th {
+            background:#199644;
+            padding:12px;
+            color:white;
+            text-align:left;
+            font-size:15px;
+        }
+
+        td {
+            padding:14px;
+            border-bottom: 1px solid #eee;
+            font-size:15px;
+        }
+
+        .edit-link {
+            color:#007bff;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        .delete-link {
+            color:#d9534f;
+            font-weight:600;
+        }
+
+        /* ---------- Slide Form ---------- */
+        #formBox {
+            width: 500px;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.08);
+            margin-top:25px;
+            display:none;
+            opacity:0;
+            transform:translateY(-10px);
+            transition:0.3s ease;
+        }
+
+        #formBox.show {
+            display:block;
+            opacity:1;
+            transform:translateY(0);
+        }
+
+        input[type="text"], input[type="email"] {
+            width:100%;
+            padding:11px;
+            border-radius:6px;
+            border:1px solid #ccc;
+            outline:none;
+            margin-bottom:12px;
+        }
+
+        .save-btn {
+            background:#1e9b48;
+            color:white;
+            border:none;
+            padding:8px 18px;
+            border-radius:6px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        .cancel-btn {
+            background:#555;
+            color:white;
+            border:none;
+            padding:8px 18px;
+            border-radius:6px;
+            cursor:pointer;
+            font-weight:600;
+            margin-left:10px;
+        }
+        /* Centers all page content properly */
+        .content-wrapper {
+            margin-left: 320px;   /* sidebar space */
+            padding: 40px;
+            width: calc(100% - 320px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;  /* centers table & Add button */
+        }
+
+        /* center the table card */
+        .table-box {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 750px;              /* table width */
+            max-width: 90%;            /* responsiveness */
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-left: auto;
+            margin-right: auto;       /* center the box */
+        }
+
+        /* center the Add button */
+        .add-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+
+<body>
+
+{% include 'SuperAdmin/superAdmin_header_sidebar.html' %}
+
+<div class="content-wrapper">
+
+
+    <h2 class="page-title">Departments</h2>
+
+    <!-- Add Button -->
+    <button class="add-btn" onclick="toggleForm()">
+        <i data-feather="plus-circle"></i> Add Department
+    </button>
+
+    <!-- Table -->
+    <div class="table-box">
+        <table>
+            <tr>
+                <th>Department Name</th>
+                <th style="width:150px;">Actions</th>
+            </tr>
+
+            {% for d in departments %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>
+                    <a href="{% url 'superAdmin_edit_department' d.dept_id %}" class="edit-link">Edit</a> |
+                    <a href="{% url 'superAdmin_delete_department' d.dept_id %}" class="delete-link">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Slide Form -->
+    <div id="formBox">
+        <form action="{% url 'superAdmin_add_department' %}" method="POST">
+            {% csrf_token %}
+
+            <label>Department Name</label>
+            <input type="text" name="name" required>
+
+            <label>Department Code</label>
+            <input type="text" name="code" required>
+
+            <label>HOD Name</label>
+            <input type="text" name="hod_name">
+
+            <label>Email</label>
+            <input type="email" name="email">
+
+            <button class="save-btn">Save</button>
+            <button type="button" class="cancel-btn" onclick="toggleForm()">Cancel</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    feather.replace();  // load icons
+
+    function toggleForm() {
+        const box = document.getElementById("formBox");
+        box.classList.toggle("show");
+    }
+</script>
+
+</body>
+</html>

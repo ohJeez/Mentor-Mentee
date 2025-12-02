@@ -1,0 +1,234 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<title>Super Admin | Dashboard</title>
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* ============================= */
+/*           GLOBAL              */
+/* ============================= */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f5f7fa;
+    color: #222;
+    transition: 0.3s ease;
+}
+
+/* ============================= */
+/*           HEADER              */
+/* ============================= */
+.header {
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    border-bottom: 1px solid #ddd;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    width: 55px;
+}
+
+.main-title {
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logout-btn {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.logout-btn:hover {
+    background: #c72432;
+}
+
+/* ============================= */
+/*            SIDEBAR            */
+/* ============================= */
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 240px;
+    background: #1f7a3a;
+    height: calc(100vh - 80px);
+    padding-top: 30px;
+    position: sticky;
+    top: 0;
+}
+
+.menu-item {
+    display: block;
+    padding: 15px 25px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+.menu-item:hover,
+.menu-item.active {
+    background: #145a28;
+}
+
+/* ============================= */
+/*           DASHBOARD           */
+/* ============================= */
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+}
+
+.dashboard-section h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Cards */
+.dashboard-cards {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.dashboard-card {
+    flex: 1;
+    min-width: 250px;
+    background: linear-gradient(135deg, #ffffff, #eef2f3);
+    padding: 35px;
+    border-radius: 18px;
+    text-align: center;
+    border: 1px solid #e4e4e4;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+/* Hover Animation */
+.dashboard-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+}
+
+/* Icon */
+.dashboard-card .icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+    color: #1f7a3a;
+    animation: pop 0.6s ease-in-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.5); opacity: 0;}
+    100% { transform: scale(1); opacity: 1;}
+}
+
+/* Count */
+.count {
+    font-size: 26px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <img src="{% static 'Assets/logo.png' %}" class="header-logo">
+    <div>
+      <h2>RCSS</h2>
+      <p>Rajagiri College of Social Sciences</p>
+    </div>
+  </div>
+
+  <h1 class="main-title">SUPER ADMIN</h1>
+
+  <div class="header-right">
+    <h3>{{ superadmin.name }}</h3>
+
+    <button class="logout-btn" onclick="window.location='/logout'">Log out</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="/superAdmin_dashboard" class="menu-item active">Dashboard</a>
+    <a href="/superAdmin_departments" class="menu-item">Departments</a>
+    <a href="/superAdmin_courses" class="menu-item">Courses</a>
+    <a href="/superAdmin_batches" class="menu-item">Batches</a>
+    <a href="/superAdmin_add_faculty_admin" class="menu-item">Faculty Admins</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <section class="dashboard-section">
+      <h2>Dashboard Overview</h2>
+
+      <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+          <i class="fas fa-building icon"></i>
+          <h3>Total Departments</h3>
+          <p class="count">{{ departments_count }}</p>
+        </div>
+
+        <div class="dashboard-card">
+          <i class="fas fa-book icon"></i>
+          <h3>Total Courses</h3>
+          <p class="count">{{ courses_count }}</p>
+        </div>
+
+        <div class="dashboard-card">
+          <i class="fas fa-layer-group icon"></i>
+          <h3>Total Batches</h3>
+          <p class="count">{{ batches_count }}</p>
+        </div>
+
+        <div class="dashboard-card">
+          <i class="fas fa-user-tie icon"></i>
+          <h3>Total Faculty Admins</h3>
+          <p class="count">{{ admins_count }}</p>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+</div>
+
+</body>
+</html>
