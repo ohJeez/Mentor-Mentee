@@ -1114,3 +1114,4 @@ def student_Profile(request):
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Student/student_profile.html',contents)
+
