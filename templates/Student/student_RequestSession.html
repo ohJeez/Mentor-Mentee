@@ -191,7 +191,7 @@
 
         <div class="header-right">
             <div class="user-profile-icon"><i class="fas fa-user"></i></div>
-            <button class="logout-btn">Log out</button>
+            <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
         </div>
     </header>
 
@@ -208,20 +208,20 @@
 
                 <hr class="menu-divider">
 
-                <a class="menu-item" href="/student_profile">
-                    <i class="fas fa-user"></i><span>Profile</span>
-                </a>
-
-                <hr class="menu-divider">
-
                 <a class="menu-item" href="/student_sessions">
                     <i class="fas fa-file-alt"></i><span>My Sessions</span>
                 </a>
 
                 <hr class="menu-divider">
 
-                <a class="menu-item active" href="/student_request_session">
+                <a class="menu-item active" href="/student_RequestSession">
                     <i class="fas fa-calendar-plus"></i><span>Request Session</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_profile">
+                    <i class="fas fa-user"></i><span>Profile</span>
                 </a>
 
             </nav>
