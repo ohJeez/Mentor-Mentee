@@ -31,6 +31,7 @@ class Batches(models.Model):
     batch_id = models.AutoField(primary_key=True)
     batch_name = models.CharField(max_length=30,blank=True)
     course = models.ForeignKey(Courses,on_delete=models.CASCADE)
+    batch_mail = models.EmailField(max_length=150,db_index=False,blank=True,null=True)
     
     
     #Admin
