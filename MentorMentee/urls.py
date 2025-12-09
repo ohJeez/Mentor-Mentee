@@ -54,6 +54,8 @@ path('logout', views.logout, name='logout'),
     path("get_day_sessions/<str:date_str>", views.student_api_get_day_sessions),
     path('student_RequestSession',views.student_RequestSession),
     path('student_profile',views.student_Profile),
+    path('student_uploads',views.student_uploads),
+    
     
 
 

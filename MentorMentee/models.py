@@ -130,4 +130,12 @@ class SessionRequest(models.Model):
 class StudentUploads(models.Model):
     upload_id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student,on_delete=models.CASCADE)
-    upload_file = models.CharField(max_length=500)
+    file_name = models.CharField(max_length=100,blank=True,null=True)
+    upload_file = models.FileField(upload_to='student_uploads/',max_length=500)
+    description = models.CharField(max_length=200,blank=True,null=True)
+    def file_type(self):
+        ext = str(self.upload_file.name).lower()
+        if ext.endswith(".pdf"):
+            return "pdf"
+        return "image"
+    

@@ -1,0 +1,184 @@
+/* ===================== STUDENT UPLOADS PAGE STYLES ===================== */
+
+        /* ===================== LAYOUT ===================== */
+        .uploads-container {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .upload-list-card {
+            width: 30%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        .upload-list-card h3 {
+            margin-bottom: 15px;
+            color: #28a745;
+            font-weight: 700;
+        }
+
+        .upload-item {
+            background: #eef7ee;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+
+        .upload-item:hover {
+            background: #d8f1d8;
+            transform: translateX(4px);
+        }
+
+        .preview-card {
+            width: 70%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        /* ===================== PDF/Image PREVIEW AREA ===================== */
+        #preview-container {
+            width: 100%;
+            height: 510px;
+            background: #f7f7f7;
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        #pdf-scroll-box {
+            width: 100%;
+            height: 510px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        canvas.pdf-page {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .viewer {
+            max-width: 100%;
+            max-height: 500px;
+            display: block;
+            margin: auto;
+            object-fit: contain;
+        }
+
+        /* ===================== UPLOAD BUTTON ===================== */
+        .upload-btn-main {
+            background: #28a745;
+            padding: 12px 22px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .upload-btn-main:hover {
+            background: #1f7a33;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* ===================== MODAL ===================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-box {
+            background: white;
+            width: 450px;
+            padding: 28px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            animation: popIn 0.25s ease-out;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-box h2 {
+            color: #28a745;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            font-size: 14px;
+        }
+
+        .modal-box input,
+        .modal-box textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border-radius: 8px;
+            border: 1.5px solid #ccc;
+            font-size: 14px;
+        }
+
+        .modal-box textarea {
+            resize: none;
+        }
+
+        .modal-buttons {
+            text-align: right;
+            margin-top: 15px;
+        }
+
+        .cancel-btn {
+            background: #888;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .upload-btn {
+            background: #28a745;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }

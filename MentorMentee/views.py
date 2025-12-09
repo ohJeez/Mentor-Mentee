@@ -1115,3 +1115,32 @@ def student_Profile(request):
         print(f"Error! {e}")
     return render(request,'./Student/student_profile.html',contents)
 
+#Student Uploads
+def student_uploads(request):
+    contents={}
+    login_id = request.session.get('login_id')
+    if not login_id:
+        return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+    try:
+        student=Student.objects.get(login_id=login_id)
+        uploads=StudentUploads.objects.filter(student_id=student.student_id)
+        contents={'student':student,'uploads':uploads}
+        if request.method == "POST":
+                file_name = request.POST.get("file_name")
+                description = request.POST.get("description")
+                upload_file = request.FILES.get("upload_file")
+                # Save directly using FileField
+                res = StudentUploads(
+                    student=student,
+                    file_name=file_name,
+                    upload_file=upload_file,
+                    description=description
+                )
+                res.save()
+                return HttpResponse(
+                    "<script>alert('File uploaded successfully!'); window.location.href='/student_uploads'</script>")
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Student/student_uploads.html',contents)
+
