@@ -295,7 +295,48 @@ def admin_ViewStudents(request):
     return render(request,'./Admin/view_students.html',contents)
 
 #Add faculty
-def admin_addFaculty(request):
+# def admin_addFaculty(request):
+#     contents={}
+#     try:
+#         login_id=request.session.get('login_id')
+#         if not login_id:
+#             return HttpResponse(
+#             "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+#         adm_dept=Admin.objects.get(login_id=login_id)
+#         dept=Department.objects.filter(dept_id=adm_dept.department_id)
+#         contents={'department':dept,'admin':adm_dept}
+#     except Exception as e:
+#         print(f"Error! {e}")
+#     if request.method=='POST':
+#         name=request.POST['name']
+#         email=request.POST['email']
+#         phone=request.POST['phone']
+#         department=request.POST['department']
+#         designation=request.POST['designation']
+#         username=request.POST['username']
+#         passwd=request.POST['password']
+#         faculty_image=request.FILES['faculty_image']
+#         photo_path = os.path.join(
+#                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+#                 'static',
+#                 'faculty_images'
+#             )
+
+#         fs = FileSystemStorage(location=photo_path, base_url='../static/faculty_images/')
+#         image = fs.save(faculty_image.name, faculty_image)
+        
+#         res1=Login(username=username,password=passwd,userType='faculty')
+#         res1.save()
+#         res2=Faculty(name=name,email=email,phone=phone,department_id=department,designation=designation,faculty_image=image,login_id=res1.login_id)
+#         res2.save()
+        
+#         return HttpResponse(
+#                 "<script>alert('Faculty Added Successfully!'); window.location.href='/admin_addFaculty'</script>")
+#     return render(request,'./Admin/admin_addFaculty.html',contents)
+
+
+#Add Batches
+def admin_addBatch(request):
     contents={}
     try:
         login_id=request.session.get('login_id')
@@ -303,36 +344,48 @@ def admin_addFaculty(request):
             return HttpResponse(
             "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
         adm_dept=Admin.objects.get(login_id=login_id)
-        dept=Department.objects.filter(dept_id=adm_dept.department_id)
-        contents={'department':dept,'admin':adm_dept}
+        courses=Courses.objects.filter(department_id=adm_dept.department_id)
+        contents={'courses':courses,'admin':adm_dept}
     except Exception as e:
         print(f"Error! {e}")
     if request.method=='POST':
-        name=request.POST['name']
-        email=request.POST['email']
-        phone=request.POST['phone']
-        department=request.POST['department']
-        designation=request.POST['designation']
-        username=request.POST['username']
-        passwd=request.POST['password']
-        faculty_image=request.FILES['faculty_image']
-        photo_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'static',
-                'faculty_images'
-            )
-
-        fs = FileSystemStorage(location=photo_path, base_url='../static/faculty_images/')
-        image = fs.save(faculty_image.name, faculty_image)
+        batch_name=request.POST['batch_name']
+        course=request.POST['course']
         
-        res1=Login(username=username,password=passwd,userType='faculty')
-        res1.save()
-        res2=Faculty(name=name,email=email,phone=phone,department_id=department,designation=designation,faculty_image=image,login_id=res1.login_id)
-        res2.save()
+        res=Batches(batch_name=batch_name,course_id=course)
+        res.save()
         
         return HttpResponse(
-                "<script>alert('Faculty Added Successfully!'); window.location.href='/admin_addFaculty'</script>")
-    return render(request,'./Admin/admin_addFaculty.html',contents)
+                "<script>alert('Batch Added Successfully!'); window.location.href='/admin_addBatch'</script>")
+    return render(request,'./Admin/admin_addBatch.html',contents)
+
+#View Batches
+def admin_viewBatches(request):
+    contents={}
+    try:
+        login_id=request.session.get('login_id')
+        if not login_id:
+            return HttpResponse(
+            "<script>alert('Session expired! Please login again.'); window.location.href='/'</script>")
+        adm_dept=Admin.objects.get(login_id=login_id)
+        batches=Batches.objects.filter(course__department_id=adm_dept.department_id)
+        contents={'batches':batches,'admin':adm_dept}
+        
+        #Editing batch
+        if request.method == 'POST':
+            batch_id=request.POST['batch_id']
+            batch_name=request.POST['batch_name']
+            mail=request.POST['batch_mail']
+            
+            batch_obj=Batches.objects.get(batch_id=batch_id)
+            batch_obj.batch_name=batch_name
+            batch_obj.batch_mail=mail
+            batch_obj.save()
+            return HttpResponse(
+                "<script>alert('Batch Updated Successfully!'); window.location.href='/admin_viewBatches'</script>")
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request,'./Admin/admin_viewBatches.html',contents)
 
 #View Faculties
 def admin_viewFaculty(request):

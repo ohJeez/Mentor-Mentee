@@ -45,6 +45,11 @@
       <a class="menu-item" href="/admin_dashboard">
         <i class="fas fa-th-large"></i><span>Dashboard</span>
       </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
 
       <hr class="menu-divider">
 
@@ -58,19 +63,18 @@
           <a class="dropdown-item active" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
         </div>
       </div>
-
       <hr class="menu-divider">
 
-      <div class="dropdown">
-        <a class="menu-item dropdown-toggle">
-          <i class="fas fa-chalkboard-teacher"></i><span>Faculty</span>
-          <i class="fas fa-chevron-down dropdown-icon"></i>
-        </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="/admin_addFaculty"><i class="fas fa-user-plus"></i>Add Faculty</a>
-          <a class="dropdown-item" href="/admin_viewFaculty"><i class="fas fa-users"></i>View Faculty</a>
-        </div>
-      </div>
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
 
       <hr class="menu-divider">
 
@@ -112,7 +116,6 @@
 
     </nav>
   </aside>
-
 
   <!-- ✅ MAIN CONTENT -->
   <main class="main-content">
