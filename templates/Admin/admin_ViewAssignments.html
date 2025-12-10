@@ -78,18 +78,32 @@
 
       <div class="dropdown open">
         <a class="menu-item dropdown-toggle">
-          <i class="fas fa-link active"></i><span>Assignments</span>
+          <i class="fas fa-link"></i><span>Assignments</span>
           <i class="fas fa-chevron-down dropdown-icon"></i>
         </a>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
-          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users active"></i>View Assignments</a>
+          <a class="dropdown-item active" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
         </div>
       </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
       <hr class="menu-divider">
 
       <a class="menu-item" href="/admin_reports">
-        <i class="fas fa-user"></i><span>Reports</span>
+        <i class="fas fa-user"></i><span>Report</span>
       </a>
 
       <hr class="menu-divider">
