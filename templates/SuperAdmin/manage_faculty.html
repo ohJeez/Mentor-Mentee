@@ -1,0 +1,50 @@
+{% extends 'SuperAdmin/base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Faculty Management</h2>
+    <a href="/add_faculty/" class="btn btn-success px-4 py-2">
+        + Add Faculty
+    </a>
+</div>
+
+<div class="row">
+    {% for fac in faculty_list %}
+    <div class="col-md-3 mb-4">
+        <div class="card shadow-sm" style="border-radius:12px;">
+            
+            <!-- Faculty Image -->
+            <img src="{% if fac.faculty_image %}{{ fac.faculty_image.url }}{% else %}/static/default_user.png{% endif %}"
+                 alt="Faculty Image"
+                 class="img-fluid rounded-top"
+                 style="height:200px; width:100%; object-fit:cover;">
+            
+            <div class="card-body text-center">
+                <h6 class="fw-bold">{{ fac.name }}</h6>
+                <p class="text-muted" style="font-size:13px;">
+                    {{ fac.designation }}
+                </p>
+                <p class="text-success fw-bold" style="font-size:13px;">
+                    {{ fac.department.name }}
+                </p>
+
+                <!-- Delete Button -->
+                {% if fac.faculty_id %}
+                <a href="{% url 'delete_faculty' faculty_id=fac.faculty_id %}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure you want to delete {{ fac.name }}?');">
+                   Delete
+                </a>
+                {% else %}
+                <button class="btn btn-secondary btn-sm" disabled>No Action</button>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center mt-5">No Faculty Members Found</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

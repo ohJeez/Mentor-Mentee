@@ -53,7 +53,7 @@ class Faculty(models.Model):
     phone = models.CharField(max_length=15, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="faculties")
     designation = models.CharField(max_length=100, blank=True, null=True)
-    faculty_image = models.CharField(max_length=500,blank=True)
+    faculty_image = models.ImageField(upload_to='faculty_images/', null=True, blank=True)
     # created_at = models.DateTimeField(auto_now_add=True)
     
     #Student
@@ -71,18 +71,20 @@ class Student(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="students")
     dob = models.DateField(null=True, blank=True)
     
+    application_form = models.FileField(upload_to='application_forms/', null=True, blank=True)
+    assessment_file = models.FileField(upload_to='assessments/', null=True, blank=True)
+    
     
     #Mentoring Session
 class MentoringSession(models.Model):
     session_id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="sessions")
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name="sessions")
-    session_date = models.DateField()
-    topics_discussed = models.TextField()
-    remarks = models.TextField(blank=True, null=True)
-    action_plan = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sessions')
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='sessions')
+    date = models.DateTimeField(default=timezone.now)
+    title = models.TextField(blank=True, null=True)
+    academic_details = models.TextField(blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
+
     #MentorAssignments
 class MentorAssignmentLog(models.Model):
     log_id = models.AutoField(primary_key=True)

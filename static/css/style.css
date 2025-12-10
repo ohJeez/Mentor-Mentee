@@ -436,12 +436,16 @@ body {
     border: none;
     cursor: pointer;
     transition: 0.2s;
+
+    text-decoration: none !important; /* remove underline */
+    display: inline-block; /* needed to remove underline properly */
   }
-  
+
   .view-btn:hover {
     background: var(--dark-green);
+    text-decoration: none; /* ensure hover doesn't show underline */
   }
-  
+
   /* Mobile – stack cards */
   @media (max-width: 768px) {
     .students-table {
@@ -457,3 +461,6 @@ body {
     }
   }
   
+  select option:first-child {
+    color: #999; 
+}

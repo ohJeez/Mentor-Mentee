@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperAdmin Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6f9;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #1B8A4F;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 20px;
+            color: white;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 80px;
+            border-radius: 50%;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #146C3A;
+            padding-left: 30px;
+        }
+
+        /* Top Navigation */
+        .topnav {
+            background: white;
+            padding: 12px 25px;
+            margin-left: 250px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+        }
+
+        .username {
+            font-size: 16px;
+            font-weight: bold;
+            color: #146C3A;
+        }
+
+        .logout-btn {
+            background: #D62828;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .logout-btn:hover {
+            background: #A61C1C;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 250px;
+            padding: 25px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #146C3A;
+            margin-bottom: 20px;
+        }
+
+        /* Cards */
+        .cards-container {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 270px;
+            padding: 20px;
+            border-radius: 12px;
+            background: white;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #146C3A;
+        }
+
+        .card-value {
+            font-size: 32px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .menu-icon {
+            width: 20px;
+            filter: brightness(0) invert(1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/71/Rajagiri_College_of_Social_Sciences_logo.png/200px-Rajagiri_College_of_Social_Sciences_logo.png">
+        </div>
+        <h2>Super Admin</h2>
+
+        <a href="/manage_departments/"><img class="menu-icon" src="https://cdn-icons-png.flaticon.com/128/3135/3135706.png"> Departments</a>
+        <a href="/manage_courses/"><img class="menu-icon" src="https://cdn-icons-png.flaticon.com/128/3135/3135690.png"> Courses</a>
+        <a href="/logout/"><img class="menu-icon" src="https://cdn-icons-png.flaticon.com/128/1828/1828490.png"> Logout</a>
+    </div>
+
+    <!-- Top Navigation -->
+    <div class="topnav">
+        <div class="username">Welcome, SuperAdmin</div>
+        <a class="logout-btn" href="/logout/">Logout</a>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="title">Dashboard Overview</div>
+
+        <div class="cards-container">
+            <div class="card" onclick="location.href='/manage_departments/'">
+                <div class="card-title">Departments</div>
+                <div class="card-value">{{ total_departments }}</div>
+            </div>
+
+            <div class="card" onclick="location.href='/manage_courses/'">
+                <div class="card-title">Courses</div>
+                <div class="card-value">{{ total_courses }}</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

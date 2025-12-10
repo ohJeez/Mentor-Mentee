@@ -1,35 +1,22 @@
 from django.urls import path
+from .views import *
 
-from . import views
-
-#URL's
-#path('pathname',functionName)
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', home, name='home'),
 
-    # ✅ No login in URL
-    path('logout', views.logout, name='logout'),
-    path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
-    path('admin_addStudent', views.add_Student, name='admin_addStudent'),
-    path('admin_ViewStudents', views.admin_ViewStudents),
-    path('admin_addFaculty', views.admin_addFaculty),
-    path('admin_viewFaculty', views.admin_viewFaculty),
-    path('admin_FacultyDetails/<fac_id>', views.admin_FacultyDetails),
-    path('admin_AddAssignment/', views.admin_AddAssignment, name='admin_AddAssignment'),
-    path('get_batch_students/<int:batch_id>/<int:faculty_id>', views.get_batch_students, name='get_batch_students'),
-    path('save_assignments', views.save_assignments, name='save_assignments'),
-    path("admin_ViewAssignments", views.admin_ViewAssignments),
-    path("get_assigned_students", views.get_assigned_students, name="get_assigned_students"),
-    ##Faculty URL's
-    path("assignments/", views.assignment_page, name="assignment_page"),
-    path('partials/students/', views.students_partial, name='students_partial'),
-    path('partials/student/<int:student_id>/', views.student_profile_partial, name='student_profile_partial'),
-    path('student/<int:student_id>/', views.student_profile, name='student_profile'),
+    path('superadmin_dashboard/', superadmin_dashboard, name='superadmin_dashboard'),
+
+    path('manage_departments/', manage_departments, name='manage_departments'),
+    path('add_department/', add_department, name='add_department'),
+    path('delete_department/<int:id>/', delete_department, name='delete_department'),
+
+    path('manage_courses/', manage_courses, name='manage_courses'),
+    path('add_course/', add_course, name='add_course'),
+    path('delete_course/<int:course_id>/', delete_course, name='delete_course'),
+
+    path('manage_faculty/', manage_faculty, name='manage_faculty'),
+    path('add_faculty/', add_faculty, name='add_faculty'),
+    path('delete_faculty/<int:faculty_id>/', delete_faculty, name='delete_faculty'),
+
+    path('logout/', logout, name='logout'),
 ]
-    
-    
-    
-    
-    
-    
-

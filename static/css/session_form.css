@@ -1,0 +1,65 @@
+.session-container {
+    width: 80%;
+    margin: 30px auto;
+    font-family: 'Poppins', sans-serif;
+}
+
+.title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.session-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #333;
+}
+
+.input-group textarea,
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    background: #f8f9fa;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.input-group textarea:focus,
+.input-group input:focus {
+    outline: none;
+    border-color: #28a745;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #28a745;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-btn:hover {
+    background: #218838;
+}

@@ -1,0 +1,32 @@
+{% extends 'SuperAdmin/base.html' %}
+{% block content %}
+
+<h3>Department Management</h3>
+
+<a href="/add_department/" class="btn btn-custom btn-sm mt-2">+ Add Department</a>
+
+<table class="table table-bordered table-striped mt-3">
+    <thead class="table-dark">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Code</th>
+        <th>HOD</th>
+        <th>Email</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    {% for d in departments %}
+    <tr>
+        <td>{{ d.dept_id }}</td>
+        <td>{{ d.name }}</td>
+        <td>{{ d.code }}</td>
+        <td>{{ d.hod_name }}</td>
+        <td>{{ d.email }}</td>
+        <td><a class="btn btn-danger btn-sm" href="/delete_department/{{ d.dept_id }}/">Delete</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

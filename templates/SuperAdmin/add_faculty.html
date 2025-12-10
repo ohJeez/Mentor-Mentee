@@ -1,0 +1,63 @@
+{% extends 'SuperAdmin/base.html' %}
+{% block content %}
+
+<h4 class="fw-bold mb-3">Add Faculty</h4>
+
+<form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm bg-white">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+        <div class="col">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="col">
+            <label class="form-label">Designation</label>
+            <input type="text" name="designation" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="col">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-control" required>
+            <option value="">-- Select Department --</option>
+            {% for dept in departments %}
+            <option value="{{ dept.dept_id }}">{{ dept.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Profile Image</label>
+        <input type="file" class="form-control" name="faculty_image">
+    </div>
+
+    <hr>
+
+    <h6 class="fw-bold">Login Credentials</h6>
+    <div class="row mb-3">
+        <div class="col">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+        <div class="col">
+            <label class="form-label">Password</label>
+            <input type="text" name="password" class="form-control" required>
+        </div>
+    </div>
+
+    <button class="btn btn-success fw-bold">Submit</button>
+</form>
+
+{% endblock %}
