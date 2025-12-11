@@ -381,6 +381,13 @@ Kindly note the following:
 // LIVE UPDATE ON DATE CHANGE
 document.getElementById("start_date").addEventListener("change", updateMailDraft);
 document.getElementById("end_date").addEventListener("change", updateMailDraft);
+document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
 </script>
 
 </body>

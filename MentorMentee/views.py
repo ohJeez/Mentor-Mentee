@@ -19,6 +19,7 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from django.utils.dateparse import parse_date
+from django.core.mail import send_mail
 
 # Create your views here.
 def home(request):
@@ -161,23 +162,23 @@ def admin_createSession(request):
     login_id = request.session.get('login_id')
     if not login_id:
         return HttpResponse("""
-    <html>
-    <head>
-        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-    </head>
-    <body>
-        <script>
-            Swal.fire({
-                title: 'Session Expired!',
-                text: 'Please login again.',
-                icon: 'warning'
-            }).then(() => {
-                window.location.href = '/';
-            });
-        </script>
-    </body>
-    </html>
-""")
+            <html>
+            <head>
+                <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+            </head>
+            <body>
+                <script>
+                    Swal.fire({
+                        title: 'Session Expired!',
+                        text: 'Please login again.',
+                        icon: 'warning'
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                </script>
+            </body>
+            </html>
+        """)
     try:   
         admin = Admin.objects.get(login_id=login_id)
         batches = Batches.objects.filter(course__department_id=admin.department_id)
@@ -472,21 +473,75 @@ def save_assignments(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
+
             faculty_id = data.get("faculty")
             student_ids = data.get("students", [])
 
-            # Clear old assignments for THIS faculty (you can also limit by batch if you want)
-            Student.objects.filter(faculty_id=faculty_id).update(faculty=None)
+            faculty = Faculty.objects.get(faculty_id=faculty_id)
 
-            # Assign new students
+            # STEP 1 — Fetch students originally assigned to this faculty
+            old_assigned_ids = list(
+                Student.objects.filter(faculty_id=faculty_id).values_list("student_id", flat=True)
+            )
+
+            # STEP 2 — Students who were removed (unassigned)
+            removed_ids = set(old_assigned_ids) - set(student_ids)
+
+            # STEP 3 — Clear assignment for removed students
+            Student.objects.filter(student_id__in=removed_ids).update(faculty_id=None)
+
+            # STEP 4 — Assign new students
             Student.objects.filter(student_id__in=student_ids).update(faculty_id=faculty_id)
 
-            return JsonResponse({"status": "success", "message": "Assignments saved successfully ✅"})
+            # STEP 5 — Identify students who are newly assigned OR re-assigned after unassign
+            newly_assigned_ids = (set(student_ids) - set(old_assigned_ids)) | (set(student_ids) & removed_ids)
+
+            newly_assigned_students = Student.objects.filter(student_id__in=newly_assigned_ids)
+
+            # STEP 6 — Send email only to newly assigned OR re-assigned students
+            for s in newly_assigned_students:
+                try:
+                    email_subject = "Mentor Assignment Notification"
+                    email_body = f"""
+Dear {s.name},
+
+Greetings!
+
+    You have been assigned a mentor as part of the Mentorship Programme.
+
+    Assigned Mentor:
+        Name: {faculty.name}
+        Department: {faculty.department.name}
+
+Please contact your mentor as required.
+
+Regards,
+    Mentor-Mentee Coordination Team
+"""
+
+                    send_mail(
+                        subject=email_subject,
+                        message=email_body,
+                        from_email="noreply.mentormentee@gmail.com",
+                        recipient_list=[s.email],
+                        fail_silently=False,
+                    )
+
+                except Exception as err:
+                    print(f"Email error for {s.name}: {err}")
+
+            return JsonResponse({
+                "status": "success",
+                "message": "Assignments updated. Emails sent only to newly assigned or re-assigned students."
+            })
+
         except Exception as e:
             print(f"Error in save_assignments: {e}")
             return JsonResponse({"error": "Server error"}, status=500)
 
     return JsonResponse({"error": "Invalid method"}, status=400)
+
+
 
 #Admin view assignments
 def admin_ViewAssignments(request):
@@ -1211,8 +1266,6 @@ def student_uploads(request):
         print(f"Error! {e}")
     return render(request,'./Student/student_uploads.html',contents)
 
-
-from django.core.mail import send_mail
 
 def test_mail(request):
     try:
