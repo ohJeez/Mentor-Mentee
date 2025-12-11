@@ -881,6 +881,23 @@ def generate_report_pdf(request):
 
     return response
 
+#Admin View Sessions
+def admin_viewSessions(request):
+    try:
+        login_id = request.session.get("login_id")
+        if not login_id:
+            return redirect('/')
+        admin = Admin.objects.get(login_id=login_id)
+        dept = admin.department_id
+        batches = Batches.objects.filter(course__department_id=dept)
+        faculties = Faculty.objects.filter(department_id=dept)
+        students = Student.objects.filter(department_id=dept)
+        sessions = Schedule.objects.filter(batch__course__department_id=dept)
+    except Exception as e:
+        print(f"Error! {e}")
+    return render(request, './Admin/admin_viewSessions.html',
+                  {"batches": batches, "faculties": faculties, "students": students,"admin":admin,"sessions": sessions})
+
 #===============================================================================================
 
 
@@ -1279,3 +1296,4 @@ def test_mail(request):
         return HttpResponse("Email sent successfully!")
     except Exception as e:
         return HttpResponse(f"Error sending email: {e}")
+    

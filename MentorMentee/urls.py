@@ -29,6 +29,7 @@ path('logout', views.logout, name='logout'),
     path("admin_reports", views.admin_Reports, name="admin_reports"),
     path("admin_reports_data", views.filter_sessions, name="admin_reports_data"),
     path("admin_reports_pdf", views.generate_report_pdf, name="admin_reports_pdf"),
+    path('admin_viewSessions',views.admin_viewSessions),
     
     ##Faculty URL's
     path('faculty/', views.faculty_dashboard, name='faculty_dashboard'),
