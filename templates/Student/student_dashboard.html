@@ -41,7 +41,7 @@
         <h1 class="main-title">MENTOR MENTEE</h1>
 
         <div class="header-right">
-            <div class="user-profile-icon"><i class="fas fa-user"></i></div>
+            <div class="user-profile-icon"><img src="{% static './static/student_images/' %}{{ student.student_image }}" alt="Student Profile"></div>
             <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
         </div>
     </header>

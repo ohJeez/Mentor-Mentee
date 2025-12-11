@@ -60,6 +60,7 @@ path('logout', views.logout, name='logout'),
     
     
 
+    path('test-mail/', views.test_mail),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     

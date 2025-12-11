@@ -136,3 +136,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Allow PDF preview in iframe
 X_FRAME_OPTIONS = 'ALLOWALL'
 SECURE_CONTENT_TYPE_NOSNIFF = False
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'noreply.mentormentee@gmail.com'
+EMAIL_HOST_PASSWORD = 'otne tzym dxax exng'

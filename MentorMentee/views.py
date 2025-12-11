@@ -187,6 +187,8 @@ def admin_createSession(request):
             start_date = request.POST['start_date']
             end_date = request.POST['end_date']
             status = request.POST['status']
+            mail_subject = request.POST['mail_subject']
+            mail_body = request.POST['mail_body']
             if start_date > end_date:
                 return HttpResponse("<script>alert('Invalid Date Selection!');window.location.href='admin_createSession'</script>")
             
@@ -199,7 +201,19 @@ def admin_createSession(request):
                 created_by_id=login_id
                 )
             res.save()
-            return HttpResponse("<script>alert('Mentoring Session Created!');window.location.href='admin_createSession'</script>")
+            
+            batch=Batches.objects.get(batch_id=batch)
+            
+            #Mail delivery system
+            send_mail(
+                subject=mail_subject,
+                message=mail_body,
+                from_email="noreply.mentormentee@gmail.com",
+                recipient_list=[batch.batch_mail],
+                fail_silently=False,
+            )
+
+            return HttpResponse("<script>alert('Session Created & Mail Sent Sucessfully!');window.location.href='/admin_createSession'</script>")
     except Exception as e:
         print(f"Error! {e}")
     return render(request,'./Admin/admin_createSession.html',contents)
@@ -1197,3 +1211,18 @@ def student_uploads(request):
         print(f"Error! {e}")
     return render(request,'./Student/student_uploads.html',contents)
 
+
+from django.core.mail import send_mail
+
+def test_mail(request):
+    try:
+        send_mail(
+            subject="Mail from Mentor-Mentee System",
+            message="Gentle reminder. This is to inform you that you have not completed your 1st mentoring session yet. You are asked to meet your mentor now itself along with a apology letter. Avoidance will result in expelling you from the institution.",
+            from_email="noreply.mentormentee@gmail.com",   # SAME as EMAIL_HOST_USER
+            recipient_list=["mca2531@rajagiri.edu"],  # you will receive the test mail
+            fail_silently=False,
+        )
+        return HttpResponse("Email sent successfully!")
+    except Exception as e:
+        return HttpResponse(f"Error sending email: {e}")

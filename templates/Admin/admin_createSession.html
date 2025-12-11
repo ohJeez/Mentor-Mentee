@@ -7,17 +7,12 @@
 
     <title>Create Session | Admin</title>
 
-    <!-- Base Theme Styles -->
     <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Page Style -->
     <style>
-        /* Card container */
-        .page-container {
-            width: 100%;
-            /* padding: 10px; */
-        }
+
+        .page-container { width: 100%; }
 
         .session-card {
             background: #ffffff;
@@ -30,12 +25,11 @@
             border-left: 6px solid #28a745;
         }
 
-        /* Title */
         .session-title {
             font-size: 26px;
             font-weight: 700;
             color: #28a745;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
@@ -46,7 +40,6 @@
             margin-bottom: 25px;
         }
 
-        /* Form Grid */
         .session-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -71,15 +64,86 @@
         }
 
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: #28a745;
             background: #ffffff;
             box-shadow: 0px 0px 4px #28a746ab;
         }
 
-        .full-row {
-            grid-column: span 2;
+        .full-row { grid-column: span 2; }
+
+        /* ---------------- UPDATED MAIL SECTION ---------------- */
+        .mail-section {
+            background: #ffffff;
+            padding: 35px 38px;
+            border-radius: 16px;
+            border: 1px solid #dcefe3;
+            margin-top: 40px;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+            border-left: 7px solid #28a745;
+        }
+
+        .mail-section h3 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1f7a33;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .mail-section .desc {
+            font-size: 15px;
+            color: #4b5563;
+            margin-bottom: 25px;
+        }
+
+        .mail-section .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            margin-top: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #2f3e46;
+        }
+
+        .mail-section input[type="text"] {
+            background: #f8fafc;
+            padding: 15px 16px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 15px;
+            transition: 0.2s ease;
+            width: 100%;
+        }
+
+        .mail-section input[type="text"]:focus {
+            border-color: #28a745;
+            background: #ffffff;
+            box-shadow: 0px 0px 6px rgba(40,167,69,0.25);
+        }
+
+        .mail-section textarea {
+            width: 100%;              /* 🔥 FULL WIDTH */
+            min-width: 100%;          /* prevent shrinking */
+            height: 260px;
+            resize: vertical;
+            white-space: pre-wrap;
+            line-height: 1.65;
+            border-radius: 12px;
+            border: 1.5px solid #cbd5e1;
+            padding: 15px 16px;
+            background: #f8fafc;
+            font-size: 15px;
+            transition: 0.2s ease;
+        }
+
+
+        .mail-section textarea:focus {
+            border-color: #28a745;
+            background: #ffffff;
+            box-shadow: 0px 0px 6px rgba(40,167,69,0.25);
         }
 
         /* Submit Button */
@@ -101,36 +165,37 @@
         }
 
         .submit-btn:hover {
-            background: #28a745;
+            background: #1f7a33;
         }
+
     </style>
 </head>
 
 <body>
 
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-left">
-            <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
-            <div class="header-title">
-                <h2 class="rcss-title">RCSS</h2>
-                <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
-            </div>
+<!-- HEADER -->
+<header class="header">
+    <div class="header-left">
+        <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+        <div class="header-title">
+            <h2 class="rcss-title">RCSS</h2>
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
         </div>
+    </div>
 
-        <h1 class="main-title">MENTOR MENTEE</h1>
+    <h1 class="main-title">MENTOR MENTEE</h1>
 
-        <div class="header-right">
-            <div class="user-profile-icon"><i class="fas fa-user"></i></div>
-                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
-        </div>
-    </header>
+    <div class="header-right">
+        <div class="user-profile-icon"><i class="fas fa-user"></i></div>
+        <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+    </div>
+</header>
 
-    <!-- BODY -->
-    <div class="container">
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
+<div class="container">
+
+    <!-- SIDEBAR -->
+     <aside class="sidebar">
     <nav class="menu">
 
       <a class="menu-item" href="/admin_dashboard">
@@ -162,7 +227,7 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item active" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
                     <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
                 </div>
             </div>
@@ -207,82 +272,116 @@
 
     </nav>
   </aside>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
 
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
+        <div class="page-container">
 
-            <div class="page-container">
+            <div class="session-card">
 
-                <div class="session-card">
+                <h2 class="session-title">Create New Mentoring Session</h2>
+                <p class="session-subtitle">Schedule a new mentoring session for a batch</p>
 
-                    <h2 class="session-title">Create New Mentoring Session</h2>
-                    <p class="session-subtitle">Schedule a new mentoring session for a batch</p>
+                <form method="POST">
+                    {% csrf_token %}
 
-                    <form method="POST">
-                        {% csrf_token %}
+                    <div class="session-grid">
 
-                        <div class="session-grid">
-
-                            <div class="form-group full-row">
-                                <label>Batch</label>
-                                <select name="batch" required>
-                                    <option value="">Select Batch</option>
-                                    {% for b in batches %}
-                                        <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Start Date</label>
-                                <input type="date" name="start_date" id="start_date" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label>End Date</label>
-                                <input type="date" name="end_date" required>
-                            </div>
-
-                            <div class="form-group full-row">
-                                <label>Status</label>
-                                <select name="status">
-                                    <option value="active">Active</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="incomplete">Incomplete</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
-
+                        <div class="form-group full-row">
+                            <label>Batch</label>
+                            <select name="batch" required>
+                                <option value="">Select Batch</option>
+                                {% for b in batches %}
+                                    <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
-                        <button class="submit-btn" type="submit">Create Session</button>
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" name="start_date" id="start_date" required>
+                        </div>
 
-                    </form>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" name="end_date" id="end_date" required>
+                        </div>
 
-                </div>
+                        <div class="form-group full-row">
+                            <label>Status</label>
+                            <select name="status">
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                                <option value="incomplete">Incomplete</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- EMAIL SECTION -->
+                    <div class="mail-section">
+                        <h3>Email Notification</h3>
+                        <p class="desc">This message will be sent automatically to the batch group email.</p>
+
+                        <div class="form-group">
+                            <label>Email Subject</label>
+                            <input type="text" name="mail_subject"
+                                   value="Mentoring Session Scheduled for Your Batch">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Message</label>
+                            <textarea name="mail_body" id="mail_body">
+Dear Students,
+Greetings of the day!
+
+This is to inform you that our 2025-27 Mentorship programme is officially underway.
+The first phase of the mentoring is scheduled from START_DATE to END_DATE.
+
+Kindly note the following:
+
+• All students can voluntarily meet their respective mentors in person according to the mentor’s availability.
+                            </textarea>
+                        </div>
+
+                    </div>
+
+                    <button class="submit-btn" type="submit">Create Session</button>
+
+                </form>
 
             </div>
 
-        </main>
-    </div>
+        </div>
 
-    <script>
-        // Auto-fill start_date if URL includes ?date=
-        const params = new URLSearchParams(window.location.search);
-        const d = params.get("date");
-        if (d) {
-            document.getElementById("start_date").value = d;
-        }
+    </main>
+</div>
 
-        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-    toggle.addEventListener('click', function (e) {
-      e.preventDefault();
+<script>
+function updateMailDraft() {
+    let start = document.getElementById("start_date").value;
+    let end = document.getElementById("end_date").value;
 
-      const dropdown = this.closest('.dropdown');
-      dropdown.classList.toggle('open');
-    });
-  });
-    </script>
+    let mailText = `
+Dear Students,
+Greetings of the day!
+
+This is to inform you that our 2025-27 Mentorship programme is officially underway.
+The first phase of the mentoring is scheduled from ${start || "START_DATE"} to ${end || "END_DATE"}.
+
+Kindly note the following:
+
+• All students can voluntarily meet their respective mentors in person according to the mentor’s availability.
+`;
+
+    document.getElementById("mail_body").value = mailText.trim();
+}
+
+// LIVE UPDATE ON DATE CHANGE
+document.getElementById("start_date").addEventListener("change", updateMailDraft);
+document.getElementById("end_date").addEventListener("change", updateMailDraft);
+</script>
 
 </body>
 </html>
