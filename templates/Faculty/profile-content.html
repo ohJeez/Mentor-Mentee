@@ -1,0 +1,182 @@
+{% load static %}
+
+{% include 'Faculty/header.html' %}
+
+  <!-- BASE THEME -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+
+  <!-- PAGE STYLE -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin_profile.css' %}" />
+
+<!-- PAGE BODY -->
+<div class="container">
+
+      <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav class="menu">
+            <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-content' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-view' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'faculty_session_requests' %}" class="menu-item">
+                <i class="fas fa-file-alt"></i> <span>Session Requests</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'profile_content' %}" class="menu-item active">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="profile-area">
+
+    <!-- HERO BANNER -->
+    <div class="profile-banner">
+      <div class="banner-overlay"></div>
+
+      <div class="banner-content">
+        <h1>Hello, {{ faculty.name }}</h1>
+        <p>Your faculty account overview</p>
+      </div>
+    </div>
+
+
+    <!-- PROFILE MAIN CARD -->
+    <div class="profile-main-card">
+
+      <!-- LEFT -->
+      <div class="profile-left">
+        <div class="profile-photo-frame">
+          {% if faculty.faculty_image %}
+            <img src="/static/faculty_images/{{ faculty.faculty_image }}" alt="Faculty Photo">
+          {% else %}
+            <img src="{% static 'images/avatar-placeholder.png' %}" alt="Default Avatar">
+          {% endif %}
+        </div>
+
+        <h2 class="profile-name">{{ faculty.name }}</h2>
+        <p class="profile-role">{{ faculty.designation}}</p>
+
+        <button class="edit-btn" id="openEditModal">
+          <i class="fas fa-pen"></i> Edit Profile
+        </button>
+      </div>
+
+
+      <!-- RIGHT -->
+      <div class="profile-right">
+
+        <div class="info-group">
+          <label>Email</label>
+          <p>{{ faculty.email }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Phone</label>
+          <p>{{ faculty.phone}}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Department</label>
+          <p>{{ faculty.department.name }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Total Students</label>
+          <p>{{ students|length }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Total Mentoring Sessions</label>
+          <p>{{ total_mentoring }}</p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- EDIT MODAL -->
+    <div class="modal" id="editModal">
+      <div class="modal-content">
+
+        <h2>Edit Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="modal-grid">
+            <div>
+              <label>Name</label>
+              <input type="text" name="name" value="{{ faculty.name }}" required>
+            </div>
+
+            <div>
+              <label>Email</label>
+              <input type="email" name="email" value="{{ faculty.email }}" required>
+            </div>
+
+            <div>
+              <label>Phone</label>
+              <input type="text" name="phone" value="{{ faculty.phone }}">
+            </div>
+
+            <div>
+              <label>Designation</label>
+              <input type="text" name="designation" value="{{ faculty.designation }}">
+            </div>
+
+            <div class="full">
+              <label>Profile Photo</label>
+              <input type="file" name="faculty_image" accept="image/*">
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="cancel" id="closeEditModal">Cancel</button>
+            <button type="submit" class="save">Save Changes</button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+  // Dropdown
+  document.querySelectorAll('.dropdown-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      el.parentNode.classList.toggle('open');
+    });
+  });
+
+  // Modal
+  const modal = document.getElementById("editModal");
+  document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
+  document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
+</script>
+
+
+{% include 'Faculty/footer.html' %}

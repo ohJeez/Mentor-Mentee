@@ -1,0 +1,160 @@
+{% load static %}
+{% include 'Faculty/header.html' %}
+
+<link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.css" rel="stylesheet">
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav class="menu">
+            <a href="{% url 'faculty_dashboard' %}" class="menu-item active">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-content' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-view' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'faculty_session_requests' %}" class="menu-item">
+                <i class="fas fa-file-alt"></i> <span>Session Requests</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'profile_content' %}" class="menu-item">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+    <!-- WELCOME -->
+    <div class="welcome-section">
+        <p>Welcome <strong>{{ faculty.name }}</strong></p>
+    </div>
+
+    <div style="display:flex; width:100%; gap:20px;">
+
+        <!-- CALENDAR -->
+        <div class="calendar-card">
+            <div id="calendar"></div>
+        </div>
+
+        <!-- RIGHT SIDE PANEL -->
+        <div class="side-info">
+
+            <div class="info-box">
+                <h3>Active Sessions</h3>
+                {% if active_sessions %}
+                <ul>
+                    {% for s in active_sessions %}
+                        <li>{{ s.batch.batch_name }} – {{ s.start_date }} to {{ s.end_date }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p>No active sessions.</p>
+                {% endif %}
+            </div>
+
+            <div class="info-box">
+                <h3>Pending Sessions</h3>
+                {% if pending_sessions %}
+                <ul>
+                    {% for s in pending_sessions %}
+                        <li>{{ s.batch.batch_name }} – Starts {{ s.start_date }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p>No pending sessions.</p>
+                {% endif %}
+            </div>
+
+            <div class="info-box">
+                <h3>Missed Sessions</h3>
+                {% if missed_sessions %}
+                <ul>
+                    {% for s in missed_sessions %}
+                        <li>{{ s.batch.batch_name }} – Ended {{ s.end_date }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p>No missed sessions.</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+</main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="sessionModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal()">Close</span>
+        <h3 id="modal-date"></h3>
+        <ul id="modal-session-list"></ul>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+        initialView: "dayGridMonth",
+        height: 650,
+        events: "/get_sessions/",
+        dateClick: loadDay,
+        eventClick: loadDay
+    });
+
+    function loadDay(info) {
+        let date = info.dateStr || info.event.startStr;
+
+        fetch(`/get_day_sessions/${date}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("modal-date").innerHTML = date;
+            let ul = document.getElementById("modal-session-list");
+            ul.innerHTML = "";
+
+            if (data.length === 0) {
+                ul.innerHTML = "<li>No sessions scheduled.</li>";
+            } else {
+                data.forEach(item => {
+                    ul.innerHTML += `<li>${item.batch} – ${item.status}</li>`;
+                });
+            }
+            document.getElementById("sessionModal").style.display = "flex";
+        });
+    }
+
+    calendar.render();
+});
+
+function closeModal() {
+    document.getElementById("sessionModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

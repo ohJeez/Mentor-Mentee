@@ -1,0 +1,116 @@
+{% include 'Faculty/header.html' %}
+{% load static %}
+
+<style>
+    .reject-btn {
+    background: #dc3545;
+    color: #fff;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.reject-btn:hover {
+    background: #b52a37;
+}
+</style>    
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav class="menu">
+            <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-content' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-view' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'faculty_session_requests' %}" class="menu-item active">
+                <i class="fas fa-file-alt"></i> <span>Session Requests</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'profile_content' %}" class="menu-item">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <h2>Session Requests</h2>
+
+        {% if requests %}
+        <table class="students-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Requested On</th>
+                    <th>Comments</th>
+                    <th>Status</th>
+                    <th>Schedule</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for r in requests %}
+            <tr>
+                <td>{{ r.student.name }}</td>
+                <td>{{ r.request_date }}</td>
+                <td>{{ r.comments|default:"-" }}</td>
+                <td>{{ r.status|title }}</td>
+
+                <td>
+                {% if r.status == "Pending" %}
+                    <div style="display:flex; gap:6px; align-items:center;">
+
+                        <form method="POST"
+                            action="{% url 'accept_session_request' r.request_id %}"
+                            style="display:flex; gap:4px; align-items:center;">
+                            {% csrf_token %}
+                            <input type="date" name="session_date" required>
+                            <input type="time" name="session_time" required>
+                            <button type="submit" class="view-btn">Accept</button>
+                        </form>
+
+                        <form method="POST"
+                            action="{% url 'reject_session_request' r.request_id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="reject-btn">Reject</button>
+                        </form>
+
+                    </div>
+                {% else %}
+                    {{ r.session_date|default:"-" }} {{ r.session_time|default:"" }}
+                {% endif %}
+                </td>
+
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+        {% else %}
+            <p>No session requests.</p>
+        {% endif %}
+
+    </main>
+</div>
+
+{% include 'Faculty/footer.html' %}

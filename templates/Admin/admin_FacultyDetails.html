@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faculty Details | Mentor Mentee</title>
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+  <link rel="stylesheet" href="{% static '../static/styles/admin_FacultyDetails.css' %}" />
+
+  <!--Javascript-->
+
+
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+      <div class="header-title">
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+      </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+             <h3>{{admin.name}}</h3>
+            <div class="user-profile-icon"><img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin"></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        </div>
+  </header>
+
+  <!-- PAGE BODY -->
+  <div class="container">
+
+    <!-- SIDEBAR -->
+   <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item active" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_viewSessions"><i class="fas fa-users"></i>View Sessions</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- FACULTY DETAILS -->
+      <section class="faculty-details-section">
+        <div class="faculty-details-header">
+          <img
+            src="../static/faculty_images/{{ faculty.faculty_image }}"
+            alt="{{ faculty.name }}"
+            class="faculty-details-photo"
+          />
+
+          <div class="faculty-details-main">
+            <h2>{{ faculty.name }}</h2>
+            <p class="faculty-designation">{{ faculty.designation }}</p>
+            <p class="faculty-department">{{ faculty.department.name }}</p>
+          </div>
+        </div>
+
+        <div class="faculty-details-grid">
+          <div class="fd-item">
+            <span class="fd-label">Email</span>
+            <p class="fd-value">{{ faculty.email }}</p>
+          </div>
+
+          <div class="fd-item">
+            <span class="fd-label">Phone</span>
+            <p class="fd-value">{{ faculty.phone }}</p>
+          </div>
+
+          <div class="fd-item">
+            <span class="fd-label">Faculty ID</span>
+            <p class="fd-value">{{ faculty.faculty_id }}</p>
+          </div>
+
+          {% if faculty.login %}
+          <div class="fd-item">
+            <span class="fd-label">Username</span>
+            <p class="fd-value">{{ faculty.login.username }}</p>
+          </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- ASSIGNED STUDENTS -->
+      <section class="students-section">
+        <div class="students-header">
+          <h2>Assigned Students</h2>
+        </div>
+
+        <!-- Filters: search + batch -->
+        <div class="students-filters">
+          <input
+            type="text"
+            class="students-search"
+            placeholder="Search by name or Reg No"
+            id="studentSearch"
+          />
+
+          <select class="students-filter" id="batchFilter">
+            <option value="">All Batches</option>
+            {% for b in batches %}
+              <option value="{{ b.batch_name }}">{{ b.batch_name }}</option>
+            {% endfor %}
+          </select>
+
+          <button type="button" class="filter-btn" id="applyFilterBtn">
+            <i class="fas fa-filter"></i> Apply Filter
+          </button>
+        </div>
+
+        <!-- Students Table -->
+        <div class="students-table-container">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Reg. No</th>
+                <th>Course</th>
+                <th>Batch</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in students %}
+              <tr>
+                <td>
+                  <img src="../static/student_images/{{ s.student_image }}" class="student-photo" />
+                </td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.reg_no }}</td>
+                <td>{{ s.course.course_name }}</td>
+                <td>{{ s.batch.batch_name }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" style="text-align:center; padding:1.5rem;">
+                  No students assigned.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <!-- <footer class="footer"></footer> -->
+
+  <!-- ✅ DROPDOWN SCRIPT -->
+   <script src="{% static '../static/script/admin_FacultyDetails.js' %}"></script>
+
+</body>
+</html>

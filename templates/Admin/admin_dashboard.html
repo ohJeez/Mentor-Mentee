@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Dashboard | Mentor Mentee</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
+    <link rel="stylesheet" href="{% static '../static/styles/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+            <div class="header-title">
+                <h2 class="rcss-title">RCSS</h2>
+                <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+            </div>
+        </div>
+
+        <h1 class="main-title">MENTOR MENTEE</h1>
+
+        <div class="header-right">
+             <h3>{{admin.name}}</h3>
+            <div class="user-profile-icon"><img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin"></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+
+        </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item active" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item active" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_viewSessions"><i class="fas fa-users"></i>View Sessions</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- WELCOME -->
+            <!-- <div class="welcome-section">
+                <p>Welcome <strong>{{ admin.name }}</strong></p>
+            </div> -->
+
+            <div style="display:flex; width:100%;">
+
+                <!-- CALENDAR -->
+                <div class="calendar-card">
+                    <div id="calendar"></div>
+                </div>
+
+                <!-- RIGHT SIDE NOTIFICATIONS -->
+                <div class="side-info">
+
+                    <!-- TODAY -->
+                    <div class="info-box">
+                        <h3>Today's Sessions</h3>
+                        {% if today_list %}
+                        <ul>
+                            {% for s in today_list %}
+                                <li>{{ s.batch.batch_name }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>No sessions today.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- PENDING -->
+                    <div class="info-box">
+                        <h3>Upcoming Sessions</h3>
+                        {% if pending_list %}
+                        <ul>
+                            {% for p in pending_list %}
+                                <li>{{ p.batch.batch_name }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>No upcoming sessions.</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- POPUP MODAL -->
+    <div class="modal-bg" id="sessionModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeModal()">X</span>
+            <h3 id="modal-date"></h3>
+            <ul id="modal-session-list"></ul>
+
+            <div id="addSessionContainer" style="margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+                initialView: "dayGridMonth",
+                height: 650,
+
+                events: "/api/get_sessions/",
+
+                dateClick: function(info) {
+                    let date = info.dateStr;
+
+                    fetch(`/api/get_day_sessions/${date}`)
+                    .then(res => res.json())
+                    .then(data => {
+
+                        document.getElementById("modal-date").innerHTML = 
+                            new Date(date).toDateString();
+
+                        let ul = document.getElementById("modal-session-list");
+                        ul.innerHTML = "";
+
+                        if (data.length === 0) {
+                            ul.innerHTML = "<li>No sessions scheduled.</li>";
+                        } else {
+                            data.forEach(item => {
+                                ul.innerHTML += `<li>${item.batch} – ${item.status}</li>`;
+                            });
+                        }
+
+                        // ADD SESSION BUTTON (only for today or future)
+                        let today = new Date().toISOString().split("T")[0];
+                        let addContainer = document.getElementById("addSessionContainer");
+
+                        if (date >= today) {
+                            addContainer.innerHTML = `
+                                <button class="add-btn" onclick="window.location.href='/admin_createSession'">
+                                    + Add Session
+                                </button>`;
+                        } else {
+                            addContainer.innerHTML = "";
+                        }
+
+                        document.getElementById("sessionModal").style.display = "flex";
+                    });
+                }
+            });
+
+            calendar.render();
+        });
+
+        function closeModal() {
+            document.getElementById("sessionModal").style.display = "none";
+        }
+
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>View Sessions | Admin</title>
+
+    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+        /* ---------- Container ---------- */
+        .session-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 18px;
+            margin-top: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+            min-height: 600px;
+        }
+
+        .header-row h2 {
+            color: #28a745;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        /* ---------- Filters ---------- */
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section input,
+        .filter-section select {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            width: 25%;
+        }
+
+        /* ---------- Table ---------- */
+        .styled-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .styled-table thead th {
+            background: #e7f5ea;
+            padding: 15px;
+            color: #1c7c31;
+            font-weight: 700;
+        }
+
+        .styled-table tbody tr {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: 0.25s;
+        }
+
+        .styled-table tbody tr:hover {
+            transform: translateY(-3px);
+            background: #f6fff6;
+        }
+
+        .styled-table td {
+            padding: 16px;
+        }
+
+        /* ---------- Action Icons ---------- */
+        .action-icons {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .action-icon {
+            font-size: 18px;
+            color: #28a745;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .action-icon:hover {
+            color: #1c7c31;
+            transform: scale(1.15);
+        }
+
+        /* ---------- MODAL ---------- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 420px;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            animation: fadeIn .3s ease;
+        }
+
+        .modal-box h3 {
+            color: #28a745;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .view-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 15px;
+        }
+
+        .view-row span:first-child {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .modal-box label {
+            font-weight: 600;
+            margin-top: 12px;
+            display: block;
+        }
+
+        .modal-box input,
+        .modal-box select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .btn {
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-close {
+            background: #9ca3af;
+            color: white;
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-left">
+        <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+        <div class="header-title">
+            <h2 class="rcss-title">RCSS</h2>
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+        </div>
+    </div>
+    <h1 class="main-title">MENTOR MENTEE</h1>
+    <div class="header-right">
+             <h3>{{admin.name}}</h3>
+            <div class="user-profile-icon"><img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin"></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+
+        </div>
+</header>
+
+<div class="container">
+
+    <!-- SIDEBAR (UNCHANGED) -->
+    <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item active" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown open">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item active" href="/admin_viewSessions"><i class="fas fa-users"></i>View Sessions</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <div class="session-container">
+
+            <div class="header-row">
+                <h2>Mentoring Sessions</h2>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="filter-section">
+                <input type="text" id="searchText" placeholder="Search Batch..." onkeyup="filterSessions()">
+                <select id="filterStatus" onchange="filterSessions()">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="incomplete">Incomplete</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <input type="date" id="filterStart" onchange="filterSessions()">
+                <input type="date" id="filterEnd" onchange="filterSessions()">
+            </div>
+
+            <!-- TABLE -->
+            <table class="styled-table" id="sessionTable">
+                <thead>
+                    <tr>
+                        <th>Batch</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                        <th style="text-align:center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in sessions %}
+                    <tr>
+                        <td>{{ s.batch.batch_name }}</td>
+                        <td>{{ s.start_date }}</td>
+                        <td>{{ s.end_date }}</td>
+                        <td>{{ s.status|title }}</td>
+                        <td>
+                            <div class="action-icons">
+                                <i class="fas fa-eye action-icon"
+                                   onclick="openView('{{ s.batch.batch_name }}','{{ s.start_date }}','{{ s.end_date }}','{{ s.status }}')"></i>
+
+                                <i class="fas fa-pen action-icon"
+                                    data-id="{{ s.schedule_id }}"
+                                    data-start="{{ s.start_date|date:'Y-m-d' }}"
+                                    data-end="{{ s.end_date|date:'Y-m-d' }}"
+                                    data-status="{{ s.status }}"
+                                    onclick="openEdit(this)">
+                                    </i>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </main>
+</div>
+
+<!-- VIEW MODAL -->
+<div id="viewModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Session Details</h3>
+
+        <div class="view-row"><span>Batch</span><span id="vBatch"></span></div>
+        <div class="view-row"><span>Start Date</span><span id="vStart"></span></div>
+        <div class="view-row"><span>End Date</span><span id="vEnd"></span></div>
+        <div class="view-row"><span>Status</span><span id="vStatus"></span></div>
+
+        <div class="modal-actions">
+            <button class="btn btn-close" onclick="closeModal('viewModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Edit Session</h3>
+
+        <form method="POST" action="/admin_updateSession">
+            {% csrf_token %}
+            <input type="hidden" name="schedule_id" id="eId">
+
+            <label>Start Date</label>
+            <input type="date" name="start_date" id="eStart">
+
+            <label>End Date</label>
+            <input type="date" name="end_date" id="eEnd">
+
+            <label>Status</label>
+            <select name="status" id="eStatus">
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="incomplete">Incomplete</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-close" onclick="closeModal('editModal')">Cancel</button>
+                <button type="submit" class="btn btn-save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+function openView(batch, start, end, status) {
+    vBatch.innerText = batch;
+    vStart.innerText = start;
+    vEnd.innerText = end;
+    vStatus.innerText = status;
+    viewModal.style.display = "flex";
+}
+
+function openEdit(el) {
+    document.getElementById("eId").value = el.dataset.id;
+    document.getElementById("eStart").value = el.dataset.start;   // YYYY-MM-DD ✅
+    document.getElementById("eEnd").value = el.dataset.end;       // YYYY-MM-DD ✅
+    document.getElementById("eStatus").value = el.dataset.status;
+
+    document.getElementById("editModal").style.display = "flex";
+}
+
+  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>

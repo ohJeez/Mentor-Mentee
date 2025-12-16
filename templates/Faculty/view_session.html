@@ -1,0 +1,97 @@
+{% load static %}
+{% include 'Faculty/header.html' %}
+
+<link rel="stylesheet" href="{% static 'css/session_details.css' %}">
+
+<div class="container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav class="menu">
+            <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-content' %}" class="menu-item active">
+                <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-view' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'faculty_session_requests' %}" class="menu-item">
+                <i class="fas fa-file-alt"></i> <span>Session Requests</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'profile_content' %}" class="menu-item">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <div class="session-card">
+            <h2 class="title">Session Details for {{ session.student.name }}</h2>
+
+            <div class="session-row">
+                <span class="label">Date:</span>
+                <span class="value">{{ session.date|date:"d M Y H:i" }}</span>
+            </div>
+
+            {% if session.demography %}
+            <div class="section">
+                <span class="label">Demography:</span>
+                <p class="text">{{ session.demography }}</p>
+            </div>
+            {% endif %}
+
+            {% if session.personal %}
+            <div class="section">
+                <span class="label">Personal:</span>
+                <p class="text">{{ session.personal }}</p>
+            </div>
+            {% endif %}
+
+            <div class="section">
+                <span class="label">Academic Details:</span>
+                <p class="text">{{ session.academic_details|default:"No academic details provided." }}</p>
+            </div>
+
+            {% if session.emotional_details %}
+            <div class="section">
+                <span class="label">Emotional Details:</span>
+                <p class="text">{{ session.emotional_details }}</p>
+            </div>
+            {% endif %}
+
+            {% if session.other_details %}
+            <div class="section">
+                <span class="label">Other Details:</span>
+                <p class="text">{{ session.other_details }}</p>
+            </div>
+            {% endif %}
+
+            {% if session.followup_actions %}
+            <div class="section">
+                <span class="label">Follow-up Actions:</span>
+                <p class="text">{{ session.followup_actions }}</p>
+            </div>
+            {% endif %}
+
+            <a href="{% url 'student_session' session.student.student_id %}" class="btn-back">Back to Sessions</a>
+        </div>
+
+    </main>
+</div>
+
+{% include 'Faculty/footer.html' %}

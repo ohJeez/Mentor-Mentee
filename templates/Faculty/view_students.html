@@ -1,0 +1,166 @@
+{% load static %}
+
+{% include 'Faculty/header.html' %}
+
+<!-- PAGE BODY -->
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav class="menu">
+            <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-content' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-view' %}" class="menu-item active">
+                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'faculty_session_requests' %}" class="menu-item">
+                <i class="fas fa-file-alt"></i> <span>Session Requests</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'profile_content' %}" class="menu-item">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+<!-- ✅ MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ✅ FILTER + STUDENT LIST -->
+    <section class="students-section">
+      <div class="students-header">
+        <h2>Students List</h2>
+      </div>
+
+      <!-- ✅ Filters -->
+      <div class="students-filters">
+        <input type="text" id="searchInput" class="students-search" placeholder="Search by name or reg no..." />
+
+        <select id="batchFilter" class="students-filter">
+          <option value="">Filter by Batch</option>
+          {% for b in batches %}
+          <option value="{{ b.batch_name }}">{{ b.batch_name }}</option>
+          {% endfor %}
+        </select>
+
+        <select id="courseFilter" class="students-filter">
+          <option value="">Filter by Course</option>
+          {% for c in courses %}
+          <option value="{{ c.course_name }}">{{ c.course_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- ✅ Student Table -->
+      <div class="students-table-container">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Reg. No</th>
+              <th>Course</th>
+              <th>Batch</th>
+              <th>Assigned To</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for s in students %}
+            <tr data-name="{{ s.name|lower }}"
+                data-reg="{{ s.reg_no|lower }}"
+                data-batch="{{ s.batch.batch_name|lower }}"
+                data-course="{{ s.course.course_name|lower }}">
+
+              <td><img src="/static/student_images/{{ s.student_image }}" class="student-photo" /></td>
+              <td>{{ s.name }}</td>
+              <td>{{ s.reg_no }}</td>
+              <td>{{ s.course.course_name }}</td>
+              <td>{{ s.batch.batch_name }}</td>
+
+              <td>
+                {% if s.faculty %}
+                  {{ s.faculty.name }}
+                {% else %}
+                  <span style="color: #dc3545; font-weight: 600;">Unassigned</span>
+                {% endif %}
+              </td>
+
+              <td>
+                <button class="icon-btn view-btn"
+                        onclick="window.location.href='{% url 'student_profile' s.student_id %}'">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<!-- ✅ DROPDOWN SCRIPT -->
+<script>
+  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+</script>
+
+<!-- ✅ FILTERING SCRIPT -->
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const batchFilter = document.getElementById("batchFilter");
+  const courseFilter = document.getElementById("courseFilter");
+  const tableRows = document.querySelectorAll(".students-table tbody tr");
+
+  function applyFilters() {
+    const searchText = searchInput.value.toLowerCase();
+    const batchValue = batchFilter.value.toLowerCase();
+    const courseValue = courseFilter.value.toLowerCase();
+
+    tableRows.forEach(row => {
+      const name = row.dataset.name;
+      const reg = row.dataset.reg;
+      const batch = row.dataset.batch;
+      const course = row.dataset.course;
+
+      const matchesSearch = name.includes(searchText) || reg.includes(searchText);
+      const matchesBatch = !batchValue || batch === batchValue;
+      const matchesCourse = !courseValue || course === courseValue;
+
+      row.style.display = (matchesSearch && matchesBatch && matchesCourse) ? "" : "none";
+    });
+  }
+
+  searchInput.addEventListener("input", applyFilters);
+  batchFilter.addEventListener("change", applyFilters);
+  courseFilter.addEventListener("change", applyFilters);
+</script>

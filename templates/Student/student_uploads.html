@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Uploads | Mentor Mentee</title>
+
+    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
+    <link rel="stylesheet" href="{% static '../static/styles/student_uploads.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <!-- PDF.js Lite CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-left">
+        <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+        <div class="header-title">
+            <h2 class="rcss-title">RCSS</h2>
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+        </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+             <h3>{{student.name}}</h3>
+            <div class="user-profile-icon"><img src="../static/student_images/{{ student.student_image }}" alt="Admin"></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        </div>
+</header>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <nav class="menu">
+
+                <a class="menu-item" href="/student_dashboard">
+                    <i class="fas fa-th-large"></i><span>Dashboard</span>
+                </a>
+                <hr class="menu-divider">
+
+                <a class="menu-item active" href="/student_uploads">
+                    <i class="fas fa-folder-open"></i><span>My Uploads</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_viewSessions">
+                    <i class="fas fa-file-alt"></i><span>My Sessions</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_RequestSession">
+                    <i class="fas fa-calendar-plus"></i><span>Request Session</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_profile">
+                    <i class="fas fa-user"></i><span>Profile</span>
+                </a>
+
+            </nav>
+        </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- <div class="welcome-section">
+            <p><strong>{{ student.name }}</strong> – Your Uploaded Files</p>
+        </div> -->
+
+        <!-- Upload New Button -->
+        <a class="upload-btn-main" onclick="openModal()">
+            <i class="fas fa-upload"></i> Upload New File
+        </a>
+
+        <div class="uploads-container">
+
+            <!-- LEFT FILE LIST -->
+            <div class="upload-list-card">
+                <h3>Your Files</h3>
+
+                {% if uploads %}
+                    {% for file in uploads %}
+                        <div class="upload-item"
+                             onclick="loadPreview('{{ file.upload_file.url }}', '{{ file.file_type }}')">
+
+                            {% if file.file_type == 'pdf' %}
+                                <i class="fas fa-file-pdf" style="color:#d9534f;"></i>
+                            {% else %}
+                                <i class="fas fa-file-image" style="color:#28a745;"></i>
+                            {% endif %}
+
+                            {{ file.file_name }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No uploaded files yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- RIGHT PREVIEW -->
+            <div class="preview-card">
+                <div class="preview-header">
+                    <h3>File Preview</h3>
+                </div>
+
+                <div id="preview-container">
+                    <div id="pdf-scroll-box" class="scroll-box">
+                        Select a file from the left to preview it here.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<!-- =============== UPLOAD MODAL =============== -->
+<div id="uploadModal" class="modal-overlay">
+    <div class="modal-box">
+
+        <h2>Upload New File</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>File Name</label>
+                <input type="text" name="file_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Select File</label>
+                <input type="file" name="upload_file" accept=".pdf,image/*" required>
+            </div>
+
+            <div class="form-group desc">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Write something..."></textarea>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="upload-btn">Upload</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- ================= PDF.js Lite Preview Script ================= -->
+<script>
+function openModal() {
+    document.getElementById("uploadModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("uploadModal").style.display = "none";
+}
+
+function loadPreview(url, type) {
+    let container = document.getElementById("pdf-scroll-box");
+    container.innerHTML = "";
+
+    if (type === "pdf") {
+        renderPDF(url);
+    } else {
+        container.innerHTML =
+            `<img class="viewer" src="${url}" />`;
+    }
+}
+
+function renderPDF(url) {
+    let container = document.getElementById("pdf-scroll-box");
+    container.innerHTML = "Loading PDF...";
+
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+        container.innerHTML = "";
+
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            pdf.getPage(pageNum).then(page => {
+
+                let viewport = page.getViewport({ scale: 1.25 });
+                let canvas = document.createElement("canvas");
+                canvas.className = "pdf-page";
+
+                let ctx = canvas.getContext("2d");
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                container.appendChild(canvas);
+
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
+            });
+        }
+    });
+}
+</script>
+
+</body>
+</html>

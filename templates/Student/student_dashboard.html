@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Mentor Mentee</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
+    <link rel="stylesheet" href="{% static '../static/styles/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.css" rel="stylesheet">
+
+    <style>
+        /* Override for student layout if needed */
+        .welcome-section p strong {
+            color: #4f46e5;
+        }
+        .calendar-card {
+            min-width: 65%;
+        }
+        .side-info {
+            min-width: 30%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+            <div class="header-title">
+                <h2 class="rcss-title">RCSS</h2>
+                <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+            </div>
+        </div>
+
+        <h1 class="main-title">MENTOR MENTEE</h1>
+
+        <div class="header-right">
+             <h3>{{student.name}}</h3>
+            <div class="user-profile-icon"><img src="../static/student_images/{{ student.student_image }}" alt="Admin"></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <nav class="menu">
+
+                <a class="menu-item active" href="/student_dashboard">
+                    <i class="fas fa-th-large"></i><span>Dashboard</span>
+                </a>
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_uploads">
+                    <i class="fas fa-folder-open"></i><span>My Uploads</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_viewSessions">
+                    <i class="fas fa-file-alt"></i><span>My Sessions</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_RequestSession">
+                    <i class="fas fa-calendar-plus"></i><span>Request Session</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_profile">
+                    <i class="fas fa-user"></i><span>Profile</span>
+                </a>
+
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- WELCOME -->
+            <div class="welcome-section">
+                <p>Welcome <strong>{{ student.name }}</strong></p>
+            </div>
+
+            <div style="display:flex; width:100%; gap:20px;">
+
+                <!-- CALENDAR -->
+                <div class="calendar-card">
+                    <div id="calendar"></div>
+                </div>
+
+                <!-- RIGHT SIDE PANEL -->
+                <div class="side-info">
+
+                    <!-- ACTIVE SESSIONS -->
+                    <div class="info-box">
+                        <h3>Active Sessions</h3>
+                        {% if active_sessions %}
+                        <ul>
+                            {% for s in active_sessions %}
+                                <li>{{ s.batch.batch_name }} – {{ s.start_date }} to {{ s.end_date }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                            <p>No active sessions.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- PENDING SESSIONS -->
+                    <div class="info-box">
+                        <h3>Pending Sessions</h3>
+                        {% if pending_sessions %}
+                        <ul>
+                            {% for s in pending_sessions %}
+                                <li>{{ s.batch.batch_name }} – Starts {{ s.start_date }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                            <p>No pending sessions.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- MISSED SESSIONS -->
+                    <div class="info-box">
+                        <h3>Missed Sessions</h3>
+                        {% if missed_sessions %}
+                        <ul>
+                            {% for s in missed_sessions %}
+                                <li>{{ s.batch.batch_name }} – Ended {{ s.end_date }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                            <p>No missed sessions.</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- POPUP MODAL -->
+    <div class="modal-bg" id="sessionModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeModal()">Close</span>
+            <h3 id="modal-date"></h3>
+            <ul id="modal-session-list"></ul>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+        initialView: "dayGridMonth",
+        height: 650,
+
+        events: "/get_sessions/",
+
+        /* 🔵 CLICK ON ANY DATE (works even if no event present) */
+        dateClick: function(info) {
+            let date = info.dateStr;
+
+            fetch(`/get_day_sessions/${date}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("modal-date").innerHTML = date;
+
+                let ul = document.getElementById("modal-session-list");
+                ul.innerHTML = "";
+
+                if (data.length === 0) {
+                    ul.innerHTML = `<li>No sessions scheduled.</li>`;
+                } else {
+                    data.forEach(item => {
+                        ul.innerHTML += `<li>${item.batch} – ${item.status}</li>`;
+                    });
+                }
+
+                document.getElementById("sessionModal").style.display = "flex";
+            });
+        },
+
+        /* 🟣 CLICK ON AN EVENT (optional – same behaviour) */
+        eventClick: function(info) {
+            let date = info.event.startStr;
+            fetch(`/get_day_sessions/${date}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("modal-date").innerHTML = date;
+
+                let ul = document.getElementById("modal-session-list");
+                ul.innerHTML = "";
+
+                if (data.length === 0) {
+                    ul.innerHTML = `<li>No sessions scheduled.</li>`;
+                } else {
+                    data.forEach(item => {
+                        ul.innerHTML += `<li>${item.batch} – ${item.status}</li>`;
+                    });
+                }
+
+                document.getElementById("sessionModal").style.display = "flex";
+            });
+        }
+    });
+
+    calendar.render();
+});
+
+function closeModal() {
+    document.getElementById("sessionModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

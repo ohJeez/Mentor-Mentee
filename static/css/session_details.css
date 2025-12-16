@@ -1,0 +1,94 @@
+/* Main layout */
+
+/* Main content area */
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    background: #fafafa;
+}
+
+/* Session card */
+.session-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+/* Labels & values */
+.session-row {
+    margin-bottom: 20px;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 15px;
+    color: #444;
+}
+
+.value {
+    font-size: 15px;
+    margin-left: 10px;
+}
+
+/* Summary + details boxes */
+.section {
+    margin-top: 20px;
+}
+
+.text {
+    background: #f9f9f9;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #e3e3e3;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+/* Back button */
+.btn-back {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 12px 20px;
+    background: #28a745;
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.btn-back:hover {
+    background: #218838;
+}
+
+.session-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 15px;
+}
+
+.section {
+    margin-bottom: 12px;
+}
+
+.section .label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.section .text {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+}

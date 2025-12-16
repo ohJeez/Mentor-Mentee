@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Student | Mentor Mentee</title>
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="{% static 'styles/admin.css' %}" />
+  <link rel="stylesheet" href="{% static 'styles/admin_addStudent.css' %}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    .file-upload-card {
+      width: 100%;
+      border: 2px dashed #28a745;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      background: #f8fff8;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .file-upload-card:hover {
+      background: #e9ffe9;
+      border-color: #1f7e35;
+      transform: scale(1.01);
+    }
+
+    .file-upload-card i {
+      font-size: 45px;
+      color: #28a745;
+      margin-bottom: 8px;
+    }
+
+    .file-upload-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #000;
+      margin-bottom: 4px;
+    }
+
+    .file-upload-hint {
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+
+    /* ===== PASSWORD TOGGLE ===== */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 42px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+    }
+
+    .toggle-password:hover {
+      color: #28a745;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <img src="{% static 'Assets/logo.png' %}" class="header-logo" />
+    <div class="header-title">
+      <h2 class="rcss-title">RCSS</h2>
+      <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+    </div>
+  </div>
+
+  <h1 class="main-title">MENTOR MENTEE</h1>
+
+  <div class="header-right">
+    <h3>{{admin.name}}</h3>
+    <div class="user-profile-icon">
+      {% if admin.admin_image %}
+      <img src="{% static '../static/admin_image/' %}{{admin.admin_image}}" />
+      {% else %}
+      <i class="fas fa-user"></i>
+      {% endif %}
+    </div>
+    <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- SIDEBAR (UNCHANGED) -->
+<aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown open">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item active" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_viewSessions"><i class="fas fa-users"></i>View Sessions</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <div class="page-top-actions">
+    <h2>Add New Student</h2>
+
+    <form method="POST" action="{% url 'admin_addStudent' %}" enctype="multipart/form-data" class="csv-upload-form">
+      {% csrf_token %}
+      <label class="csv-btn">
+        <i class="fas fa-file-csv"></i> Upload CSV
+        <input type="file" name="csv_file" accept=".csv" onchange="this.form.submit()" hidden>
+      </label>
+    </form>
+  </div>
+
+  <div class="student-form-container">
+
+    <form method="post" enctype="multipart/form-data" action="/admin_addStudent" onsubmit="return validatePassword()">
+      {% csrf_token %}
+
+      <div class="form-grid">
+
+        <div class="form-group full-width">
+          <label>Full Name</label>
+          <input type="text" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Reg. Number</label>
+          <input type="text" name="roll" required>
+        </div>
+
+        <div class="form-group">
+          <label>Course</label>
+          <select name="department" required>
+            <option>Select Course</option>
+            {% for i in courses %}
+            <option value="{{i.course_id}}">{{i.course_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" required>
+        </div>
+
+        <!-- ===== NEW USERNAME ===== -->
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" name="username" required>
+        </div>
+
+        <!-- ===== NEW PASSWORD ===== -->
+        <div class="form-group password-wrapper">
+          <label>Password</label>
+          <input type="password" id="password" name="password" required>
+          <i class="fas fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
+        </div>
+
+        <!-- ===== CONFIRM PASSWORD ===== -->
+        <div class="form-group password-wrapper">
+          <label>Confirm Password</label>
+          <input type="password" id="confirm_password" required>
+          <i class="fas fa-eye toggle-password" onclick="togglePassword('confirm_password', this)"></i>
+        </div>
+
+        <!-- ===== ORIGINAL FIELDS CONTINUE ===== -->
+
+        <div class="form-group">
+          <label>Batch</label>
+          <select name="batch" required>
+            <option>Select Batch</option>
+            {% for i in batch %}
+            <option value="{{i.batch_id}}">{{i.batch_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" name="phone" required>
+        </div>
+
+        <div class="form-group">
+          <label>Date of Birth</label>
+          <input type="date" name="dob" required>
+        </div>
+
+        <!-- STUDENT PHOTO -->
+        <div class="form-group full-width">
+          <label>Student Photo</label>
+          <input type="file" name="photo" class="file-input-hidden"
+                 id="studentPhotoInput"
+                 onchange="showFileName(this, 'photoName')">
+          <div class="file-upload-card" onclick="document.getElementById('studentPhotoInput').click()">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <div class="file-upload-title">Upload Student Photo</div>
+            <div class="file-upload-hint">PNG, JPG up to 5MB</div>
+            <div class="selected-file" id="photoName"></div>
+          </div>
+        </div>
+
+        <!-- APPLICATION FORM -->
+        <div class="form-group full-width">
+          <label>Application Form</label>
+          <input type="file" name="application_form" class="file-input-hidden"
+                 id="appFormInput"
+                 onchange="showFileName(this, 'appName')">
+          <div class="file-upload-card" onclick="document.getElementById('appFormInput').click()">
+            <i class="fas fa-file-pdf"></i>
+            <div class="file-upload-title">Upload Application Form</div>
+            <div class="file-upload-hint">PDF Only</div>
+            <div class="selected-file" id="appName"></div>
+          </div>
+        </div>
+
+        <!-- ASSESSMENT FILE -->
+         <div class="form-group full-width">
+          <label>Assessment File</label>
+          <input type="file" name="assessment_file" class="file-input-hidden"
+                 id="assessmentInput"
+                 onchange="showFileName(this, 'assessmentName')">
+          <div class="file-upload-card" onclick="document.getElementById('assessmentInput').click()">
+            <i class="fas fa-file-alt"></i>
+            <div class="file-upload-title">Upload Assessment File</div>
+            <div class="file-upload-hint">PDF, DOC, DOCX</div>
+            <div class="selected-file" id="assessmentName"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="save-btn" type="submit">Save Student</button>
+
+    </form>
+  </div>
+
+</main>
+</div>
+
+<script>
+  function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  }
+
+  function showFileName(input, targetId) {
+    if (input.files.length > 0) {
+      document.getElementById(targetId).innerText = input.files[0].name;
+    }
+  }
+
+  function validatePassword() {
+    const p1 = document.getElementById("password").value;
+    const p2 = document.getElementById("confirm_password").value;
+    if (p1 !== p2) {
+      alert("Passwords do not match!");
+      return false;
+    }
+    return true;
+  }
+
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>

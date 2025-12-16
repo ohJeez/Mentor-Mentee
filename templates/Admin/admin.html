@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentor Mentee | RCSS</title>
+
+  <!-- MAIN STYLES -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+  <link rel="stylesheet" href="{% static '../static/styles/style.css' %}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+      <div class="header-title">
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+      </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+      <h3>{{admin.name}}</h3>
+      <div class="user-profile-icon">
+        <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
+      </div>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+    </div>
+  </header>
+
+  <!-- PAGE BODY -->
+  <div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item active" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-chalkboard-teacher"></i><span>Faculty</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addFaculty"><i class="fas fa-user-plus"></i>Add Faculty</a>
+          <a class="dropdown-item" href="/admin_viewFaculty"><i class="fas fa-users"></i>View Faculty</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+      <a class="menu-item active" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- <div class="welcome-section">
+        <p>Welcome <strong>DILJITH K BENNY</strong></p>
+      </div> -->
+
+      <!-- ✅ YOUR DASHBOARD SECTION -->
+      {% load static %}
+      <link rel="stylesheet" href="{%static '../static/styles/style.css'%}"/>
+
+      <!-- STAT CARDS -->
+      <section class="stats">
+        <div class="card">
+          <p>Total Students</p>
+          <h1>1,250 <span class="up">↑</span></h1>
+        </div>
+
+        <div class="card">
+          <p>Total Mentors</p>
+          <h1>85</h1>
+        </div>
+      </section>
+
+      <!-- CHART + ACTIVITY -->
+      <section class="grid">
+
+        <div class="box chart-box">
+          <h3>Department Wise Student Count (2024)</h3>
+          <div class="chart-placeholder">
+            <p>[Chart Placeholder]</p>
+          </div>
+        </div>
+
+        <div class="box activity-box">
+          <h3>Recent Activity Feed</h3>
+
+          <ul class="activity-list">
+            <li><span>5 min ago</span> John Doe uploaded MPOWER CSV</li>
+            <li><span>1 hr ago</span> Prof. Smith changed mentor for Roll 1</li>
+            <li><span>2 hrs ago</span> Admin exported Students Report</li>
+            <li><span>1 hr ago</span> Aulip updated details</li>
+          </ul>
+        </div>
+
+      </section>
+
+      <!-- BUTTONS -->
+      <div class="bottom-buttons">
+        <button class="btn primary">Upload MPOWER CSV</button>
+        <button class="btn">Bulk Import</button>
+        <button class="btn">Export Reports</button>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- FOOTER -->
+  <!-- <footer class="footer">
+✅ Your full original footer goes here exactly as before 
+  </footer> -->
+
+  <!-- DROPDOWN SCRIPT -->
+  <script>
+  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+{% load static %}
+
+{% include 'Faculty/header.html' %}
+
+<link rel="stylesheet" href="{% static 'css/sessions.css' %}">
+
+<!-- PAGE BODY -->
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav class="menu">
+            <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-content' %}" class="menu-item active">
+                <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-view' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'faculty_session_requests' %}" class="menu-item">
+                <i class="fas fa-file-alt"></i> <span>Session Requests</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'profile_content' %}" class="menu-item">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <span>Mentoring Sessions for <b>{{ student.name }}</b></span>
+
+    <!-- QUICK STATS -->
+    <div class="students-stats">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div>
+          <h4>Total Mentoring</h4>
+          {% if sessions|length > 0 %}
+            <p>{{ sessions|length }} Completed</p>
+          {% else %}
+            <p>No Mentoring Attended</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <h4>Last Session</h4>
+          {% if sessions %}
+            <p>{{ sessions.0.date|date:"d M Y" }}</p>
+          {% else %}
+            <p>No sessions</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div>
+          <h4>Next Meeting</h4>
+          <p>Not Scheduled</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS SECTION -->
+    <div class="documents-section">
+      <h4 class="section-title">Student Documents</h4>
+
+      <div class="documents-grid">
+
+        <!-- Application Form -->
+        <div class="document-card glass">
+          <div class="doc-icon pdf"><i class="fas fa-file-pdf"></i></div>
+          <div class="doc-content">
+            <h5>Application Form</h5>
+            {% if student.application_form %}
+              <a href="{{ student.application_form.url }}" target="_blank" class="doc-btn">
+                <i class="fas fa-eye"></i> View PDF
+              </a>
+            {% else %}
+              <span class="no-doc">Not Uploaded</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Assessment File -->
+        <div class="document-card glass">
+          <div class="doc-icon pdf"><i class="fas fa-file-alt"></i></div>
+          <div class="doc-content">
+            <h5>Assessment File</h5>
+            {% if student.assessment_file %}
+              <a href="{{ student.assessment_file.url }}" target="_blank" class="doc-btn">
+                <i class="fas fa-eye"></i> View PDF
+              </a>
+            {% else %}
+              <span class="no-doc">Not Uploaded</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Student Uploads -->
+        <div class="document-card glass">
+          <div class="doc-icon upload"><i class="fas fa-cloud-upload-alt"></i></div>
+          <div class="doc-content">
+            <h5>Student Uploads</h5>
+            {% if student_uploads %}
+              <ul class="upload-list">
+                {% for upload in student_uploads %}
+                  <li class="upload-item">
+                    <span class="file-name">
+                      <i class="fas fa-paperclip"></i>
+                      {{ upload.file_name|default:upload.upload_file.name }}
+                    </span>
+                    <a href="{{ upload.upload_file.url }}" target="_blank" class="view-btn-small">View</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="no-doc">No uploads yet</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW SESSION -->
+    <div class="new-session-container">
+      <a href="{% url 'new_session' student.student_id %}" class="view-btn">
+        New Session
+      </a>
+    </div>
+
+    <!-- SESSIONS TABLE -->
+    <div class="students-table-container">
+      <table class="students-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Title</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for session in sessions %}
+          <tr>
+            <td>{{ session.date }}</td>
+            <td>{{ session.title }}</td>
+            <td>
+              <a href="{% url 'view_session' session.session_id %}" class="view-btn">
+                View Details
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No sessions yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+{% comment %}{% include 'Faculty/footer.html' %}{% endcomment %}

@@ -1,0 +1,196 @@
+:root {
+            --green: #28a745;
+            --dark-green: #218838;
+            --border: #dadada;
+            --bg: #f4f6f9;
+            --text: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 50px 20px;
+        }
+
+        .signup-card {
+            width: 100%;
+            max-width: 900px;
+            background: #fff;
+            padding: 35px 40px;
+            border-radius: 14px;
+            box-shadow: 0 8px 26px rgba(0,0,0,0.08);
+        }
+
+        .signup-title {
+            text-align: center;
+            font-size: 1.9rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* GRID */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 780px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* INPUTS */
+        label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px 15px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            font-size: 0.95rem;
+            background: #fff;
+            transition: 0.25s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--green);
+            outline: none;
+            box-shadow: 0 0 4px rgba(40,167,69,0.35);
+        }
+
+        /* FULL WIDTH ITEMS */
+        .full {
+            grid-column: span 2;
+        }
+        @media (max-width: 780px) {
+            .full {
+                grid-column: span 1;
+            }
+        }
+
+        /* FILE UPLOAD */
+        .file-upload-box {
+            border: 2px dashed #d0d0d0;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .file-upload-box:hover {
+            border-color: var(--green);
+            background: #f7fdf8;
+        }
+
+        .file-upload-box i {
+            font-size: 2.4rem;
+            color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .file-upload-box p {
+            margin-top: 4px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* SUBMIT BUTTON */
+        .signup-btn {
+            width: 100%;
+            margin-top: 30px;
+            padding: 14px;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .signup-btn:hover {
+            background: var(--dark-green);
+        }
+        /* LOGIN REDIRECT TEXT */
+.login-link {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 0.92rem;
+    color: #666;
+    font-weight: 400;
+}
+
+.login-link a {
+    color: var(--green);
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.login-link a:hover {
+    color: var(--dark-green);
+    text-decoration: underline;
+}
+/* PASSWORD FIELD WRAPPER */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    padding-right: 45px; /* space for eye icon */
+}
+
+/* EYE ICON */
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    color: gray;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.toggle-password:hover {
+    color: var(--green);
+}
+.top-logo {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.top-logo img {
+    width: 80px;
+}
+
+.top-logo h2 {
+    margin-top: 12px;
+    font-weight: 700;
+}
+
+.top-logo p {
+    color: #777;
+    font-size: 14px;
+}

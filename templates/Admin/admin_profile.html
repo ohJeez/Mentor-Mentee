@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Profile | Mentor Mentee</title>
+
+  <!-- BASE THEME -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+
+  <!-- PAGE STYLE -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin_profile.css' %}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+    <div class="header-title">
+      <h2 class="rcss-title">RCSS</h2>
+      <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+    </div>
+  </div>
+
+  <h1 class="main-title">MENTOR MENTEE</h1>
+
+  <div class="header-right">
+    <h3>{{ admin.name }}</h3>
+
+    <div class="user-profile-icon">
+      <img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin">
+    </div>
+    <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_viewSessions"><i class="fas fa-users"></i>View Sessions</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item active" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+
+
+  <!-- MAIN CONTENT -->
+  <main class="profile-area">
+
+    <!-- HERO BANNER -->
+    <div class="profile-banner">
+      <div class="banner-overlay"></div>
+
+      <div class="banner-content">
+        <h1>Hello, {{ admin.name }}</h1>
+        <p>Your administrator account overview</p>
+      </div>
+    </div>
+
+
+    <!-- PROFILE MAIN CARD -->
+    <div class="profile-main-card">
+
+      <!-- LEFT -->
+      <div class="profile-left">
+        <div class="profile-photo-frame">
+          <img src="../static/admin_image/{{ admin.admin_image }}" alt="">
+        </div>
+
+        <h2 class="profile-name">{{ admin.name }}</h2>
+        <p class="profile-role">{{ admin.designation|default:"Department Administrator" }}</p>
+
+        <button class="edit-btn" id="openEditModal">
+          <i class="fas fa-pen"></i> Edit Profile
+        </button>
+      </div>
+
+
+      <!-- RIGHT -->
+      <div class="profile-right">
+
+        <div class="info-group">
+          <label>Email</label>
+          <p>{{ admin.email }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Phone</label>
+          <p>{{ admin.phone|default:"Not added" }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Department</label>
+          <p>{{ admin.department.name }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Total Students</label>
+          <p>{{ total_students }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Total Mentors</label>
+          <p>{{ total_mentors }}</p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- EDIT MODAL -->
+    <div class="modal" id="editModal">
+      <div class="modal-content">
+
+        <h2>Edit Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="modal-grid">
+            <div>
+              <label>Name</label>
+              <input type="text" name="name" value="{{ admin.name }}" required>
+            </div>
+
+            <div>
+              <label>Email</label>
+              <input type="email" name="email" value="{{ admin.email }}" required>
+            </div>
+
+            <div>
+              <label>Phone</label>
+              <input type="text" name="phone" value="{{ admin.phone }}">
+            </div>
+
+            <div>
+              <label>Designation</label>
+              <input type="text" name="designation" value="{{ admin.designation }}">
+            </div>
+
+            <div class="full">
+              <label>Profile Photo</label>
+              <input type="file" name="admin_image" accept="image/*">
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="cancel" id="closeEditModal">Cancel</button>
+            <button type="submit" class="save">Save Changes</button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+  // Dropdown
+  document.querySelectorAll('.dropdown-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      el.parentNode.classList.toggle('open');
+    });
+  });
+
+  // Modal
+  const modal = document.getElementById("editModal");
+  document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
+  document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
+</script>
+
+</body>
+</html>

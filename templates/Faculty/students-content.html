@@ -1,0 +1,221 @@
+{% load static %}
+
+{% include 'Faculty/header.html' %}
+
+<!-- PAGE BODY -->
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <nav class="menu">
+            <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-content' %}" class="menu-item active">
+                <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'students-view' %}" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'faculty_session_requests' %}" class="menu-item">
+                <i class="fas fa-file-alt"></i> <span>Session Requests</span>
+            </a>
+
+            <hr class="menu-divider" />
+
+            <a href="{% url 'profile_content' %}" class="menu-item">
+                <i class="fas fa-user"></i> <span>Profile</span>
+            </a>
+        </nav>
+    </aside>
+
+
+  <div class="main-content">
+     
+    <!-- QUICK STATS -->
+    <div class="students-stats">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div>
+          <h4>Total Mentees</h4>
+          <p>{{ students|length }} Assigned</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <h4>Last Session</h4>
+          {% if last_session_date %}
+            <p>{{ last_session_date|date:"d M Y" }}</p>
+          {% else %}
+            <p>No sessions</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div>
+          <h4>Next Meeting</h4>
+          <p>Not Scheduled</p>
+        </div>
+      </div>
+      </div>
+      
+      <!-- SEARCH + FILTERS -->
+      <div class="students-filters">
+        <input type="text" class="students-search" placeholder="Search by name or Reg No" id="studentSearch">
+      
+        <select class="students-filter" id="departmentFilter">
+          <option value="">All Departments</option>
+
+            {% for department in departments %}
+              <option value="{{ department.dept_id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select>
+      
+        <select class="students-filter" id="courseFilter">
+          <option value="">All Course</option>
+            {% for c in courses %}
+              <option value="{{ c.course_id }}">{{ c.course_name }}</option>
+            {% endfor %}
+        </select>
+
+        <select class="students-filter" id="batchFilter">
+          <option value="">All Batch</option>
+          {% for batch in batches %}
+            <option value="{{ batch.batch_id }}">{{ batch.batch_name }}</option>
+          {% endfor %}
+        </select>
+
+        <script>
+          
+          function fetchFilteredStudents() {
+            let dept = document.getElementById("departmentFilter").value;
+            let course = document.getElementById("courseFilter").value;
+            let batch = document.getElementById("batchFilter").value;
+
+            fetch(`/filter-students/?department=${dept}&course=${course}&batch=${batch}`)
+
+                  .then(res => res.json())
+                  .then(data => {
+                      let tbody = document.getElementById("studentsList");
+                      tbody.innerHTML = "";
+
+                      if (data.students.length === 0) {
+                          tbody.innerHTML = `<tr><td colspan="6">No students found.</td></tr>`;
+                          return;
+                      }
+
+                      data.students.forEach(s => {
+                        let baseUrl = document.getElementById("student-profile-url").value;
+                        baseUrl = baseUrl.replace("0", s.student_id);
+                          tbody.innerHTML += `
+                              <tr>
+                                  <td><img src="/static/images/avatar-placeholder.png" class="student-photo" alt="photo"></td>
+                                  <td>${s.name}</td>
+                                  <td>${s.reg_no}</td>
+                                  <td>${s.department_name}</td>
+                                  <td>${s.course_name}</td>
+                                  <td>${s.batch_name}</td>
+                                  <td>
+                                    <a class="view-btn"
+                                      href="${baseUrl}"
+                                      data-student-id="${s.student_id}"
+                                      role="button"
+                                      aria-label="View profile of ${s.name}">
+                                      View Profile
+                                    </a>
+                                  </td>
+                              </tr>
+                          `;
+                      });
+                  });
+          }
+
+          // 🔹 When filter changes → reload student list
+          document.getElementById('departmentFilter').addEventListener('change', fetchFilteredStudents);
+          document.getElementById('courseFilter').addEventListener('change', fetchFilteredStudents);
+          document.getElementById('batchFilter').addEventListener('change', fetchFilteredStudents);
+
+
+          // 🔹 Live search (still works)
+          document.getElementById('studentSearch').addEventListener('keyup', function(e) {
+              const searchValue = e.target.value.toLowerCase();
+              const tableRows = document.querySelectorAll('.students-table tbody tr');
+
+              tableRows.forEach(row => {
+                  if (row.innerHTML.includes('No students assigned')) return;
+
+                  const name = row.cells[1].textContent.toLowerCase();
+                  const regNo = row.cells[2].textContent.toLowerCase();
+
+                  row.style.display = (name.includes(searchValue) || regNo.includes(searchValue)) ? '' : 'none';
+              });
+          });
+
+        </script>
+
+        <!-- STUDENTS TABLE -->
+        <div class="students-table-container">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Reg No</th>
+                <th>Department</th>
+                <th>Course</th>
+                <th>Batch</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <input type="hidden" id="student-profile-url" value="{% url 'student_profile' 0 %}">
+
+            <tbody id="studentsList">
+            {% if students %}
+              {% for student in students %}
+                <tr>
+                  <td><img src="{% static 'images/avatar-placeholder.png' %}" class="student-photo" alt="photo"></td>
+                  <td>{{ student.name }}</td>
+                  <td>{{ student.reg_no }}</td>
+                  <td>{{ student.department.name }}</td>
+                  <td>{{ student.course.course_name }}</td>
+                  <td>{{ student.batch.batch_name }}</td>
+                  <td>
+                    <a class="view-btn" href="{% url 'student_profile' student.student_id %}" data-student-id="{{ student.student_id }}" role="button" aria-label="View profile of {{ student.name }}">View Profile</a>
+                    <a class="view-btn" 
+                      href="{% url 'student_session' student.student_id %}" 
+                      data-student-id="{{ student.student_id }}" 
+                      role="button" 
+                      aria-label="View profile of {{ student.name }}">
+                      View Session
+                    </a>
+                  </td>
+                  
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="6">No students assigned.</td></tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'Faculty/footer.html' %}

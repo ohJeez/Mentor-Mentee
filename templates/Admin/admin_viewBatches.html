@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Batches | Mentor Mentee</title>
+
+    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .batch-container {
+            background: #ffffff;
+            padding: 30px 35px;
+            border-radius: 20px;
+            box-shadow: 0 8px 26px rgba(0,0,0,0.10);
+            margin-top: 25px;
+            min-height: 600px;
+            animation: fadeIn .4s ease;
+        }
+
+        .header-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header-title-row h2 {
+            color: #28a745;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .search-wrapper {
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            width: 100%;
+            background: #eef7ee;
+            padding: 14px 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-box input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            padding-left: 8px;
+            outline: none;
+        }
+
+        .search-box i {
+            font-size: 18px;
+            color: #28a745;
+        }
+
+        .styled-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .styled-table thead {
+            background: #e6f5e6;
+            border-radius: 10px;
+        }
+
+        .styled-table thead th {
+            padding: 15px;
+            font-size: 15px;
+            color: #1d7a33;
+            font-weight: 700;
+            text-align: left;
+            border-bottom: 2px solid #d7ecd7;
+        }
+
+        .styled-table tbody tr {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            border-radius: 12px;
+            transition: 0.2s ease;
+        }
+
+        .styled-table tbody tr:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.10);
+            background: #f6fff6;
+        }
+
+        .styled-table tbody td {
+            padding: 16px;
+            font-size: 15px;
+            color: #333;
+            border-bottom: none;
+        }
+
+        .styled-table tbody tr td:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+        .styled-table tbody tr td:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .action-btn {
+            cursor: pointer;
+            font-size: 18px;
+            color: #28a745;
+            transition: 0.2s ease;
+        }
+
+        .action-btn:hover {
+            color: #1c6a2d;
+            transform: scale(1.15);
+        }
+
+        /* ----------- MODAL ---------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-box {
+            background: white;
+            width: 420px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+            animation: fadeIn .3s ease;
+        }
+
+        .modal-box h3 {
+            text-align: center;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .modal-box input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+
+        .modal-actions {
+            text-align: right;
+        }
+
+        .btn-close {
+            padding: 10px 16px;
+            background: #777;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            margin-right: 10px;
+        }
+
+        .btn-save {
+            padding: 10px 16px;
+            background: #28a745;
+            color: white;
+            border-radius: 8px;
+            border: none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-left">
+        <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
+        <div class="header-title">
+            <h2 class="rcss-title">RCSS</h2>
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+        </div>
+    </div>
+    <h1 class="main-title">MENTOR MENTEE</h1>
+    <div class="header-right">
+             <h3>{{admin.name}}</h3>
+            <div class="user-profile-icon"><img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin"></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+
+        </div>
+</header>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+            <div class="dropdown open">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item active" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item" href="/admin_viewSessions"><i class="fas fa-users"></i>View Sessions</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <div class="batch-container">
+
+            <div class="header-title-row">
+                <h2>Batch List</h2>
+            </div>
+
+            <div class="search-wrapper">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by Batch Name or Course Name..." onkeyup="searchBatch()">
+                </div>
+            </div>
+
+            <table class="styled-table" id="batchTable">
+                <thead>
+                    <tr>
+                        <th>Batch Name</th>
+                        <th>Course</th>
+                        <th>Batch Email</th>
+                        <th style="text-align:center;">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for b in batches %}
+                    <tr>
+                        <td>{{ b.batch_name }}</td>
+                        <td>{{ b.course.course_name }}</td>
+                        <td>{{ b.batch_mail }}</td>
+
+                        <td style="text-align:center;">
+                            <span class="action-btn"
+                                  onclick="openEditModal('{{ b.batch_id }}','{{ b.batch_name }}','{{ b.batch_mail }}')">
+                                <i class="fas fa-edit"></i>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </main>
+</div>
+
+<!-- ========= EDIT MODAL ========= -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+        <h3>Edit Batch</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="edit_batch_id" name="batch_id">
+
+            <label>Batch Name</label>
+            <input type="text" id="edit_batch_name" name="batch_name" required>
+
+            <label>Batch Email</label>
+            <input type="email" id="edit_batch_mail" name="batch_mail" required>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-close" onclick="closeModal()">Close</button>
+                <button class="btn-save">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+function searchBatch() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#batchTable tbody tr");
+
+    rows.forEach(row => {
+        let batch = row.cells[0].innerText.toLowerCase();
+        let course = row.cells[1].innerText.toLowerCase();
+
+        row.style.display = (batch.includes(input) || course.includes(input)) ? "" : "none";
+    });
+}
+
+function openEditModal(id, name, mail) {
+    document.getElementById("edit_batch_id").value = id;
+    document.getElementById("edit_batch_name").value = name;
+    document.getElementById("edit_batch_mail").value = mail;
+
+    document.getElementById("editModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+
+document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+  
+</script>
+
+</body>
+</html>

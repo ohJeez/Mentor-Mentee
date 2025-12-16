@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentoring Reports | Admin</title>
+
+<link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+/* ================= FILTER CARD ================= */
+.filter-card{
+    background:#ffffff;
+    padding:25px 30px;
+    border-radius:14px;
+    box-shadow:0 6px 20px rgba(0,0,0,.1);
+    margin-top:20px;
+}
+
+.filter-title{
+    font-size:20px;
+    font-weight:700;
+    color:#1c7c31;
+    margin-bottom:15px;
+}
+
+.filter-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.filter-group label{
+    font-weight:600;
+    font-size:14px;
+    margin-bottom:6px;
+    display:block;
+}
+
+.filter-group select,
+.filter-group input{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #cbd5e1;
+    background:#f8fafc;
+}
+
+.filter-actions{
+    margin-top:20px;
+    text-align:right;
+}
+
+.filter-actions button{
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.view-btn{
+    background:#28a745;
+    color:white;
+    margin-right:10px;
+}
+
+.pdf-btn{
+    background:#dc3545;
+    color:white;
+}
+
+/* ================= REPORT SHEET ================= */
+.report-sheet{
+    position:relative;
+    background:#fff;
+    padding:60px 70px;
+    margin-top:25px;
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+    min-height:900px;
+}
+
+.report-sheet::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("{% static 'Assets/logo.png' %}") center center no-repeat;
+    background-size:400px;
+    opacity:.05;
+    pointer-events:none;
+}
+
+/* ================= HEADER ================= */
+.report-top{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.report-top h1{
+    font-size:26px;
+    font-weight:800;
+    color:#1c7c31;
+}
+
+.report-top p{
+    font-size:14px;
+    color:#475569;
+}
+
+/* ================= META ================= */
+.meta-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+    margin-bottom:30px;
+}
+
+.meta-box{
+    background:#f6fff6;
+    padding:16px 20px;
+    border-left:4px solid #28a745;
+    border-radius:8px;
+}
+
+.meta-box label{
+    font-size:13px;
+    color:#64748b;
+}
+
+.meta-box span{
+    display:block;
+    font-size:16px;
+    font-weight:700;
+    margin-top:4px;
+}
+
+/* ================= KPI ================= */
+.section-title{
+    font-size:18px;
+    font-weight:700;
+    color:#1c7c31;
+    margin-bottom:15px;
+    border-bottom:2px solid #e5f5ea;
+    padding-bottom:5px;
+}
+
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+
+.kpi{
+    background:#fff;
+    padding:22px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+.kpi h2{
+    font-size:32px;
+    color:#28a745;
+    font-weight:800;
+}
+
+.kpi p{
+    font-size:14px;
+    color:#64748b;
+}
+
+/* ================= SUMMARY ================= */
+.summary-text{
+    background:#f8fff9;
+    padding:22px;
+    border-radius:10px;
+    border-left:5px solid #28a745;
+    line-height:1.7;
+    font-size:15px;
+    color:#334155;
+    margin-top:15px;
+}
+
+/* ================= FOOTER ================= */
+.report-footer{
+    position:absolute;
+    bottom:30px;
+    left:70px;
+    right:70px;
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:#64748b;
+}
+
+.hidden{display:none;}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="header-left">
+    <img src="{% static 'Assets/logo.png' %}" class="header-logo">
+    <div class="header-title">
+      <h2 class="rcss-title">RCSS</h2>
+      <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+    </div>
+  </div>
+
+  <h1 class="main-title">MENTOR MENTEE</h1>
+
+  <div class="header-right">
+             <h3>{{admin.name}}</h3>
+            <div class="user-profile-icon"><img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin"></div>
+                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+
+        </div>
+</header>
+
+<div class="container">
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+    <nav class="menu">
+
+      <a class="menu-item" href="/admin_dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_viewFaculty">
+        <i class="fas fa-user"></i><span>View Faculty</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-graduation-cap"></i><span>Students</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_addStudent"><i class="fas fa-user-plus"></i>Add Student</a>
+          <a class="dropdown-item" href="/admin_ViewStudents"><i class="fas fa-users"></i>View Students</a>
+        </div>
+      </div>
+      <hr class="menu-divider">
+
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                    <i class="fas fa-book"></i><span>Batches</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item active" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
+                </div>
+            </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Assignments</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_AddAssignment"><i class="fas fa-user-plus"></i>Assign Student</a>
+          <a class="dropdown-item" href="/admin_ViewAssignments"><i class="fas fa-users"></i>View Assignments</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <div class="dropdown ">
+        <a class="menu-item dropdown-toggle">
+          <i class="fas fa-link"></i><span>Mentoring Sessions</span>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin_createSession"><i class="fas fa-user-plus"></i>Create Session</a>
+          <a class="dropdown-item " href="/admin_viewSessions"><i class="fas fa-users"></i>View Sessions</a>
+        </div>
+      </div>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item active" href="/admin_reports">
+        <i class="fas fa-user"></i><span>Report</span>
+      </a>
+
+      <hr class="menu-divider">
+
+      <a class="menu-item" href="/admin_profile">
+        <i class="fas fa-user"></i><span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+
+<!-- ================= MAIN ================= -->
+<main class="main-content">
+
+<!-- FILTER -->
+<div class="filter-card">
+  <div class="filter-title"><i class="fas fa-filter"></i> Generate Report</div>
+
+  <div class="filter-grid">
+
+    <div class="filter-group">
+      <label>Report Type</label>
+      <select id="reportType">
+        <option value="">Select</option>
+        <option value="student">Student</option>
+        <option value="faculty">Faculty</option>
+        <option value="batch">Batch</option>
+      </select>
+    </div>
+
+    <div class="filter-group hidden" id="studentBox">
+      <label>Student</label>
+      <select id="studentId">
+        <option value="">Select</option>
+        {% for s in students %}
+        <option value="{{s.student_id}}">{{s.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filter-group hidden" id="facultyBox">
+      <label>Faculty</label>
+      <select id="facultyId">
+        <option value="">Select</option>
+        {% for f in faculty %}
+        <option value="{{f.faculty_id}}">{{f.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filter-group hidden" id="batchBox">
+      <label>Batch</label>
+      <select id="batchId">
+        <option value="">Select</option>
+        {% for b in batches %}
+        <option value="{{b.batch_id}}">{{b.batch_name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Range</label>
+      <select id="range">
+        <option value="daily">Daily</option>
+        <option value="monthly">Monthly</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+
+    <div class="filter-group hidden" id="dateBox">
+      <label>From</label>
+      <input type="date" id="start">
+      <label>To</label>
+      <input type="date" id="end">
+    </div>
+
+  </div>
+
+  <div class="filter-actions">
+    <button class="view-btn" onclick="viewReport()"><i class="fas fa-eye"></i> View</button>
+    <button class="pdf-btn" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+  </div>
+</div>
+
+<!-- REPORT PREVIEW -->
+<div class="report-sheet" id="reportPreview">
+  <div class="report-top">
+    <h1>MENTORING PROGRAMME REPORT</h1>
+    <p>Use filters above to generate report</p>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+const reportType=document.getElementById("reportType");
+const studentBox=document.getElementById("studentBox");
+const facultyBox=document.getElementById("facultyBox");
+const batchBox=document.getElementById("batchBox");
+const range=document.getElementById("range");
+const dateBox=document.getElementById("dateBox");
+
+reportType.onchange=()=>{
+  studentBox.classList.add("hidden");
+  facultyBox.classList.add("hidden");
+  batchBox.classList.add("hidden");
+
+  if(reportType.value==="student") studentBox.classList.remove("hidden");
+  if(reportType.value==="faculty") facultyBox.classList.remove("hidden");
+  if(reportType.value==="batch") batchBox.classList.remove("hidden");
+};
+
+range.onchange=()=> {
+  dateBox.classList.toggle("hidden", range.value!=="custom");
+};
+
+function viewReport(){
+    let type = reportType.value;
+    let id =
+        type==="student" ? studentId.value :
+        type==="faculty" ? facultyId.value :
+        batchId.value;
+
+    fetch(`/fetch_report_data/?type=${type}&id=${id}&range=${range.value}&start=${start.value}&end=${end.value}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("reportPreview").innerHTML = `
+            <div class="report-top">
+                <h1>MENTORING PROGRAMME REPORT</h1>
+                <p>${data.start_date} to ${data.end_date}</p>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi"><h2>${data.total_sessions}</h2><p>Total Sessions</p></div>
+                <div class="kpi"><h2>${data.total_students}</h2><p>Students Attended</p></div>
+                <div class="kpi"><h2>${data.total_faculty}</h2><p>Faculty Involved</p></div>
+            </div>
+        `;
+    });
+}
+
+function downloadPDF(){
+    let type = reportType.value;
+    let id =
+        type==="student" ? studentId.value :
+        type==="faculty" ? facultyId.value :
+        batchId.value;
+
+    window.open(`/generate_report_pdf/?type=${type}&id=${id}&range=${range.value}&start=${start.value}&end=${end.value}`);
+}
+</script>
+
+</body>
+</html>

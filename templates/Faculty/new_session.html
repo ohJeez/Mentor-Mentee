@@ -1,0 +1,169 @@
+{% include "Faculty/header.html" %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/session_form.css' %}">
+
+{% block content %}
+<div class="session-container">
+    <h2 class="title">Create New Session for {{ student.name }}</h2>
+
+    <!-- FORM STARTS HERE (IMPORTANT FIX) -->
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="session-card">
+
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+
+            {% if is_first_session %}
+            <!-- Editable only for FIRST session -->
+            <div class="input-group">
+                <label>Demography</label>
+                <textarea name="demography"
+                          placeholder="Student demographic details"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Personal</label>
+                <textarea name="personal"
+                          placeholder="Personal info, hobbies, health, etc."></textarea>
+            </div>
+
+            {% else %}
+            <!-- Read-only for other sessions -->
+            <div class="input-group">
+                <label>Demography</label>
+                <textarea readonly>{{ demography }}</textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Personal</label>
+                <textarea readonly>{{ personal }}</textarea>
+            </div>
+
+            <!-- Previous Sessions Dropdown -->
+            {% if previous_sessions %}
+            <div class="input-group">
+                <label>Previous Sessions</label>
+                <select id="previous-session-dropdown">
+                    <option value="">-- Select a previous session --</option>
+                    {% for s in previous_sessions %}
+                    <option value="{{ s.session_id }}">{{ s.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Previous Session Details (View Only) -->
+            <div class="prev-session-details">
+
+                <div class="input-group">
+                    <label>Title</label>
+                    <textarea id="prev-title" readonly></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Academic Details</label>
+                    <textarea id="prev-academic" readonly></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Emotional / Mental Wellbeing</label>
+                    <textarea id="prev-emotional" readonly></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Other Details</label>
+                    <textarea id="prev-other" readonly></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Follow-up Actions</label>
+                    <textarea id="prev-followup" readonly></textarea>
+                </div>
+
+            </div>
+            {% endif %}
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-column">
+
+            <div class="input-group">
+                <label>Title <span class="required">*</span></label>
+                <input type="text"
+                       name="title"
+                       placeholder="Enter session title"
+                       required>
+            </div>
+
+            <div class="input-group">
+                <label>Academic Details <span class="required">*</span></label>
+                <textarea name="academic_details"
+                          placeholder="Grades, projects, attendance"
+                          required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Emotional / Mental Wellbeing</label>
+                <textarea name="emotional_details"
+                          placeholder="Motivation, stress, mood, etc."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Other Details</label>
+                <textarea name="other_details"
+                          placeholder="Any additional notes"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Follow-up Actions</label>
+                <textarea name="followup_actions"
+                          placeholder="Next steps or tasks for the student"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Save Session</button>
+
+        </div>
+
+    </div>
+    </form>
+    <!-- FORM ENDS HERE -->
+
+</div>
+
+{% if not is_first_session %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const previousSessions = {
+        {% for s in previous_sessions %}
+        "{{ s.session_id }}": {
+            title: `{{ s.title|escapejs }}`,
+            academic: `{{ s.academic_details|escapejs }}`,
+            emotional: `{{ s.emotional_details|escapejs }}`,
+            other: `{{ s.other_details|escapejs }}`,
+            followup: `{{ s.followup_actions|escapejs }}`
+        },
+        {% endfor %}
+    };
+
+    const dropdown = document.getElementById("previous-session-dropdown");
+
+    dropdown?.addEventListener("change", function () {
+        const data = previousSessions[this.value];
+
+        document.getElementById("prev-title").value = data?.title || "";
+        document.getElementById("prev-academic").value = data?.academic || "";
+        document.getElementById("prev-emotional").value = data?.emotional || "";
+        document.getElementById("prev-other").value = data?.other || "";
+        document.getElementById("prev-followup").value = data?.followup || "";
+    });
+
+});
+</script>
+{% endif %}
+
+{% endblock %}
