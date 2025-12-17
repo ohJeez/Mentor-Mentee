@@ -3,47 +3,126 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold">Faculty Management</h2>
-    <a href="/add_faculty/" class="btn btn-success px-4 py-2">
+    <a href="{% url 'add_faculty' %}" class="btn btn-success px-4 py-2">
         + Add Faculty
     </a>
 </div>
 
+<!-- SEARCH & FILTER FORM -->
+<form method="get" class="card shadow-sm p-3 mb-4" style="border-radius:12px;">
+    <div class="row g-3 align-items-end">
+
+        <!-- SEARCH -->
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">Search</label>
+            <input type="text"
+                   name="search"
+                   class="form-control"
+                   placeholder="Name / Email / Department"
+                   value="{{ request.GET.search }}">
+        </div>
+
+        <!-- DEPARTMENT FILTER -->
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Department</label>
+            <select name="department" class="form-select">
+                <option value="">All Departments</option>
+                {% for dept in departments %}
+                <option value="{{ dept.dept_id }}"
+                        {% if request.GET.department == dept.dept_id|stringformat:"s" %}selected{% endif %}>
+                    {{ dept.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- ADMIN FILTER -->
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Role</label>
+            <select name="admin" class="form-select">
+                <option value="">All</option>
+                <option value="admin" {% if request.GET.admin == 'admin' %}selected{% endif %}>
+                    Admin
+                </option>
+                <option value="faculty" {% if request.GET.admin == 'faculty' %}selected{% endif %}>
+                    Faculty
+                </option>
+            </select>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">
+                Apply
+            </button>
+            <a href="{% url 'manage_faculty' %}" class="btn btn-outline-secondary mt-2">
+                Reset
+            </a>
+        </div>
+
+    </div>
+</form>
+
+<!-- FACULTY LIST -->
 <div class="row">
     {% for fac in faculty_list %}
     <div class="col-md-3 mb-4">
         <div class="card shadow-sm" style="border-radius:12px;">
-            
-            <!-- Faculty Image -->
+
+            <!-- IMAGE -->
             <img src="{% if fac.faculty_image %}{{ fac.faculty_image.url }}{% else %}/static/default_user.png{% endif %}"
-                 alt="Faculty Image"
                  class="img-fluid rounded-top"
                  style="height:200px; width:100%; object-fit:cover;">
-            
+
             <div class="card-body text-center">
                 <h6 class="fw-bold">{{ fac.name }}</h6>
-                <p class="text-muted" style="font-size:13px;">
+
+                <p class="text-muted mb-1" style="font-size:13px;">
                     {{ fac.designation }}
                 </p>
-                <p class="text-success fw-bold" style="font-size:13px;">
+
+                <p class="text-success fw-bold mb-2" style="font-size:13px;">
                     {{ fac.department.name }}
                 </p>
 
-                <!-- Delete Button -->
-                {% if fac.faculty_id %}
-                <a href="{% url 'delete_faculty' faculty_id=fac.faculty_id %}"
-                   class="btn btn-danger btn-sm"
-                   onclick="return confirm('Are you sure you want to delete {{ fac.name }}?');">
-                   Delete
-                </a>
-                {% else %}
-                <button class="btn btn-secondary btn-sm" disabled>No Action</button>
+                {% if fac.is_admin %}
+                    <span class="badge bg-primary mb-2">ADMIN</span>
                 {% endif %}
+
+                <div class="d-grid gap-2 mt-3">
+
+                    <a href="{% url 'view_faculty' fac.faculty_id %}"
+                       class="btn btn-outline-primary btn-sm">
+                        View Profile
+                    </a>
+
+                    {% if fac.is_admin %}
+                        <a href="{% url 'remove_faculty_admin' fac.faculty_id %}"
+                           class="btn btn-warning btn-sm"
+                           onclick="return confirm('Remove admin role from {{ fac.name }}?');">
+                            Remove Admin
+                        </a>
+                    {% else %}
+                        <a href="{% url 'make_faculty_admin' fac.faculty_id %}"
+                           class="btn btn-success btn-sm"
+                           onclick="return confirm('Make {{ fac.name }} the Admin?');">
+                            Make Admin
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'delete_faculty' fac.faculty_id %}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Delete {{ fac.name }}?');">
+                        Delete
+                    </a>
+
+                </div>
             </div>
 
         </div>
     </div>
     {% empty %}
-    <p class="text-center mt-5">No Faculty Members Found</p>
+    <p class="text-center mt-5">No faculty found.</p>
     {% endfor %}
 </div>
 

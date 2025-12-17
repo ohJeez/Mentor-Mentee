@@ -1,0 +1,38 @@
+{% extends 'SuperAdmin/base.html' %}
+{% block content %}
+
+<h3>Pending Assignment Requests</h3>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Faculty</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for a in assignments %}
+        <tr>
+            <td>{{ a.student.name }}</td>
+            <td>{{ a.faculty.name }}</td>
+            <td>
+                <a href="{% url 'approve_assignment' a.assignment_id %}"
+                   class="btn btn-success btn-sm">
+                   Approve
+                </a>
+                <a href="{% url 'reject_assignment' a.assignment_id %}"
+                   class="btn btn-danger btn-sm">
+                   Reject
+                </a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="3" class="text-center">No pending assignments</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

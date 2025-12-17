@@ -1,0 +1,113 @@
+{% extends 'SuperAdmin/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'manage_faculty' %}" class="btn btn-secondary mb-3">
+        ← Back to Faculty List
+    </a>
+
+    <!-- FACULTY PROFILE CARD -->
+    <div class="card shadow mb-4" style="border-radius:15px;">
+        <div class="row g-0">
+
+            <!-- IMAGE -->
+            <div class="col-md-4 text-center p-4">
+                <img src="{% if faculty.faculty_image %}{{ faculty.faculty_image.url }}{% else %}/static/default_user.png{% endif %}"
+                     class="img-fluid rounded-circle mb-3"
+                     style="width:180px; height:180px; object-fit:cover;">
+
+                {% if faculty.is_admin %}
+                    <span class="badge bg-primary px-3 py-2">ADMIN</span>
+                {% endif %}
+            </div>
+
+            <!-- DETAILS -->
+            <div class="col-md-8 p-4">
+                <h3 class="fw-bold">{{ faculty.name }}</h3>
+
+                <p class="text-muted mb-1">
+                    <b>Designation:</b> {{ faculty.designation|default:"—" }}
+                </p>
+
+                <p class="text-muted mb-1">
+                    <b>Department:</b> {{ faculty.department.name }}
+                </p>
+
+                <p class="text-muted mb-1">
+                    <b>Email:</b> {{ faculty.email }}
+                </p>
+
+                <p class="text-muted mb-3">
+                    <b>Phone:</b> {{ faculty.phone|default:"—" }}
+                </p>
+
+                <hr>
+
+                <!-- ADMIN ACTION -->
+                {% if faculty.is_admin %}
+                    <a href="{% url 'remove_faculty_admin' faculty.faculty_id %}"
+                       class="btn btn-warning"
+                       onclick="return confirm('Remove admin role from {{ faculty.name }}?');">
+                        Remove Admin
+                    </a>
+                {% else %}
+                    <a href="{% url 'make_faculty_admin' faculty.faculty_id %}"
+                       class="btn btn-success"
+                       onclick="return confirm('Make {{ faculty.name }} the Admin?');">
+                        Make Admin
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- STUDENT LIST -->
+    <div class="card shadow" style="border-radius:15px;">
+        <div class="card-body">
+
+            <h4 class="fw-bold mb-3">
+                Students Assigned to {{ faculty.name }}
+            </h4>
+
+            {% if students %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Register No</th>
+                            <th>Course</th>
+                            <th>Batch</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.reg_no }}</td>
+                            <td>{{ student.course.course_name }}</td>
+                            <td>{{ student.batch.batch_name }}</td>
+                            <td>{{ student.year }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="text-muted mt-3">
+                    No students are currently assigned to this faculty.
+                </p>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

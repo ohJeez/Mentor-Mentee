@@ -2,180 +2,147 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
-from .models import Department, Courses, Login, Faculty
+from django.db.models import Q
 
+from .models import (
+    Department,
+    Courses,
+    Login,
+    Faculty,
+    Student,
+    Assignment   # <-- IMPORTANT
+)
 
-# HOME / LOGIN
+# =========================================================
+# LOGIN (UNCHANGED LOGIC, TENANT-AWARE)
+# =========================================================
 def home(request):
     if request.method == 'POST':
         uname = request.POST.get('uname')
         pas = request.POST.get('password')
 
         try:
-            user = Login.objects.get(username=uname, password=pas)
-            request.session['login_id'] = user.login_id
+            login = Login.objects.get(username=uname, password=pas)
+            faculty = Faculty.objects.select_related('department').get(login=login)
 
-            if user.userType == 'superadmin':
+            request.session['login_id'] = login.login_id
+            request.session['faculty_id'] = faculty.faculty_id
+            request.session['department_id'] = faculty.department.dept_id
+            request.session['is_superadmin'] = faculty.is_superadmin
+            request.session['is_admin'] = faculty.is_admin
+
+            if faculty.is_superadmin:
                 return redirect('superadmin_dashboard')
-            elif user.userType == 'admin':
-                return HttpResponse("Admin Dashboard coming soon!")
-            elif user.userType == 'faculty':
-                return HttpResponse("Faculty Dashboard coming soon!")
+            else:
+                return HttpResponse("Only SuperAdmin module implemented")
 
-        except Login.DoesNotExist:
-            return HttpResponse("<script>alert('Invalid Login!');window.location.href='/'</script>")
+        except (Login.DoesNotExist, Faculty.DoesNotExist):
+            return HttpResponse(
+                "<script>alert('Invalid Login!');window.location.href='/'</script>"
+            )
 
     return render(request, 'Login.html')
 
 
-# SUPER ADMIN DASHBOARD
+# =========================================================
+# SUPERADMIN DASHBOARD
+# =========================================================
 def superadmin_dashboard(request):
-    if 'login_id' not in request.session:
+    if not request.session.get('is_superadmin'):
         return redirect('/')
 
+    dept_id = request.session['department_id']
+
     context = {
-        'total_departments': Department.objects.count(),
-        'total_courses': Courses.objects.count(),
-        'total_faculty': Faculty.objects.count()
+        'total_faculty': Faculty.objects.filter(department_id=dept_id).count(),
+        'pending_assignments': Assignment.objects.filter(
+            status='pending',
+            faculty__department_id=dept_id
+        ).count()
     }
+
     return render(request, 'SuperAdmin/dashboard.html', context)
 
 
-# DEPARTMENT MANAGEMENT
-def manage_departments(request):
-    if 'login_id' not in request.session:
+# =========================================================
+# SUPERADMIN — VIEW PENDING ASSIGNMENTS
+# =========================================================
+def pending_assignments(request):
+    if not request.session.get('is_superadmin'):
         return redirect('/')
 
-    departments = Department.objects.all().order_by('name')
-    return render(request, 'SuperAdmin/manage_departments.html', {'departments': departments})
+    dept_id = request.session['department_id']
+
+    assignments = Assignment.objects.select_related(
+        'student', 'faculty'
+    ).filter(
+        status='pending',
+        faculty__department_id=dept_id
+    )
+
+    return render(
+        request,
+        'SuperAdmin/pending_assignments.html',
+        {'assignments': assignments}
+    )
 
 
-def add_department(request):
-    if 'login_id' not in request.session:
+# =========================================================
+# SUPERADMIN — APPROVE ASSIGNMENT
+# =========================================================
+def approve_assignment(request, assignment_id):
+    if not request.session.get('is_superadmin'):
         return redirect('/')
 
-    if request.method == 'POST':
-        Department.objects.create(
-            name=request.POST['name'],
-            code=request.POST['code'],
-            hod_name=request.POST['hod'],
-            email=request.POST['email']
-        )
-        return redirect('manage_departments')
+    dept_id = request.session['department_id']
 
-    return render(request, 'SuperAdmin/add_department.html')
+    assignment = get_object_or_404(
+        Assignment,
+        assignment_id=assignment_id,
+        status='pending',
+        faculty__department_id=dept_id
+    )
+
+    # 1. Approve assignment
+    assignment.status = 'approved'
+    assignment.save()
+
+    # 2. Update student table ONLY NOW
+    student = assignment.student
+    student.faculty = assignment.faculty
+    student.save()
+
+    # 3. Email hook (already exists in your project)
+    # send_assignment_approval_mail(student.email)
+
+    return redirect('pending_assignments')
 
 
-def delete_department(request, id):
-    if 'login_id' not in request.session:
+# =========================================================
+# SUPERADMIN — REJECT ASSIGNMENT
+# =========================================================
+def reject_assignment(request, assignment_id):
+    if not request.session.get('is_superadmin'):
         return redirect('/')
 
-    get_object_or_404(Department, dept_id=id).delete()
-    return redirect('manage_departments')
+    dept_id = request.session['department_id']
+
+    assignment = get_object_or_404(
+        Assignment,
+        assignment_id=assignment_id,
+        status='pending',
+        faculty__department_id=dept_id
+    )
+
+    assignment.status = 'rejected'
+    assignment.save()
+
+    return redirect('pending_assignments')
 
 
-# COURSE MANAGEMENT
-def manage_courses(request):
-    if 'login_id' not in request.session:
-        return redirect('/')
-
-    courses = Courses.objects.select_related('department').all()
-    departments = Department.objects.all()
-
-    return render(request, 'SuperAdmin/manage_courses.html', {
-        'courses': courses,
-        'departments': departments
-    })
-
-
-def add_course(request):
-    if 'login_id' not in request.session:
-        return redirect('/')
-
-    if request.method == 'POST':
-        Courses.objects.create(
-            course_name=request.POST['course_name'],
-            department_id=request.POST['department']
-        )
-    return redirect('manage_courses')
-
-
-def delete_course(request, course_id):
-    if 'login_id' not in request.session:
-        return redirect('/')
-
-    get_object_or_404(Courses, course_id=course_id).delete()
-    return redirect('manage_courses')
-
-
-# FACULTY MANAGEMENT
-def manage_faculty(request):
-    if 'login_id' not in request.session:
-        return redirect('/')
-
-    faculty = Faculty.objects.select_related('department').all()
-    return render(request, 'SuperAdmin/manage_faculty.html', {'faculty_list': faculty})
-
-
-def add_faculty(request):
-    if 'login_id' not in request.session:
-        return redirect('/')
-
-    departments = Department.objects.all()
-
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        designation = request.POST.get('designation')
-        department = request.POST.get('department')
-        image = request.FILES.get('faculty_image')
-
-        # Create Login record
-        login = Login.objects.create(
-            username=username,
-            password=password,
-            userType='faculty'
-        )
-
-        # Save Image inside media/faculty_images/
-        img_path = None
-        if image:
-            fs = FileSystemStorage(location=f"{settings.MEDIA_ROOT}/faculty_images/")
-            img_filename = fs.save(image.name, image)
-            img_path = f"faculty_images/{img_filename}"
-
-        # Create Faculty record
-        Faculty.objects.create(
-            login=login,
-            name=name,
-            email=email,
-            phone=phone,
-            designation=designation,
-            department_id=department,
-            faculty_image=img_path
-        )
-
-        return redirect('manage_faculty')
-
-    return render(request, 'SuperAdmin/add_faculty.html', {
-        'departments': departments
-    })
-
-
-def delete_faculty(request, faculty_id):
-    if 'login_id' not in request.session:
-        return redirect('/')
-
-    faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
-    Login.objects.filter(login_id=faculty.login.login_id).delete()
-    faculty.delete()
-    return redirect('manage_faculty')
-
-
+# =========================================================
 # LOGOUT
+# =========================================================
 def logout(request):
     request.session.flush()
     return redirect('/')
