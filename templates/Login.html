@@ -8,6 +8,8 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
   <style>
     :root {
@@ -246,6 +248,63 @@
   box-shadow:0 0 0 3px rgba(40,167,69,.2);
 }
 
+/* ===== PASSWORD FORM STYLES ===== */
+.form-group{
+  margin-bottom:18px;
+}
+
+.form-group label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+  color:#374151;
+}
+
+.input-wrapper{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+.input-wrapper input{
+  width:100%;
+  padding:12px 42px 12px 42px;
+  border-radius:10px;
+  border:1.5px solid #d1d5db;
+  font-size:14px;
+  transition:0.25s;
+}
+
+.input-wrapper input:focus{
+  outline:none;
+  border-color:var(--primary-green);
+  box-shadow:0 0 0 3px rgba(40,167,69,.18);
+}
+
+.input-icon-left{
+  position:absolute;
+  left:14px;
+  color:#6b7280;
+  font-size:14px;
+}
+
+.toggle-eye{
+  position:absolute;
+  right:14px;
+  color:#6b7280;
+  cursor:pointer;
+  font-size:15px;
+}
+
+.toggle-eye:hover{
+  color:var(--primary-green);
+}
+
+.swal2-container {
+  z-index: 100000 !important;
+}
+
 
   </style>
 </head>
@@ -403,44 +462,72 @@
 
 <!-- ===========================New Password Modal======================== -->
  <div class="modal" id="newPasswordModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <i class="fas fa-key"></i> Set New Password
-    </div>
-   <div class="modal-body">
+  <div class="modal-content" style="max-width:440px;padding:30px 32px;">
 
-      <div class="input-group">
+    <!-- Header -->
+    <div class="modal-header" style="
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:1.2rem;
+      font-weight:700;
+      color:var(--primary-green);
+      margin-bottom:18px;
+    ">
+      <i class="fas fa-key"></i>
+      Set New Password
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <p style="
+        font-size:14px;
+        color:#4b5563;
+        margin-bottom:22px;
+        line-height:1.5;
+      ">
+        Create a strong password for your account.<br>
+        Make sure both passwords match.
+      </p>
+
+      <!-- New Password -->
+      <div class="form-group">
         <label>New Password</label>
         <div class="input-wrapper">
-    <i class="fas fa-lock"></i>
-    <input type="password"
-           id="newPassword"
-           placeholder="Enter New password">
+          <i class="fas fa-lock input-icon-left"></i>
+          <input type="password"
+                 id="newPassword"
+                 placeholder="Enter new password">
           <i class="fas fa-eye toggle-eye"
-            onclick="togglePassword(this, 'newPassword')"></i>
+             onclick="togglePassword(this, 'newPassword')"></i>
         </div>
       </div>
 
-      <div class="input-group">
+      <!-- Confirm Password -->
+      <div class="form-group">
         <label>Confirm Password</label>
         <div class="input-wrapper">
-    <i class="fas fa-lock"></i>
-    <input type="password"
-           id="confirmPassword"
-           placeholder="Enter current password">
+          <i class="fas fa-lock input-icon-left"></i>
+          <input type="password"
+                 id="confirmPassword"
+                 placeholder="Re-enter new password">
           <i class="fas fa-eye toggle-eye"
-            onclick="togglePassword(this, 'confirmPassword')"></i>
+             onclick="togglePassword(this, 'confirmPassword')"></i>
         </div>
       </div>
 
     </div>
 
-    <div class="modal-actions">
+    <!-- Actions -->
+    <div class="modal-actions" style="margin-top:26px;">
       <button class="cancel-btn" onclick="closeNewPasswordModal()">Cancel</button>
-      <button class="save-btn" onclick="saveNewPassword()">Save</button>
+      <button class="save-btn" onclick="saveNewPassword()">Save Password</button>
     </div>
+
   </div>
 </div>
+
 
 
 
@@ -485,7 +572,7 @@ function openOTPModal(){
     return;
   }
 
-  fetch("/send_otp/",{
+  fetch("/login_send_otp/",{
     method:"POST",
     headers:{
       "X-CSRFToken":"{{ csrf_token }}",
@@ -500,7 +587,14 @@ function openOTPModal(){
       openModal("otpModal");
       clearOTP();
     }else{
-      alert(data.message || "Unable to send OTP");
+      closeModal("forgotModal");
+      Swal.fire({
+        icon: "error",
+        title: "OTP Failed",
+        text: data.message || "Unable to send OTP. Please try again.",
+        confirmButtonColor: "#28a745",
+        allowOutsideClick: false
+      });
     }
   });
 }
@@ -538,7 +632,7 @@ function verifyOTP(){
     return;
   }
 
-  fetch("/verify_otp/",{
+  fetch("/login_verify_otp/",{
     method:"POST",
     headers:{
       "X-CSRFToken":"{{ csrf_token }}",
@@ -552,7 +646,13 @@ function verifyOTP(){
       closeModal("otpModal");
       openModal("newPasswordModal");
     }else{
-      alert("Invalid OTP");
+      Swal.fire({
+        icon: "error",
+        title: "Invalid OTP",
+        text: "The OTP you entered is incorrect. Please try again.",
+        confirmButtonColor: "#28a745",
+        allowOutsideClick: false
+      });
       clearOTP();
     }
   });
@@ -579,11 +679,24 @@ function saveNewPassword(){
   const p2 = document.getElementById("confirmPassword").value;
 
   if(!p1 || !p2){
-    alert("Fill all fields");
+    Swal.fire({
+      icon: "warning",
+      title: "Incomplete Details",
+      text: "Please fill in all required fields before continuing.",
+      confirmButtonColor: "#28a745",
+      allowOutsideClick: false
+    });
     return;
   }
   if(p1 !== p2){
-    alert("Passwords do not match");
+    Swal.fire({
+      icon: "error",
+      title: "Password Mismatch",
+      text: "The passwords you entered do not match. Please try again.",
+      confirmButtonColor: "#28a745",
+      allowOutsideClick: false
+    });
+
     return;
   }
 
@@ -598,10 +711,23 @@ function saveNewPassword(){
   .then(res=>res.json())
   .then(data=>{
     if(data.status==="success"){
-      alert("Password updated successfully");
+      Swal.fire({
+        icon: "success",
+        title: "Password Updated",
+        text: "Your password has been updated successfully.",
+        confirmButtonColor: "#28a745",
+        allowOutsideClick: false
+      });
+
       window.location.href="/";
     }else{
-      alert("Unable to reset password");
+      Swal.fire({
+        icon: "error",
+        title: "Reset Failed",
+        text: "Unable to reset password. Please try again.",
+        confirmButtonColor: "#dc3545",
+        allowOutsideClick: false
+      });
     }
   });
 }

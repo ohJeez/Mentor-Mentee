@@ -123,6 +123,61 @@ def home(request):
      
     return render(request,'Login.html') 
 
+#Forgot Password
+def login_send_otp(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        try:
+            data=json.loads(request.body)
+            mail=data.get("email")
+            if not Student.objects.filter(email=mail).exists():
+                return JsonResponse({"status":"error","message":"Email not registered!"})
+            else:
+                otp = str(random.randint(1000,9999))
+                request.session['log_otp'] = otp
+                request.session['reset_email'] = mail
+                send_mail(
+                    subject="Mentor Mentee Password Reset OTP",
+                    message=f"Your OTP for password reset is: {otp}",
+                    from_email="noreply.mentor_mentee@gmail.com",
+                    recipient_list=[mail],
+                    fail_silently=False,
+                )
+                return JsonResponse({"status":"sent","message":"OTP sent to your email!"})
+        except Exception as e:
+            print(f"Error sending OTP: {e}")
+            return JsonResponse({"status":"error","message":"Error sending OTP. Please try again."})
+        
+def login_verify_otp(request):
+    if request.method == 'POST':
+        try:
+            data=json.loads(request.body)
+            entered_otp=data.get("otp")
+            session_otp=request.session.get('log_otp')
+            if entered_otp == session_otp:
+                return JsonResponse({"status":"success","message":"OTP verified successfully!"})
+            else:
+                return JsonResponse({"status":"error","message":"Invalid OTP. Please try again."})
+        except Exception as e:
+            print(f"Error verifying OTP: {e}")
+            return JsonResponse({"status":"error","message":"Error verifying OTP. Please try again."})
+    
+def reset_password(request):
+    if request.method == 'POST':
+        try:
+            data=json.loads(request.body)
+            new_password=data.get("password")
+            student=Student.objects.get(email=request.session.get('reset_email'))
+            print(student.name)
+            login=Login.objects.get(login_id=student.login_id)
+            print(login.username)
+            login.password=new_password
+            login.save()
+            return JsonResponse({"status":"success","message":"Password updated successfully!"})
+        except Exception as e:
+            print(f"Error updating password: {e}")
+            return JsonResponse({"status":"error","message":"Error updating password. Please try again."})
+
 
 def admin_dashboard(request):
     session_login = request.session.get("login_id")

@@ -11,6 +11,10 @@ urlpatterns = [
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('admin_addStudent', views.add_Student, name='admin_addStudent'),
     path('admin_ViewStudents', views.admin_ViewStudents),
+    path('login_send_otp/', views.login_send_otp, name='login_send_otp'),
+    path('login_verify_otp/', views.login_verify_otp, name='login_verify_otp'),
+    path('reset_password/', views.reset_password, name='reset_password'),
+    
     # path('admin_addFaculty', views.admin_addFaculty),
     path('admin_addBatch', views.admin_addBatch),
     path('admin_viewBatches', views.admin_viewBatches),

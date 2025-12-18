@@ -137,6 +137,39 @@ body {
   align-items: stretch;
 }
 
+/* ================= IMAGE PREVIEW MODAL ================= */
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.image-modal.active {
+  display: flex;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.image-modal .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 36px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
 /* ======================
    ✅ SIDEBAR (Exact Match)
    ====================== */
