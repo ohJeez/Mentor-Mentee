@@ -1341,11 +1341,14 @@ def filter_students(request):
     return JsonResponse({"students": data})
 
 def student_session(request, id):
+    faculty_login_id = request.session.get('login_id')
     student = Student.objects.get(student_id=id)
     sessions = MentoringSession.objects.filter(student__student_id=id).order_by('-date')
     student_uploads = StudentUploads.objects.filter(student=student)
+    faculty = Faculty.objects.get(login_id=faculty_login_id)
     return render(request, 'Faculty/student_sessions.html', {
         'student': student,
+        'faculty': faculty,
         'sessions': sessions,
         'student_uploads': student_uploads,
     })
@@ -1523,7 +1526,7 @@ def faculty_ViewStudents(request):
 
         students = Student.objects.filter(
             department=faculty.department
-        )
+        ).order_by('name')
 
         context = {
             'faculty': faculty,

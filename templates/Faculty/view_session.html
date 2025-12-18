@@ -20,15 +20,9 @@
                 </a>
                 <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
-                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>View All Students</a>
+                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>All Students</a>
                 </div>
             </div>
-
-            <hr class="menu-divider" />
-
-            <a href="{% url 'students-view' %}" class="menu-item">
-                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
-            </a>
 
             <hr class="menu-divider" />
 
@@ -52,7 +46,7 @@
 
             <div class="session-row">
                 <span class="label">Date:</span>
-                <span class="value">{{ session.date|date:"d M Y H:i" }}</span>
+                <span class="value">{{ session.date|date:"d M Y" }}</span>
             </div>
 
             {% if session.demography %}

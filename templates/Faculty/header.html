@@ -8,6 +8,7 @@
   <title>Mentor Mentee | RCSS</title>
 
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -30,7 +31,7 @@
     <h1 class="main-title">MENTOR MENTEE</h1>
 
     <div class="header-right">
-      <h3>{{faculty.name}}</h3>
+      <h4>{{faculty.name}}</h4>
       <div class="user-profile-icon"><img src="{% static 'faculty_images/' %}{{ faculty.faculty_image }}" alt="Faculty">
 </div>
       <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>

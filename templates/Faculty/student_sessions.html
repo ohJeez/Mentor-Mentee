@@ -4,6 +4,91 @@
 
 <link rel="stylesheet" href="{% static 'css/sessions.css' %}">
 
+<style>
+.documents-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* reduce height */
+.document-card {
+    padding: 14px 16px;
+    position: relative;
+    min-height: 70px;
+}
+
+.doc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.doc-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.doc-title {
+    font-weight: 600;
+    font-size: 14.5px;
+}
+
+/* ===== Upload dropdown overlay ===== */
+.uploads-card {
+    position: relative;
+    z-index: 50;   /* create higher stacking context */
+}
+
+.uploads-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    margin-top: 8px;
+    padding: 10px 14px;
+    display: none;
+    z-index: 9999;   /* VERY IMPORTANT */
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+
+.uploads-dropdown.open {
+    display: block;
+}
+
+.uploads-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.uploads-dropdown li a {
+    display: block;
+    padding: 6px 0;
+    font-size: 13px;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.uploads-dropdown li a:hover {
+    text-decoration: underline;
+}
+
+.dropdown-arrow {
+    transition: transform 0.25s;
+}
+
+.dropdown-arrow.rotate {
+    transform: rotate(180deg);
+}
+</style>
+
 <!-- PAGE BODY -->
 <div class="container">
 
@@ -23,15 +108,9 @@
                 </a>
                 <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
-                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>View All Students</a>
+                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>All Students</a>
                 </div>
             </div>
-
-            <hr class="menu-divider" />
-
-            <a href="{% url 'students-view' %}" class="menu-item">
-                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
-            </a>
 
             <hr class="menu-divider" />
 
@@ -87,66 +166,80 @@
       </div>
     </div>
 
-    <!-- DOCUMENTS SECTION -->
-    <div class="documents-section">
-      <h4 class="section-title">Student Documents</h4>
+    <div class="documents-row">
 
-      <div class="documents-grid">
-
-        <!-- Application Form -->
-        <div class="document-card glass">
-          <div class="doc-icon pdf"><i class="fas fa-file-pdf"></i></div>
-          <div class="doc-content">
-            <h5>Application Form</h5>
+      <!-- Application Form -->
+      <div class="document-card glass">
+        <div class="doc-row">
+          <div class="doc-left">
+            <div class="doc-icon pdf"><i class="fas fa-file-pdf"></i></div>
+            <span class="doc-title">Application Form</span>
+          </div>
+          <div class="doc-right">
             {% if student.application_form %}
               <a href="{{ student.application_form.url }}" target="_blank" class="doc-btn">
-                <i class="fas fa-eye"></i> View PDF
+                <i class="fas fa-eye"></i> View
               </a>
             {% else %}
               <span class="no-doc">Not Uploaded</span>
-            {% endif %}
-          </div>
-        </div>
-
-        <!-- Assessment File -->
-        <div class="document-card glass">
-          <div class="doc-icon pdf"><i class="fas fa-file-alt"></i></div>
-          <div class="doc-content">
-            <h5>Assessment File</h5>
-            {% if student.assessment_file %}
-              <a href="{{ student.assessment_file.url }}" target="_blank" class="doc-btn">
-                <i class="fas fa-eye"></i> View PDF
-              </a>
-            {% else %}
-              <span class="no-doc">Not Uploaded</span>
-            {% endif %}
-          </div>
-        </div>
-
-        <!-- Student Uploads -->
-        <div class="document-card glass">
-          <div class="doc-icon upload"><i class="fas fa-cloud-upload-alt"></i></div>
-          <div class="doc-content">
-            <h5>Student Uploads</h5>
-            {% if student_uploads %}
-              <ul class="upload-list">
-                {% for upload in student_uploads %}
-                  <li class="upload-item">
-                    <span class="file-name">
-                      <i class="fas fa-paperclip"></i>
-                      {{ upload.file_name|default:upload.upload_file.name }}
-                    </span>
-                    <a href="{{ upload.upload_file.url }}" target="_blank" class="view-btn-small">View</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <span class="no-doc">No uploads yet</span>
             {% endif %}
           </div>
         </div>
       </div>
+
+      <!-- Assessment File -->
+      <div class="document-card glass">
+        <div class="doc-row">
+          <div class="doc-left">
+            <div class="doc-icon pdf"><i class="fas fa-file-alt"></i></div>
+            <span class="doc-title">Assessment File</span>
+          </div>
+          <div class="doc-right">
+            {% if student.assessment_file %}
+              <a href="{{ student.assessment_file.url }}" target="_blank" class="doc-btn">
+                <i class="fas fa-eye"></i> View
+              </a>
+            {% else %}
+              <span class="no-doc">Not Uploaded</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Uploads -->
+      <div class="document-card glass uploads-card">
+        <div class="doc-row clickable" onclick="toggleUploads()">
+          <div class="doc-left">
+            <div class="doc-icon upload">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <span class="doc-title">Student Uploads</span>
+          </div>
+          <i class="fas fa-chevron-down dropdown-arrow"></i>
+        </div>
+
+        <!-- DROPDOWN (overlay, not expanding card) -->
+        <div id="uploadsList" class="uploads-dropdown">
+          {% if student_uploads %}
+            <ul class="upload-list">
+              {% for upload in student_uploads %}
+                <li>
+                  <a href="{{ upload.upload_file.url }}" target="_blank">
+                    <i class="fas fa-paperclip"></i>
+                    {{ upload.file_name|default:upload.upload_file.name }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <span class="no-doc">No uploads yet</span>
+          {% endif %}
+        </div>
+      </div>
+
     </div>
+
+    <br>
 
     <!-- NEW SESSION -->
     <div class="new-session-container">
@@ -160,7 +253,7 @@
       <table class="students-table">
         <thead>
           <tr>
-            <th>Date & Time</th>
+            <th>Date</th>
             <th>Title</th>
             <th>Actions</th>
           </tr>
@@ -201,5 +294,16 @@
   document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
   document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
 </script>
+<script>
+function toggleUploads() {
+    const list = document.getElementById("uploadsList");
+    const arrow = document.querySelector(".dropdown-arrow");
+
+    list.classList.toggle("open");
+    arrow.classList.toggle("rotate");
+}
+</script>
+
+
 
 {% comment %}{% include 'Faculty/footer.html' %}{% endcomment %}

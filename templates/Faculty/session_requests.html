@@ -165,7 +165,7 @@
 
 <div class="container">
 
-    <!-- SIDEBAR -->
+      <!-- SIDEBAR -->
     <aside class="sidebar">
         <nav class="menu">
             <a href="{% url 'faculty_dashboard' %}" class="menu-item">
@@ -181,15 +181,9 @@
                 </a>
                 <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
-                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>View All Students</a>
+                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>All Students</a>
                 </div>
             </div>
-
-            <hr class="menu-divider" />
-
-            <a href="{% url 'students-view' %}" class="menu-item">
-                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
-            </a>
 
             <hr class="menu-divider" />
 
@@ -204,7 +198,6 @@
             </a>
         </nav>
     </aside>
-
 
     <main class="main-content">
 
@@ -349,11 +342,12 @@
 </div>
 
 <script>
-    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-        toggle.addEventListener('click', function () {
-            this.closest('.dropdown').classList.toggle('open');
-        });
+  // Dropdown
+  document.querySelectorAll('.dropdown-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      el.parentNode.classList.toggle('open');
     });
+  });
 
     function openSessionModal(requestId) {
     const modal = document.getElementById("sessionModal");
@@ -369,19 +363,6 @@
     document.getElementById("sessionModal").style.display = "none";
     }
 
-</script>
-<script>
-  // Dropdown
-  document.querySelectorAll('.dropdown-toggle').forEach(el => {
-    el.addEventListener('click', () => {
-      el.parentNode.classList.toggle('open');
-    });
-  });
-
-  // Modal
-  const modal = document.getElementById("editModal");
-  document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
-  document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
 </script>
 
 {% include 'Faculty/footer.html' %}

@@ -1,6 +1,7 @@
 {% load static %}
 
 {% include 'Faculty/header.html' %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 <!-- PAGE BODY -->
 <div class="container">
@@ -20,8 +21,8 @@
                 <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
-                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>View All Students</a>
+                <a class="dropdown-item active" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
+                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>All Students</a>
                 </div>
             </div>
 
@@ -232,6 +233,15 @@
   const modal = document.getElementById("editModal");
   document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
   document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
+
+      document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
 </script>
 
   {% include 'Faculty/footer.html' %}

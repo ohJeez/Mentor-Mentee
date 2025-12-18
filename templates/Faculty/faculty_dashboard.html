@@ -1,10 +1,29 @@
 {% load static %}
 {% include 'Faculty/header.html' %}
 
-<link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
     <link rel="stylesheet" href="{% static 'styles/admin_dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.css" rel="stylesheet">
+
+<style>
+.info-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;      /* space between icon and text */
+}
+
+.info-header i {
+    font-size: 22px;
+    color: #28a745; /* optional */
+}
+
+.info-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+</style>
 
 <div class="container">
 
@@ -24,7 +43,7 @@
                 </a>
                 <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
-                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>View All Students</a>
+                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>All Students</a>
                 </div>
             </div>
 
@@ -61,41 +80,36 @@
         <div class="side-info">
 
             <div class="info-box">
-                <h3>Active Sessions</h3>
+                <div class="info-header">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <h3>Active Sessions</h3>
+                </div>
+
                 {% if active_sessions %}
-                <ul>
-                    {% for s in active_sessions %}
-                        <li>{{ s.batch.batch_name }} – {{ s.start_date }} to {{ s.end_date }}</li>
-                    {% endfor %}
-                </ul>
+                    <div>
+                        {% for s in active_sessions %}
+                            <div style="margin-bottom: 10px;"><strong>{{ s.batch.batch_name }}</strong> <br>  {{ s.start_date }} to {{ s.end_date }}</div>
+                        {% endfor %}
+                    </div>
                 {% else %}
                     <p>No active sessions.</p>
                 {% endif %}
             </div>
 
             <div class="info-box">
-                <h3>Pending Sessions</h3>
-                {% if pending_sessions %}
-                <ul>
-                    {% for s in pending_sessions %}
-                        <li>{{ s.batch.batch_name }} – Starts {{ s.start_date }}</li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                    <p>No pending sessions.</p>
-                {% endif %}
-            </div>
+                <div class="info-header">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    <h3>Upcoming Sessions</h3>
+                </div>
 
-            <div class="info-box">
-                <h3>Missed Sessions</h3>
-                {% if missed_sessions %}
-                <ul>
-                    {% for s in missed_sessions %}
-                        <li>{{ s.batch.batch_name }} – Ended {{ s.end_date }}</li>
-                    {% endfor %}
-                </ul>
+                {% if pending_sessions %}
+                    <div>
+                        {% for s in pending_sessions %}
+                            <div style="margin-bottom: 10px;"><strong>{{ s.batch.batch_name }}</strong> <br> Starts {{ s.start_date }}</div>
+                        {% endfor %}
+                    </div>
                 {% else %}
-                    <p>No missed sessions.</p>
+                    <p>No upcoming sessions.</p>
                 {% endif %}
             </div>
 
@@ -105,14 +119,6 @@
 </main>
 </div>
 
-<!-- MODAL -->
-<div class="modal-bg" id="sessionModal">
-    <div class="modal-box">
-        <span class="close-btn" onclick="closeModal()">Close</span>
-        <h3 id="modal-date"></h3>
-        <ul id="modal-session-list"></ul>
-    </div>
-</div>
 
 <!-- JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
