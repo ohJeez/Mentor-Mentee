@@ -26,12 +26,11 @@ path('logout', views.logout, name='logout'),
     path("admin_profile", views.admin_profile, name="admin_profile"),
     path('admin_StudentDetails/<int:s_id>', views.admin_StudentDetails, name="admin_StudentDetails"),
     path("admin_uploadStudents", views.admin_uploadStudents, name="admin_uploadStudents"),
-    path("admin_reports", views.admin_Reports, name="admin_reports"),
-    path("admin_reports_data", views.filter_sessions, name="admin_reports_data"),
-    path("admin_reports_pdf", views.generate_report_pdf, name="admin_reports_pdf"),
+   path("admin_reports/", views.admin_Reports, name="admin_reports"),
+    path("api/search_entities/", views.search_entities, name="search_entities"),
+    path("api/report_data/", views.fetch_report_data, name="fetch_report_data"),
+    path("api/report_pdf/", views.generate_report_pdf, name="generate_report_pdf"),
     path('admin_viewSessions',views.admin_viewSessions),
-    path("fetch_report_data/", views.fetch_report_data, name="fetch_report_data"),
-    path("generate_report_pdf/", views.generate_report_pdf, name="generate_report_pdf"),
     path("admin_updateSession",views.admin_updateSession,name="admin_updateSession"),
     
     ##Faculty URL's
@@ -67,6 +66,7 @@ path('logout', views.logout, name='logout'),
     path('student_profile',views.student_Profile),
     path('student_uploads',views.student_uploads),
     path('student_viewSessions',views.student_viewSessions),
+    path("student_update_profile", views.student_update_profile, name="student_update_profile"),
     
     
 

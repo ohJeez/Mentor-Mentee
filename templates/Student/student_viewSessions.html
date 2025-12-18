@@ -110,7 +110,7 @@
     <div class="header-right">
         <h3>{{ student.name }}</h3>
         <div class="user-profile-icon">
-            <i class="fas fa-user"></i>
+            <img src="{{ student.student_image.url }}" alt="Admin">
         </div>
         <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
     </div>

@@ -42,7 +42,7 @@
 
         <div class="header-right">
              <h3>{{student.name}}</h3>
-            <div class="user-profile-icon"><img src="../static/student_images/{{ student.student_image }}" alt="Admin"></div>
+            <div class="user-profile-icon"><img src="{{ student.student_image.url }}" alt="Admin"></div>
                 <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
         </div>
     </header>
