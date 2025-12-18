@@ -1986,4 +1986,8 @@ def test_mail(request):
     except Exception as e:
         return HttpResponse(f"Error sending email: {e}")
     
-    
+def sample_view(request):
+    return HttpResponse("This is a sample view.")
+
+
+
