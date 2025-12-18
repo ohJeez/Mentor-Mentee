@@ -24,6 +24,7 @@ from django.db.models import F, Value
 from django.db.models.functions import Coalesce
 import csv
 import io
+import random
 
 
 # Create your views here.
@@ -1851,6 +1852,119 @@ def student_update_profile(request):
         return HttpResponse(
             "<script>alert('Error updating profile!'); window.location.href='/student_profile'</script>")
     return redirect("/student_profile") 
+
+# Student password editing
+def verify_current_password(request):
+    if request.method == "POST":
+        login_id = request.session.get("login_id")
+
+        if not login_id:
+            return JsonResponse({
+                "status": "error",
+                "message": "Session expired"
+            }, status=401)
+
+        password = request.POST.get("password")
+
+        try:
+            login = Login.objects.get(login_id=login_id)
+
+            if password == login.password:
+                return JsonResponse({"status": "success"})
+
+            return JsonResponse({
+                "status": "invalid",
+                "message": "Incorrect password"
+            })
+
+        except Login.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": "User not found"
+            })
+
+    return JsonResponse({"status": "error"}, status=400)
+
+
+def update_password(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid"}, status=405)
+
+    login_id = request.session.get("login_id")
+    if not login_id:
+        return JsonResponse({"status": "session_expired"}, status=401)
+
+    try:
+        data = json.loads(request.body)
+        new_password = data.get("password")
+
+        if not new_password:
+            return JsonResponse({"status": "error", "msg": "Password missing"}, status=400)
+
+        login = Login.objects.get(login_id=login_id)
+        login.password = new_password   # hash later
+        login.save()
+
+        return JsonResponse({"status": "success"})
+
+    except Login.DoesNotExist:
+        return JsonResponse({"status": "not_found"}, status=404)
+
+    except Exception as e:
+        print("Password Update Error:", e)
+        return JsonResponse({"status": "error"}, status=500)        
+    return redirect("/student_profile")
+
+def send_otp(request):
+    login_id = request.session.get("login_id")
+    if not login_id:
+        return JsonResponse({"status": "session_expired"}, status=401)
+
+    otp = str(random.randint(1000,9999))
+    request.session["otp"] = otp
+    request.session.set_expiry(300)
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid"}, status=405)
+    
+    try:
+        user = Student.objects.get(login_id=login_id)
+        print(user.email)
+        send_mail(
+            subject="OTP for changing Password - Mentor-Mentee System",
+            message="Your OTP for changing password is: {}".format(otp),
+            from_email="noreply.mentormentee@gmail.com",
+            recipient_list=[user.email],
+            fail_silently=False,    
+        )
+        return JsonResponse({"status": "sent", "otp": otp})
+    except Exception as e:
+        print("OTP Send Error:", e)
+        return JsonResponse({"status": "error"}, status=400)
+    
+    
+def verify_otp(request):
+    login_id = request.session.get("login_id")
+    if not login_id:
+        return JsonResponse({"status": "session_expired"}, status=401)
+
+    session_otp = request.session.get("otp")
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid"}, status=405)
+    
+    try:
+        data=json.loads(request.body)
+        entered_otp = data.get("otp")
+
+        if entered_otp == session_otp:
+            return JsonResponse({"status": "success"})
+        else:
+            return JsonResponse({"status": "invalid"})
+    except Exception as e:
+        print("OTP Verification Error:", e)
+        return JsonResponse({"status": "error"}, status=400)    
+    
+    return JsonResponse({"status": "error"}, status=400)
+
 
 def test_mail(request):
     try:

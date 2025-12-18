@@ -67,8 +67,10 @@ path('logout', views.logout, name='logout'),
     path('student_uploads',views.student_uploads),
     path('student_viewSessions',views.student_viewSessions),
     path("student_update_profile", views.student_update_profile, name="student_update_profile"),
-    
-    
+    path("verify-current-password/", views.verify_current_password, name="verify_current_password"),
+    path('update_password/',views.update_password,name='update_password'),
+    path('verify_otp/',views.verify_otp,name='verify_otp'),
+    path('send_otp/',views.send_otp,name='send_otp'),
 
     path('test-mail/', views.test_mail),
 
