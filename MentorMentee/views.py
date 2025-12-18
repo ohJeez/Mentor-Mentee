@@ -28,6 +28,7 @@ import os
 import json
 import csv
 import io
+import random
 from datetime import datetime, timedelta, date
 from functools import wraps
 
@@ -121,6 +122,61 @@ def home(request):
                 """)
      
     return render(request,'Login.html') 
+
+#Forgot Password
+def login_send_otp(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        try:
+            data=json.loads(request.body)
+            mail=data.get("email")
+            if not Student.objects.filter(email=mail).exists():
+                return JsonResponse({"status":"error","message":"Email not registered!"})
+            else:
+                otp = str(random.randint(1000,9999))
+                request.session['log_otp'] = otp
+                request.session['reset_email'] = mail
+                send_mail(
+                    subject="Mentor Mentee Password Reset OTP",
+                    message=f"Your OTP for password reset is: {otp}",
+                    from_email="noreply.mentor_mentee@gmail.com",
+                    recipient_list=[mail],
+                    fail_silently=False,
+                )
+                return JsonResponse({"status":"sent","message":"OTP sent to your email!"})
+        except Exception as e:
+            print(f"Error sending OTP: {e}")
+            return JsonResponse({"status":"error","message":"Error sending OTP. Please try again."})
+        
+def login_verify_otp(request):
+    if request.method == 'POST':
+        try:
+            data=json.loads(request.body)
+            entered_otp=data.get("otp")
+            session_otp=request.session.get('log_otp')
+            if entered_otp == session_otp:
+                return JsonResponse({"status":"success","message":"OTP verified successfully!"})
+            else:
+                return JsonResponse({"status":"error","message":"Invalid OTP. Please try again."})
+        except Exception as e:
+            print(f"Error verifying OTP: {e}")
+            return JsonResponse({"status":"error","message":"Error verifying OTP. Please try again."})
+    
+def reset_password(request):
+    if request.method == 'POST':
+        try:
+            data=json.loads(request.body)
+            new_password=data.get("password")
+            student=Student.objects.get(email=request.session.get('reset_email'))
+            print(student.name)
+            login=Login.objects.get(login_id=student.login_id)
+            print(login.username)
+            login.password=new_password
+            login.save()
+            return JsonResponse({"status":"success","message":"Password updated successfully!"})
+        except Exception as e:
+            print(f"Error updating password: {e}")
+            return JsonResponse({"status":"error","message":"Error updating password. Please try again."})
 
 
 def admin_dashboard(request):
@@ -1862,6 +1918,119 @@ def student_update_profile(request):
             "<script>alert('Error updating profile!'); window.location.href='/student_profile'</script>")
     return redirect("/student_profile") 
 
+# Student password editing
+def verify_current_password(request):
+    if request.method == "POST":
+        login_id = request.session.get("login_id")
+
+        if not login_id:
+            return JsonResponse({
+                "status": "error",
+                "message": "Session expired"
+            }, status=401)
+
+        password = request.POST.get("password")
+
+        try:
+            login = Login.objects.get(login_id=login_id)
+
+            if password == login.password:
+                return JsonResponse({"status": "success"})
+
+            return JsonResponse({
+                "status": "invalid",
+                "message": "Incorrect password"
+            })
+
+        except Login.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": "User not found"
+            })
+
+    return JsonResponse({"status": "error"}, status=400)
+
+
+def update_password(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid"}, status=405)
+
+    login_id = request.session.get("login_id")
+    if not login_id:
+        return JsonResponse({"status": "session_expired"}, status=401)
+
+    try:
+        data = json.loads(request.body)
+        new_password = data.get("password")
+
+        if not new_password:
+            return JsonResponse({"status": "error", "msg": "Password missing"}, status=400)
+
+        login = Login.objects.get(login_id=login_id)
+        login.password = new_password   # hash later
+        login.save()
+
+        return JsonResponse({"status": "success"})
+
+    except Login.DoesNotExist:
+        return JsonResponse({"status": "not_found"}, status=404)
+
+    except Exception as e:
+        print("Password Update Error:", e)
+        return JsonResponse({"status": "error"}, status=500)        
+    return redirect("/student_profile")
+
+def send_otp(request):
+    login_id = request.session.get("login_id")
+    if not login_id:
+        return JsonResponse({"status": "session_expired"}, status=401)
+
+    otp = str(random.randint(1000,9999))
+    request.session["otp"] = otp
+    request.session.set_expiry(300)
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid"}, status=405)
+    
+    try:
+        user = Student.objects.get(login_id=login_id)
+        print(user.email)
+        send_mail(
+            subject="OTP for changing Password - Mentor-Mentee System",
+            message="Your OTP for changing password is: {}".format(otp),
+            from_email="noreply.mentormentee@gmail.com",
+            recipient_list=[user.email],
+            fail_silently=False,    
+        )
+        return JsonResponse({"status": "sent", "otp": otp})
+    except Exception as e:
+        print("OTP Send Error:", e)
+        return JsonResponse({"status": "error"}, status=400)
+    
+    
+def verify_otp(request):
+    login_id = request.session.get("login_id")
+    if not login_id:
+        return JsonResponse({"status": "session_expired"}, status=401)
+
+    session_otp = request.session.get("otp")
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid"}, status=405)
+    
+    try:
+        data=json.loads(request.body)
+        entered_otp = data.get("otp")
+
+        if entered_otp == session_otp:
+            return JsonResponse({"status": "success"})
+        else:
+            return JsonResponse({"status": "invalid"})
+    except Exception as e:
+        print("OTP Verification Error:", e)
+        return JsonResponse({"status": "error"}, status=400)    
+    
+    return JsonResponse({"status": "error"}, status=400)
+
+
 def test_mail(request):
     try:
         send_mail(
@@ -1875,4 +2044,8 @@ def test_mail(request):
     except Exception as e:
         return HttpResponse(f"Error sending email: {e}")
     
-    
+def sample_view(request):
+    return HttpResponse("This is a sample view.")
+
+
+

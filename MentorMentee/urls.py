@@ -11,6 +11,10 @@ urlpatterns = [
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('admin_addStudent', views.add_Student, name='admin_addStudent'),
     path('admin_ViewStudents', views.admin_ViewStudents),
+    path('login_send_otp/', views.login_send_otp, name='login_send_otp'),
+    path('login_verify_otp/', views.login_verify_otp, name='login_verify_otp'),
+    path('reset_password/', views.reset_password, name='reset_password'),
+    
     # path('admin_addFaculty', views.admin_addFaculty),
     path('admin_addBatch', views.admin_addBatch),
     path('admin_viewBatches', views.admin_viewBatches),
@@ -66,7 +70,11 @@ urlpatterns = [
     path('student_profile',views.student_Profile),
     path('student_uploads',views.student_uploads),
     path('student_viewSessions',views.student_viewSessions),
-    
+    path("student_update_profile", views.student_update_profile, name="student_update_profile"),
+    path("verify-current-password/", views.verify_current_password, name="verify_current_password"),
+    path('update_password/',views.update_password,name='update_password'),
+    path('verify_otp/',views.verify_otp,name='verify_otp'),
+    path('send_otp/',views.send_otp,name='send_otp'),
     
 
     path('test-mail/', views.test_mail),
