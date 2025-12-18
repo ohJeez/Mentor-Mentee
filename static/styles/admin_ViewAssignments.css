@@ -14,6 +14,58 @@
   min-width: 220px;
 }
 
+.table-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: auto;
+}
+
+/* ================= TABLE STABILITY FIX ================= */
+
+/* Lock column widths */
+.students-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+/* Prevent content overflow */
+.students-table th,
+.students-table td {
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Photo column width */
+.students-table th:first-child,
+.students-table td:first-child {
+  width: 70px;
+  text-align: center;
+}
+
+/* Image wrapper (VERY IMPORTANT) */
+.avatar-wrapper {
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+/* Avatar itself */
+.table-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
 .students-search {
   flex: 1;
 }

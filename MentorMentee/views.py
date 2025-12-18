@@ -20,6 +20,8 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from django.utils.dateparse import parse_date
 from django.core.mail import send_mail
+from django.db.models import F, Value
+from django.db.models.functions import Coalesce
 import csv
 import io
 
@@ -797,37 +799,60 @@ def admin_ViewAssignments(request):
     login_id = request.session.get('login_id')
     if not login_id:
         return redirect('/')
+
     admin = Admin.objects.get(login_id=login_id)
     dept = admin.department_id
+
     faculties = Faculty.objects.filter(department_id=dept)
     batches = Batches.objects.filter(course__department_id=dept)
-    return render(request, './Admin/admin_ViewAssignments.html',
-                  {"faculties": faculties, "batches": batches,"admin":admin}
-    )
 
+    return render(
+        request,
+        "Admin/admin_ViewAssignments.html",
+        {
+            "faculties": faculties,
+            "batches": batches,
+            "admin": admin
+        }
+    )
+    
 #Filtering students based on assignments
 def get_assigned_students(request):
     faculty = request.GET.get("faculty")
     batch = request.GET.get("batch")
-    students = Student.objects.filter(faculty_id=faculty)
+
+    login_id = request.session.get("login_id")
+    admin = Admin.objects.get(login_id=login_id)
+    dept = admin.department_id
+
+    # Base queryset: all department students
+    students = Student.objects.filter(department_id=dept)
+
+    # Optional filters
+    if faculty:
+        students = students.filter(faculty_id=faculty)
 
     if batch:
         students = students.filter(batch_id=batch)
+
     return JsonResponse({
         "students": list(
             students.annotate(
                 course_name=F("course__course_name"),
-                batch_name=F("batch__batch_name")
+                batch_name=F("batch__batch_name"),
+                faculty_name=Coalesce(F("faculty__name"), Value("Unassigned"))
             ).values(
                 "name",
                 "reg_no",
                 "student_image",
                 "course_name",
                 "batch_name",
+                "faculty_name",
             )
         )
     })
-
+    
+    
 #Admin Profile
 def admin_profile(request):
     contents={}
