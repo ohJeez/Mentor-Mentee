@@ -1,311 +1,349 @@
 {% load static %}
-{% include 'SuperAdmin/superAdmin_header_sidebar.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Super Admin | Faculty Management</title>
 
-<div class="page-container">
+  <!-- Icons -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div>
-      <h2>Faculty Management</h2>
-      <p class="subtitle">Search, manage and assign faculty admins</p>
+  <style>
+    /* ================= GLOBAL ================= */
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #f4f6f9;
+    }
+
+    /* ================= MAIN LAYOUT ================= */
+    .main-wrapper {
+      margin-left: 260px; /* MUST match sidebar width */
+      width: calc(100% - 260px);
+      padding: 36px 40px;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* ================= SINGLE MAIN CARD ================= */
+    .main-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+    }
+
+    /* ================= HEADER ================= */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .btn-add {
+      background: #1e9e44;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* ================= FILTER ROW ================= */
+    .filter-row {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr auto;
+      gap: 16px;
+      margin-bottom: 32px;
+      align-items: end;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-apply {
+      background: #1e9e44;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-reset {
+      border: 1px solid #aaa;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #555;
+      background: white;
+    }
+
+    /* ================= FACULTY GRID ================= */
+    .faculty-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 26px;
+    }
+
+    /* ================= FACULTY CARD ================= */
+    .faculty-card {
+      background: #e0fde0;
+      border-radius: 18px;
+      padding: 22px 18px 18px;
+      box-shadow: 10px 8px 22px rgba(160, 72, 72, 0.06);
+      transition: 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .faculty-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 32px rgba(112, 49, 49, 0.14);
+    }
+
+    .image-wrapper {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #eaf5ee;
+      margin-bottom: 14px;
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .faculty-body {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .faculty-body h4 {
+      margin: 4px 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .designation {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .department {
+      font-size: 13px;
+      color: #1e9e44;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .admin-badge {
+      margin-top: 8px;
+      padding: 4px 12px;
+      font-size: 11px;
+      border-radius: 14px;
+      background: #1e9e44;
+      color: #fff;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    /* ================= ACTIONS ================= */
+    .faculty-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      border-top: 1px solid #eee;
+      padding-top: 14px;
+      width: 100%;
+    }
+
+    .faculty-actions a {
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      border: 1px solid #1e9e44;
+      color: #1e9e44;
+    }
+
+    .btn-success {
+      background: #1e9e44;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #ff9800;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #e53935;
+      color: white;
+    }
+
+    .empty-text {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: 18px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+{% include "SuperAdmin/superAdmin_header_sidebar.html" %}
+
+<div class="main-wrapper">
+  <div class="main-card">
+
+    <!-- ================= HEADER ================= -->
+    <div class="page-header">
+      <div>
+        <h2>Faculty Management</h2>
+        <p class="subtitle">Search, manage and assign faculty admins</p>
+      </div>
+
+      <a href="{% url 'add_faculty' %}" class="btn-add">
+        + Add Faculty
+      </a>
     </div>
 
-    <a href="{% url 'add_faculty' %}" class="btn-add">
-      + Add Faculty
-    </a>
+    <!-- ================= FILTERS ================= -->
+    <form method="get" class="filter-row">
+
+      <div class="filter-group">
+        <label>Search</label>
+        <input type="text"
+               name="search"
+               placeholder="Name / Email / Department"
+               value="{{ request.GET.search }}">
+      </div>
+
+      <div class="filter-group">
+        <label>Department</label>
+        <select name="department">
+          <option value="">All Departments</option>
+          {% for dept in departments %}
+          <option value="{{ dept.dept_id }}"
+            {% if request.GET.department == dept.dept_id|stringformat:"s" %}selected{% endif %}>
+            {{ dept.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Role</label>
+        <select name="admin">
+          <option value="">All</option>
+          <option value="admin" {% if request.GET.admin == 'admin' %}selected{% endif %}>Admin</option>
+          <option value="faculty" {% if request.GET.admin == 'faculty' %}selected{% endif %}>Faculty</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button type="submit" class="btn-apply">Apply</button>
+        <a href="{% url 'manage_faculty' %}" class="btn-reset">Reset</a>
+      </div>
+
+    </form>
+
+    <!-- ================= FACULTY GRID ================= -->
+    <div class="faculty-grid">
+
+      {% for f in faculty_list %}
+      <div class="faculty-card">
+
+        <div class="image-wrapper">
+          {% if f.faculty_image %}
+            <img src="{{ f.faculty_image.url }}">
+          {% else %}
+            <img src="{% static 'jaya.jpeg' %}">
+          {% endif %}
+        </div>
+
+        <div class="faculty-body">
+          <h4>{{ f.name }}</h4>
+          <p class="designation">{{ f.designation }}</p>
+          <p class="department">{{ f.department.name }}</p>
+
+          {% if f.is_admin %}
+            <span class="admin-badge">ADMIN</span>
+          {% endif %}
+        </div>
+
+        <div class="faculty-actions">
+          <a href="{% url 'view_faculty' f.faculty_id %}" class="btn-outline">View</a>
+
+          {% if not f.is_admin %}
+            <a href="{% url 'make_faculty_admin' f.faculty_id %}" class="btn-success">Make Admin</a>
+          {% else %}
+            <a href="{% url 'remove_faculty_admin' f.faculty_id %}" class="btn-warning">Remove Admin</a>
+          {% endif %}
+
+          <a href="{% url 'delete_faculty' f.faculty_id %}"
+             onclick="return confirm('Delete faculty?')"
+             class="btn-danger">
+             Delete
+          </a>
+        </div>
+
+      </div>
+      {% empty %}
+        <p class="empty-text">No faculty found.</p>
+      {% endfor %}
+
+    </div>
+
   </div>
-
-  <!-- FILTER CARD -->
-  <form method="get" class="filter-card">
-
-    <div class="filter-group">
-      <label>Search</label>
-      <input type="text"
-             name="search"
-             placeholder="Name / Email / Department"
-             value="{{ request.GET.search }}">
-    </div>
-
-    <div class="filter-group">
-      <label>Department</label>
-      <select name="department">
-        <option value="">All Departments</option>
-        {% for dept in departments %}
-        <option value="{{ dept.dept_id }}"
-          {% if request.GET.department == dept.dept_id|stringformat:"s" %}selected{% endif %}>
-          {{ dept.name }}
-        </option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label>Role</label>
-      <select name="admin">
-        <option value="">All</option>
-        <option value="admin" {% if request.GET.admin == 'admin' %}selected{% endif %}>Admin</option>
-        <option value="faculty" {% if request.GET.admin == 'faculty' %}selected{% endif %}>Faculty</option>
-      </select>
-    </div>
-
-    <div class="filter-actions">
-      <button type="submit" class="btn-apply">Apply</button>
-      <a href="{% url 'manage_faculty' %}" class="btn-reset">Reset</a>
-    </div>
-
-  </form>
-
-  <!-- FACULTY GRID -->
-  <div class="faculty-grid">
-
-    {% for f in faculty_list %}
-    <div class="faculty-card">
-
-      <div class="image-wrapper">
-        {% if f.faculty_image %}
-          <img src="{{ f.faculty_image.url }}">
-        {% else %}
-          <img src="{% static 'user-3297.png' %}">
-        {% endif %}
-      </div>
-
-      <div class="faculty-body">
-        <h4>{{ f.name }}</h4>
-        <p class="designation">{{ f.designation }}</p>
-        <p class="department">{{ f.department.name }}</p>
-
-        {% if f.is_admin %}
-          <span class="admin-badge">ADMIN</span>
-        {% endif %}
-      </div>
-
-      <div class="faculty-actions">
-        <a href="{% url 'view_faculty' f.faculty_id %}" class="btn-outline">View</a>
-
-        {% if not f.is_admin %}
-          <a href="{% url 'make_faculty_admin' f.faculty_id %}" class="btn-success">Make Admin</a>
-        {% else %}
-          <a href="{% url 'remove_faculty_admin' f.faculty_id %}" class="btn-warning">Remove Admin</a>
-        {% endif %}
-
-        <a href="{% url 'delete_faculty' f.faculty_id %}"
-           onclick="return confirm('Delete faculty?')"
-           class="btn-danger">
-           Delete
-        </a>
-      </div>
-
-    </div>
-    {% empty %}
-      <p class="empty-text">No faculty found.</p>
-    {% endfor %}
-
-  </div>
-
 </div>
 
-<!-- ===================== STYLES ===================== -->
-<style>
-.page-container {
-  margin-left: 100px;
-  padding: 36px 40px;
-  background: #f4f6f9;
-  min-height: calc(100vh - 70px);
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.page-header h2 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 800;
-}
-
-.subtitle {
-  margin-top: 4px;
-  color: #666;
-}
-
-.btn-add {
-  background: #1e9e44;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-/* FILTER CARD */
-.filter-card {
-  background: white;
-  padding: 22px;
-  margin-top: 25px;
-  border-radius: 16px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
-}
-
-.filter-group label {
-  font-weight: 600;
-  margin-bottom: 6px;
-  display: block;
-}
-
-.filter-group input,
-.filter-group select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.filter-actions {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-}
-
-.btn-apply {
-  background: #1e9e44;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-.btn-reset {
-  padding: 10px 18px;
-  border-radius: 8px;
-  text-decoration: none;
-  border: 1px solid #aaa;
-  color: #555;
-}
-
-/* GRID */
-.faculty-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
-  margin-top: 32px;
-}
-
-
-.faculty-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px 16px 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-  transition: 0.25s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.faculty-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
-}
-
-
-.image-wrapper {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-bottom: 12px;
-  border: 4px solid #eaf5ee;
-}
-
-.image-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-
-.faculty-body {
-  text-align: center;
-  padding: 6px 0 12px;
-}
-
-.faculty-body h4 {
-  margin: 4px 0;
-  font-size: 17px;
-  font-weight: 700;
-}
-
-.designation {
-  font-size: 13px;
-  color: #555;
-  margin: 2px 0;
-}
-
-.department {
-  font-size: 13px;
-  color: #1e9e44;
-  font-weight: 600;
-}
-
-.admin-badge {
-  margin-top: 8px;
-  padding: 4px 12px;
-  font-size: 11px;
-  border-radius: 14px;
-  background: #1e9e44;
-  color: #fff;
-  font-weight: 600;
-}
-
-/* ACTIONS */
-.faculty-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding: 16px;
-  border-top: 1px solid #eee;
-}
-
-.faculty-actions a {
-  text-align: center;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 13px;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.btn-outline {
-  border: 1px solid #1e9e44;
-  color: #1e9e44;
-}
-
-.btn-success {
-  
-  background: #1e9e44;
-  color: white;
-}
-
-.btn-warning {
-  background: #ff9800;
-  color: white;
-}
-
-.btn-danger {
-  background: #e53935;
-  color: white;
-}
-
-.empty-text {
-  grid-column: 1/-1;
-  text-align: center;
-  font-size: 18px;
-  color: #777;
-}
-</style>
+</body>
+</html>

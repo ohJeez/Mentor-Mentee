@@ -16,12 +16,13 @@
       background: #f3f5f9;
     }
 
-.main-wrapper {
-    margin-left: 2px;   /* THIS IS THE KEY */
-    padding: 36px 40px;
-    background: #f4f6f9;
-    min-height: calc(100vh - 80px);
-}
+    .main-wrapper {
+      margin-left: 2px;
+      /* THIS IS THE KEY */
+      padding: 36px 40px;
+      background: #f4f6f9;
+      min-height: calc(100vh - 80px);
+    }
 
 
     .page-header {
@@ -59,7 +60,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.45);
+      background: rgba(0, 0, 0, 0.45);
       display: none;
       justify-content: center;
       align-items: center;
@@ -75,8 +76,15 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     label {
@@ -85,7 +93,8 @@
       display: block;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -126,7 +135,7 @@
       background: white;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
     thead {
@@ -134,7 +143,8 @@
       color: white;
     }
 
-    th, td {
+    th,
+    td {
       padding: 14px;
       text-align: left;
     }
@@ -161,55 +171,54 @@
 
 <body>
 
-<header class="header">
-  <div class="header-left">
-    <img src="{% static 'Assets/logo.png' %}" class="header-logo">
-    <div>
-      <h2 class="rcss-title">RCSS</h2>
-      <p class="rcss-subtitle">Rajagiri College of Social Sciences</p>
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static 'Assets/logo.png' %}" class="header-logo">
+      <div>
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">Rajagiri College of Social Sciences</p>
+      </div>
     </div>
-  </div>
 
-  <h1 class="main-title">SUPER ADMIN</h1>
+    <h1 class="main-title">SUPER ADMIN</h1>
 
-  <div class="header-right">
-    <h3>{{ superadmin.name }}</h3>
-    <div class="user-profile-icon">
-      <i class="fas fa-user"></i>
+    <div class="header-right">
+      <h3>{{ superadmin.name }}</h3>
+      <div class="user-profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <button class="logout-btn" onclick="window.location='/logout'">Log out</button>
     </div>
-    <button class="logout-btn" onclick="window.location='/logout'">Log out</button>
-  </div>
-</header>
+  </header>
 
-<div class="container">
+  <div class="container">
 
-  {% load static %}
+    {% load static %}
 
-<aside class="sidebar">
-  <nav class="menu">
+    <aside class="sidebar">
+      <nav class="menu">
 
-    <!-- DASHBOARD -->
-    <a href="{% url 'superadmin_dashboard' %}" class="menu-item">
-      <i class="fas fa-th-large"></i> Dashboard
-    </a>
+        <!-- DASHBOARD -->
+        <a href="{% url 'superadmin_dashboard' %}" class="menu-item">
+          <i class="fas fa-th-large"></i> Dashboard
+        </a>
 
-    <hr class="menu-divider">
+        <hr class="menu-divider">
 
 
 
-    <!-- COURSES -->
-    <a href="{% url 'manage_courses' %}" class="menu-item">
-      <i class="fas fa-book"></i> Courses
-    </a>
-    <!-- BATCHES -->
-    <a href="{% url 'superAdmin_batches' %}" class="menu-item">
-      <i class="fas fa-layer-group"></i> Batches
-    </a>
-    <!-- FACULTY ADMINS -->
-    <a href="{% url 'manage_faculty' %}" class="menu-item">
-      <i class="fas fa-user-tie"></i> Faculty Admins
-    </a>
+        <!-- COURSES -->
+        <a href="{% url 'manage_courses' %}" class="menu-item">
+          <i class="fas fa-book"></i> Courses
+        </a>
+        <!-- BATCHES -->
+        <a href="{% url 'superAdmin_batches' %}" class="menu-item">
+          <i class="fas fa-layer-group"></i> Batches
+        </a>
+        <!-- FACULTY ADMINS -->
+        <a href="{% url 'manage_faculty' %}" class="menu-item">
+          <i class="fas fa-user-tie"></i> Faculty Admins
+        </a>
 
-  </nav>
-</aside>
-
+      </nav>
+    </aside>

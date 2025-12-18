@@ -284,6 +284,7 @@ def manage_faculty(request):
     })
 
 
+
 def add_faculty(request):
     if not _require_superadmin_session(request):
         return redirect('/')

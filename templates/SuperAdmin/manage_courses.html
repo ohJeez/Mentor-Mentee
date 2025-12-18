@@ -6,86 +6,103 @@
   <meta charset="UTF-8">
   <title>Super Admin | Course Management</title>
 
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
   <style>
+    /* ================= GLOBAL ================= */
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: #f5f7fa;
+      background: #f3f5f9;
     }
 
-    /* MAIN AREA */
+    /* ================= MAIN CONTENT ================= */
+
     .main-wrapper {
-      margin-left: 2px;
-      width: calc(100% - 80px);
+      margin-left: 240px;
+      /* must match sidebar width */
+      width: calc(100% - 240px);
       padding: 40px;
+      padding-top: 110px;
+      /* header height */
+      background: #f4f6f9;
+      min-height: calc(100vh - 80px);
     }
 
-    /* CENTER CONTENT */
     .page-container {
       max-width: 1200px;
       margin: 0 auto;
     }
 
-    /* CARD */
+    /* ================= CARD ================= */
     .card-box {
       background: #fff;
-      border-radius: 18px;
+      border-radius: 16px;
       padding: 30px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
     }
 
-    /* HEADER */
-    .card-header-custom {
+    /* ================= HEADER ================= */
+    /* .page-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 25px;
     }
 
-    .card-header-custom h2 {
+    .page-header h2 {
       margin: 0;
       font-size: 26px;
       font-weight: 700;
-    }
+      color: #222;
+    } */
 
-    /* BUTTON */
-    .btn-primary-custom {
-      background: linear-gradient(135deg, #16a34a, #22c55e);
+    .btn-primary {
+      background: #1e9e44;
       color: #fff;
       border: none;
       padding: 10px 18px;
-      border-radius: 10px;
+      border-radius: 6px;
+      cursor: pointer;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    /* TABLE */
+    .btn-primary:hover {
+      background: #157a33;
+    }
+
+    /* ================= TABLE =================
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     thead {
-      background: linear-gradient(135deg, #15803d, #22c55e);
+      background: #1e9e44;
       color: white;
     }
 
-    th,
-    td {
-      padding: 14px 16px;
+    th, td {
+      padding: 14px;
+      text-align: left;
     }
 
-    tbody tr {
-      border-bottom: 1px solid #e5e7eb;
-    }
+    tr:nth-child(even) {
+      background: #f4faf4;
+    } */
 
-    tbody tr:hover {
-      background: #f0fdf4;
-    }
-
-    /* ACTIONS */
+    /* ================= ACTIONS ================= */
     .actions {
       display: flex;
       gap: 10px;
@@ -96,16 +113,93 @@
       background: none;
       color: #2563eb;
       padding: 6px 14px;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
+      cursor: pointer;
     }
 
     .delete-btn {
-      background: #dc2626;
+      background: #d93025;
       color: white;
       padding: 6px 14px;
-      border-radius: 8px;
+      border-radius: 6px;
       text-decoration: none;
+      font-weight: 600;
+    }
+
+    .delete-btn:hover {
+      background: #a72018;
+    }
+
+    /* ================= POPUP (CUSTOM MODAL) ================= */
+    .popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup-content {
+      width: 420px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      animation: fadeIn .25s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .popup-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .save-btn {
+      background: #1e9e44;
+      padding: 10px 18px;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .cancel-btn {
+      background: #777;
+      padding: 10px 18px;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
       font-weight: 600;
     }
   </style>
@@ -120,15 +214,13 @@
 
       <div class="card-box">
 
-        <!-- HEADER -->
-        <div class="card-header-custom">
+        <div class="page-header">
           <h2>Course Management</h2>
-          <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCourseModal">
-            + Add Course
+          <button class="btn-primary" onclick="openAddPopup()">
+            <i class="fas fa-plus"></i> Add Course
           </button>
         </div>
 
-        <!-- TABLE -->
         <table>
           <thead>
             <tr>
@@ -145,11 +237,9 @@
               <td>{{ c.course_name }}</td>
               <td>{{ c.department.name }}</td>
               <td class="actions">
-                <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editCourseModal"
-                  data-id="{{ c.course_id }}" data-name="{{ c.course_name }}" data-dept="{{ c.department.dept_id }}">
+                <button class="edit-btn"onclick="openEditPopup('{{ c.course_id }}','{{ c.course_name }}','{{ c.department.dept_id }}')">
                   Edit
                 </button>
-
                 <a href="{% url 'delete_course' c.course_id %}" class="delete-btn"
                   onclick="return confirm('Delete this course?');">
                   Delete
@@ -164,74 +254,72 @@
     </div>
   </div>
 
-  <!-- ADD COURSE MODAL -->
-  <div class="modal fade" id="addCourseModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <form method="POST" action="{% url 'add_course' %}">
-          {% csrf_token %}
-          <div class="modal-header">
-            <h5>Add Course</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
+  <!-- ================= ADD POPUP ================= -->
+  <div class="popup" id="addPopup">
+    <div class="popup-content">
+      <h3>Add Course</h3>
+      <form method="POST" action="{% url 'add_course' %}">
+        {% csrf_token %}
+        <label>Course Name</label>
+        <input name="course_name" required>
 
-          <div class="modal-body">
-            <input name="course_name" class="form-control mb-3" placeholder="Course Name" required>
-            <select name="department_id" class="form-control" required>
-              {% for d in departments %}
-              <option value="{{ d.dept_id }}">{{ d.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+        <label>Department</label>
+        <select name="department_id" required>
+          {% for d in departments %}
+          <option value="{{ d.dept_id }}">{{ d.name }}</option>
+          {% endfor %}
+        </select>
 
-          <div class="modal-footer">
-            <button class="btn-primary-custom">Save</button>
-          </div>
-        </form>
-      </div>
+        <div class="popup-btns">
+          <button class="save-btn">Save</button>
+          <button type="button" class="cancel-btn" onclick="closePopups()">Cancel</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- EDIT COURSE MODAL -->
-  <div class="modal fade" id="editCourseModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <form method="POST" action="{% url 'add_course' %}">
-          {% csrf_token %}
-          <input type="hidden" name="course_id" id="editCourseId">
+  <!-- ================= EDIT POPUP ================= -->
+  <div class="popup" id="editPopup">
+    <div class="popup-content">
+      <h3>Edit Course</h3>
+      <form method="POST" action="{% url 'add_course' %}">
+        {% csrf_token %}
+        <input type="hidden" name="course_id" id="editId">
 
-          <div class="modal-header">
-            <h5>Edit Course</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
+        <label>Course Name</label>
+        <input id="editName" name="course_name" required>
 
-          <div class="modal-body">
-            <input id="editCourseName" name="course_name" class="form-control mb-3" required>
-            <select id="editCourseDept" name="department_id" class="form-control" required>
-              {% for d in departments %}
-              <option value="{{ d.dept_id }}">{{ d.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+        <label>Department</label>
+        <select id="editDept" name="department_id" required>
+          {% for d in departments %}
+          <option value="{{ d.dept_id }}">{{ d.name }}</option>
+          {% endfor %}
+        </select>
 
-          <div class="modal-footer">
-            <button class="btn-primary-custom">Update</button>
-          </div>
-        </form>
-      </div>
+        <div class="popup-btns">
+          <button class="save-btn">Update</button>
+          <button type="button" class="cancel-btn" onclick="closePopups()">Cancel</button>
+        </div>
+      </form>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.getElementById('editCourseId').value = btn.dataset.id;
-        document.getElementById('editCourseName').value = btn.dataset.name;
-        document.getElementById('editCourseDept').value = btn.dataset.dept;
-      });
-    });
+    function openAddPopup() {
+      document.getElementById('addPopup').style.display = 'flex';
+    }
+
+    function openEditPopup(id, name, dept) {
+      document.getElementById('editId').value = id;
+      document.getElementById('editName').value = name;
+      document.getElementById('editDept').value = dept;
+      document.getElementById('editPopup').style.display = 'flex';
+    }
+
+    function closePopups() {
+      document.getElementById('addPopup').style.display = 'none';
+      document.getElementById('editPopup').style.display = 'none';
+    }
   </script>
 
 </body>
