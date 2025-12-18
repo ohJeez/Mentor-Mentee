@@ -16,10 +16,10 @@
 
 <body>
 
-<!-- ✅ HEADER -->
+<!-- HEADER -->
 <header class="header">
   <div class="header-left">
-    <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+    <img src="{% static '../static/Assets/logo.png' %}" class="header-logo" />
     <div class="header-title">
       <h2 class="rcss-title">RCSS</h2>
       <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
@@ -29,18 +29,18 @@
   <h1 class="main-title">MENTOR MENTEE</h1>
 
   <div class="header-right">
-             <h3>{{admin.name}}</h3>
-            <div class="user-profile-icon"><img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin"></div>
-                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
-
-        </div>
+    <h3>{{ admin.name }}</h3>
+    <div class="user-profile-icon">
+      <img src="../static/admin_image/{{ admin.admin_image }}" alt="Admin">
+    </div>
+    <button onclick="location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+  </div>
 </header>
 
-<!-- ✅ PAGE BODY -->
 <div class="container">
 
-  <!-- ✅ SIDEBAR -->
-   <aside class="sidebar">
+<!-- SIDEBAR (UNCHANGED) -->
+<aside class="sidebar">
     <nav class="menu">
 
       <a class="menu-item" href="/admin_dashboard">
@@ -72,7 +72,7 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
+                    <a class="dropdown-item active" href="/admin_addBatch"><i class="fas fa-plus"></i>Create Batch</a>
                     <a class="dropdown-item" href="/admin_viewBatches"><i class="fas fa-layer-group"></i>View Batches</a>
                 </div>
             </div>
@@ -118,85 +118,135 @@
     </nav>
   </aside>
 
-  <!-- ✅ MAIN CONTENT -->
-  <main class="main-content">
+<!-- MAIN CONTENT -->
+<main class="main-content">
 
-    <section class="students-section">
+<section class="students-section">
 
-      <div class="students-header">
-        <h2>Assigned Students</h2>
-      </div>
-
-<!-- ✅ FILTERS -->
-<div class="students-filters">
-
-  <div class="filter-row">
-    <select id="facultySelect" class="students-filter">
-      <option value="">Select Faculty</option>
-      {% for f in faculties %}
-      <option value="{{ f.faculty_id }}">{{ f.name }} — {{ f.designation }}</option>
-      {% endfor %}
-    </select>
-
-    <select id="batchSelect" class="students-filter">
-      <option value="">All Batches</option>
-      {% for b in batches %}
-      <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
-      {% endfor %}
-    </select>
-
-    <button id="loadBtn" class="filter-btn">
-      <i class="fas fa-filter"></i> Load Records
-    </button>
+  <div class="students-header">
+    <h2>Assigned Students</h2>
   </div>
 
-  <input type="text" id="searchInput" class="students-search full-search"
-    placeholder="Search by name or Reg No" />
+  <!-- FILTERS -->
+  <div class="students-filters">
+
+    <div class="filter-row">
+      <select id="facultySelect" class="students-filter">
+        <option value="">Select Faculty</option>
+        {% for f in faculties %}
+        <option value="{{ f.faculty_id }}">{{ f.name }} — {{ f.designation }}</option>
+        {% endfor %}
+      </select>
+
+      <select id="batchSelect" class="students-filter">
+        <option value="">All Batches</option>
+        {% for b in batches %}
+        <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
+        {% endfor %}
+      </select>
+
+      <button id="loadBtn" class="filter-btn">
+        <i class="fas fa-filter"></i> Apply Filters
+      </button>
+    </div>
+
+    <input type="text" id="searchInput" class="students-search full-search"
+           placeholder="Search by name or Reg No" />
+  </div>
+
+  <!-- TABLE -->
+  <div class="students-table-container">
+    <table class="students-table">
+      <thead>
+        <tr>
+          <th>Photo</th>
+          <th>Name</th>
+          <th>Reg. No</th>
+          <th>Course</th>
+          <th>Batch</th>
+          <th>Faculty</th> <!-- ✅ NEW COLUMN -->
+        </tr>
+      </thead>
+      <tbody id="studentsTableBody"></tbody>
+    </table>
+  </div>
+
+</section>
+
+</main>
 </div>
 
-
-      <!-- ✅ TABLE -->
-      <div class="students-table-container">
-        <table class="students-table">
-          <thead>
-            <tr>
-              <th>Photo</th>
-              <th>Name</th>
-              <th>Reg. No</th>
-              <th>Course</th>
-              <th>Batch</th>
-            </tr>
-          </thead>
-          <tbody id="studentsTableBody">
-            <!-- Filled by JS -->
-          </tbody>
-        </table>
-      </div>
-
-    </section>
-
-  </main>
-
-</div>
-
-<!-- <footer class="footer"></footer> -->
-
-<!-- ✅ JS CONFIG -->
+<!-- JS -->
 <script>
+  const facultySelect = document.getElementById("facultySelect");
+  const batchSelect = document.getElementById("batchSelect");
+  const loadBtn = document.getElementById("loadBtn");
+  const tableBody = document.getElementById("studentsTableBody");
+  const searchInput = document.getElementById("searchInput");
+
   window.getAssignedURL = "{% url 'get_assigned_students' %}";
-</script>
 
-<!-- ✅ DROPDOWN SCRIPT -->
-<script>
+  document.addEventListener("DOMContentLoaded", loadStudents);
+  loadBtn.addEventListener("click", loadStudents);
+
+  function loadStudents() {
+    let url = window.getAssignedURL + "?";
+    if (facultySelect.value) url += "faculty=" + facultySelect.value + "&";
+    if (batchSelect.value) url += "batch=" + batchSelect.value;
+
+    fetch(url)
+      .then(r => r.json())
+      .then(d => renderTable(d.students));
+  }
+
+ function renderTable(students) {
+  tableBody.innerHTML = "";
+
+  if (!students.length) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center;color:#999">
+          No students found
+        </td>
+      </tr>`;
+    return;
+  }
+
+  students.forEach(s => {
+    const img = s.student_image
+      ? `/media/${s.student_image}`
+      : "/static/Assets/default-user.png";
+
+    tableBody.innerHTML += `
+      <tr>
+        <td>
+          <div class="avatar-wrapper">
+            <img src="${img}" class="table-avatar">
+          </div>
+        </td>
+        <td>${s.name}</td>
+        <td>${s.reg_no}</td>
+        <td>${s.course_name}</td>
+        <td>${s.batch_name}</td>
+        <td>${s.faculty_name}</td>
+      </tr>`;
+  });
+}
+
+  searchInput.addEventListener("keyup", () => {
+    const value = searchInput.value.toLowerCase();
+    document.querySelectorAll("#studentsTableBody tr").forEach(row => {
+      row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+    });
+  });
+
   document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-    toggle.addEventListener('click', function (e) {
+        toggle.addEventListener('click', function (e) {
       e.preventDefault();
-      this.closest('.dropdown').classList.toggle('open');
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
     });
   });
 </script>
-
-<script src="{% static '../static/script/admin_ViewAssignments.js' %}"></script>
-
 </body>
 </html>

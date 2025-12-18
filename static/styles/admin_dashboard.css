@@ -1,76 +1,85 @@
 .calendar-card {
-            width: 68%;
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-right: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        }
+    width: 68%;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-right: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
 
-        /* Right Side Info */
-        .side-info {
-            width: 30%;
-        }
+/* Right Side Info */
+.side-info {
+    width: 30%;
+}
 
-        .info-box {
-            width: 100%;
-            background: white;
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        }
+.info-box {
+    width: 100%;
+    background: white;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
 
-        .info-box h3 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #1434A4;
-        }
+.info-box h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #1434A4;
+}
 
-        /* Modal */
-        .modal-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
+/* Modal */
+.modal-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
 
-        .modal-box {
-            background: white;
-            width: 420px;
-            padding: 20px;
-            border-radius: 12px;
-            animation: pop 0.3s ease-out;
-        }
+.modal-box {
+    background: white;
+    width: 420px;
+    padding: 20px;
+    border-radius: 12px;
+    animation: pop 0.3s ease-out;
+}
 
-        @keyframes pop {
-            from { transform: scale(0.8); opacity: 0; }
-            to   { transform: scale(1); opacity: 1; }
-        }
+@keyframes pop {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
 
-        .modal-box h3 {
-            font-size: 20px;
-            margin-bottom: 15px;
-        }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
 
-        .close-btn {
-            float: right;
-            cursor: pointer;
-            color: red;
-            font-weight: bold;
-        }
+.modal-box h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
 
-        .add-btn {
-            margin-top: 15px;
-            background: #1434A4;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: inline-block;
-            font-size: 14px;
-        }
+.close-btn {
+    float: right;
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+}
+
+.add-btn {
+    margin-top: 15px;
+    background: #1434A4;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+}

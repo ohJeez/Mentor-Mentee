@@ -3,13 +3,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 
-#URL's
-#path('pathname',functionName)
 urlpatterns = [
     path('', views.home, name='home'),
 
     # ✅ No login in URL
-path('logout', views.logout, name='logout'),
+    path('logout', views.logout, name='logout'),
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('admin_addStudent', views.add_Student, name='admin_addStudent'),
     path('admin_ViewStudents', views.admin_ViewStudents),
@@ -26,13 +24,13 @@ path('logout', views.logout, name='logout'),
     path("admin_profile", views.admin_profile, name="admin_profile"),
     path('admin_StudentDetails/<int:s_id>', views.admin_StudentDetails, name="admin_StudentDetails"),
     path("admin_uploadStudents", views.admin_uploadStudents, name="admin_uploadStudents"),
-    path("admin_reports", views.admin_Reports, name="admin_reports"),
-    path("admin_reports_data", views.filter_sessions, name="admin_reports_data"),
-    path("admin_reports_pdf", views.generate_report_pdf, name="admin_reports_pdf"),
+    path("admin_reports/", views.admin_Reports, name="admin_reports"),
+    path("api/search_entities/", views.search_entities, name="search_entities"),
+    path("api/report_data/", views.fetch_report_data, name="fetch_report_data"),
+    path("api/report_pdf/", views.generate_report_pdf, name="generate_report_pdf"),
     path('admin_viewSessions',views.admin_viewSessions),
-    path("fetch_report_data/", views.fetch_report_data, name="fetch_report_data"),
-    path("generate_report_pdf/", views.generate_report_pdf, name="generate_report_pdf"),
     path("admin_updateSession",views.admin_updateSession,name="admin_updateSession"),
+    path('admin_createSession',views.admin_createSession),
     
     ##Faculty URL's
     path('faculty/', views.faculty_dashboard, name='faculty_dashboard'),
@@ -46,12 +44,13 @@ path('logout', views.logout, name='logout'),
     path('profile/', views.profile_content, name='profile_content'),
     path('filter-students/', views.filter_students, name='filter_students'),
     path('session/<int:session_id>/', views.view_session, name='view_session'),
-    path('admin_createSession',views.admin_createSession),
     path('faculty/session-requests/', views.faculty_session_requests, name='faculty_session_requests'),
     path('faculty/session-requests/accept/<int:request_id>/',views.accept_session_request,name='accept_session_request'),
     path('faculty/session-requests/reject/<int:request_id>/',views.reject_session_request,name='reject_session_request'),
     path('faculty/students/',views.faculty_ViewStudents,name='students-view'),
-
+    
+    path("faculty/get_sessions/", views.faculty_api_get_sessions, name="faculty_get_sessions"),
+    path("faculty/get_day_sessions/<str:day>/", views.faculty_api_get_day_sessions),
 
     #Dashboard calendar
     path("api/get_sessions/", views.api_get_sessions),
@@ -59,7 +58,7 @@ path('logout', views.logout, name='logout'),
     
     #Student url's
     path('signup', views.signup, name='signup'),
-    path('student_dashboard',views.student_dashboard),
+    path('student_dashboard/', views.student_dashboard, name='student_dashboard'),
     path('student_api_get_sessions',views.student_api_get_sessions),
     path("get_sessions/", views.student_api_get_sessions),
     path("get_day_sessions/<str:date_str>", views.student_api_get_day_sessions),

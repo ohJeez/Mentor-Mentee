@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
 
+
 <body>
 
 <!-- ✅ HEADER -->
@@ -121,9 +122,9 @@
 
     <!-- ✅ FILTER + STUDENT LIST -->
     <section class="students-section">
-      <div class="students-header">
+      <!-- <div class="students-header">
         <h2>Students List</h2>
-      </div>
+      </div> -->
 
       <!-- ✅ Filters -->
       <div class="students-filters">
@@ -166,7 +167,19 @@
                 data-batch="{{ s.batch.batch_name|lower }}"
                 data-course="{{ s.course.course_name|lower }}">
 
-              <td><img src="/static/student_images/{{ s.student_image }}" class="student-photo" /></td>
+              <td>
+                {% if s.student_image %}
+                  <img src="{{ s.student_image.url }}"
+                      class="student-photo"
+                      onclick="openImageModal(this.src)"
+                      style="cursor:pointer" />
+                {% else %}
+                  <img src="{% static 'Assets/default-user.png' %}"
+                      class="student-photo"
+                      onclick="openImageModal(this.src)"
+                      style="cursor:pointer" />
+                {% endif %}
+              </td>
               <td>{{ s.name }}</td>
               <td>{{ s.reg_no }}</td>
               <td>{{ s.course.course_name }}</td>
@@ -198,6 +211,12 @@
   </main>
 
 </div>
+<!-- Image preview modal -->
+<div class="image-modal" id="imageModal" onclick="closeImageModal()">
+  <span class="close-btn" onclick="closeImageModal()">×</span>
+  <img id="modalImage" src="" alt="Profile Preview">
+</div>
+
 
 <!-- ✅ DROPDOWN SCRIPT -->
 <script>
@@ -208,10 +227,8 @@
       dropdown.classList.toggle('open');
     });
   });
-</script>
 
 <!-- ✅ FILTERING SCRIPT -->
-<script>
   const searchInput = document.getElementById("searchInput");
   const batchFilter = document.getElementById("batchFilter");
   const courseFilter = document.getElementById("courseFilter");
@@ -239,6 +256,25 @@
   searchInput.addEventListener("input", applyFilters);
   batchFilter.addEventListener("change", applyFilters);
   courseFilter.addEventListener("change", applyFilters);
+
+  function openImageModal(src) {
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("modalImage");
+
+  img.src = src;
+  modal.classList.add("active");
+}
+
+function closeImageModal() {
+  const modal = document.getElementById("imageModal");
+  modal.classList.remove("active");
+}
+
+// Close on ESC key
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") closeImageModal();
+});
+
 </script>
 
 </body>

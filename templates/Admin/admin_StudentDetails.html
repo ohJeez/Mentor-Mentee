@@ -247,7 +247,11 @@
 
         <div class="student-header">
           <div class="student-photo">
-            <img src="{% static 'student_images/' %}{{ student.student_image }}" alt="Photo">
+            {% if student.student_image %}
+            <img src="{{ student.student_image.url }}" alt="Photo">
+            {% else %}
+            <img src="{% static 'student_images/default.png' %}" alt="Photo">
+            {% endif %}
           </div>
 
           <div class="student-details">

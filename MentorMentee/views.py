@@ -1,29 +1,43 @@
-from django.shortcuts import render
-from django.http import *
-from . models import *
-from django.core.files.storage import FileSystemStorage
-import os
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.db.models import F
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from functools import wraps
-import csv
-from datetime import datetime,timedelta,date
+# Django core
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
-from reportlab.lib.styles import getSampleStyleSheet
-from django.utils.dateparse import parse_date
+from django.urls import reverse
+from django.contrib import messages
 from django.core.mail import send_mail
+from django.core.files.storage import FileSystemStorage
+
+# Django decorators
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
+# Django ORM
+from django.db.models import F, Value, Count
+from django.db.models.functions import Coalesce
+
+# Django utilities
+from django.utils import timezone
+from django.utils.timezone import localdate
+from django.utils.dateparse import parse_date
+
+# Models
+from .models import *
+
+# Python standard library
+import os
+import json
 import csv
 import io
+from datetime import datetime, timedelta, date
+from functools import wraps
 
-# Create your views here.
+# ReportLab (PDF generation)
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+
+
 def home(request):
     if request.method =='POST':
         uname = request.POST.get('uname')
@@ -32,63 +46,80 @@ def home(request):
             res= Login.objects.get(username=uname,password=pas)
             
             if res and res.userType == 'admin':
-                admin_details=Admin.objects.get(login_id=res.login_id)
-                request.session['login_id']=admin_details.login_id
-                
-                total_students=Student.objects.filter(department_id=admin_details.department_id).count()
-                total_mentors=Faculty.objects.filter(department_id=admin_details.department_id).count()
-                print(admin_details.name)
-                data={'total_students':total_students,'total_mentors':total_mentors,'login':request.session.get('login_id'),'admin':admin_details}
-                return render(request,'./Admin/admin_dashboard.html',data)
-            
+                admin = Admin.objects.get(login_id=res.login_id)
+
+                request.session['login_id'] = admin.login_id
+                request.session['user_type'] = 'admin'
+
+                return redirect('admin_dashboard')
+
             elif res and res.userType == 'faculty':
-                data = Faculty.objects.get(login_id=res.login_id)
-                students = Student.objects.filter(faculty_id=data.faculty_id)
-                courses = students.values_list('course', flat=True).distinct()
-                years = students.values_list('year', flat=True).distinct()
-                departments = Department.objects.all()
-                courses = Courses.objects.all()
-                batches = Batches.objects.all()
-                
+                faculty = Faculty.objects.get(login_id=res.login_id)
+
                 request.session['login_id'] = res.login_id
-                request.session['faculty_name'] = data.name
-                
-                return render(request, 'Faculty/faculty_dashboard.html', {'name': data.name, 'students': students, 'faculty': data, 'departments': departments, 'courses': courses, 'years': years, 'courses': courses, "batches": batches,})
+                request.session['faculty_name'] = faculty.name
+
+                return redirect('faculty_dashboard')
             
             elif res and res.userType == 'student':
-                student=Student.objects.get(login_id=res.login_id)
-                request.session['login_id']=student.login_id
-                dept = student.department
-                today = date.today()
-                active_sessions = Schedule.objects.filter(
-                    batch__course__department=dept,
-                    start_date__lte=today,
-                    end_date__gte=today,
-                    status='active',
-                )
-                pending_sessions = Schedule.objects.filter(
-                    batch__course__department=dept,
-                    start_date__gt=today,
-                )
-                missed_sessions = Schedule.objects.filter(
-                    batch__course__department=dept,
-                    end_date__lt=today,
-                    status='incomplete',
-                )
-                return render(request, "./Student/student_dashboard.html", {
-                    "student": student,
-                    "active_sessions": active_sessions,
-                    "pending_sessions": pending_sessions,
-                    "missed_sessions": missed_sessions,
-                })
-            
+                student = Student.objects.get(login_id=res.login_id)
+
+                request.session['login_id'] = student.login_id
+                request.session['user_type'] = 'student'
+
+                return redirect('student_dashboard')
+
             else:
-                return HttpResponse("<script>alert('Invalid Login Credentials!');</script>")
+                return HttpResponse("""
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>Redirecting...</title>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    </head>
+                    <body>
+                    <script>
+                    Swal.fire({
+                        title: "Invalid Login",
+                        text: "Invalid login credentials. Please try again.",
+                        icon: "error",
+                        confirmButtonColor: "#28a745",
+                        allowOutsideClick: false
+                    }).then(() => {
+                        window.location.href = "/";
+                    });
+                    </script>
+                    </body>
+                    </html>
+                    """)
 
         except Exception as e:
             print(f"Error: {e}")
-            return HttpResponse("<script>alert('Invalid Login Credentials!');</script>")
-            
+            return HttpResponse("""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <meta charset="UTF-8">
+                <title>Redirecting...</title>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                </head>
+                <body>
+                <script>
+                Swal.fire({
+                    title: "Invalid Login",
+                    text: "Invalid login credentials. Please try again.",
+                    icon: "error",
+                    confirmButtonColor: "#28a745",
+                    allowOutsideClick: false
+                }).then(() => {
+                    window.location.href = "/";
+                });
+                </script>
+                </body>
+                </html>
+                """)
+     
     return render(request,'Login.html') 
 
 
@@ -228,6 +259,16 @@ def logout(request):
     request.session.flush()   # clears session completely
     return redirect('/')  
 
+def dob_to_password(dob_str):
+    """
+    Convert YYYY-MM-DD → DDMMYYYY
+    """
+    dob = datetime.strptime(dob_str, "%Y-%m-%d")
+    return dob.strftime("%d%m%Y")
+
+
+
+
 #Admin add student
 def add_Student(request):
     # ✅ Session check
@@ -260,39 +301,114 @@ def add_Student(request):
         try:
             csv_file = request.FILES["csv_file"]
 
-            if not csv_file.name.endswith(".csv"):
-                return HttpResponse(
-                    "<script>alert('Invalid file format. Upload CSV only!');window.history.back();</script>"
-                )
+            if not csv_file.name.lower().endswith(".csv"):
+                raise Exception("Invalid file type")
 
-            data = csv_file.read().decode("utf-8")
-            csv_reader = csv.DictReader(io.StringIO(data))
+            decoded = csv_file.read().decode("utf-8-sig").splitlines()
+
+            # Detect delimiter (comma / tab)
+            dialect = csv.Sniffer().sniff(decoded[0])
+            reader = csv.DictReader(decoded, dialect=dialect)
+
+            # Normalize headers
+            reader.fieldnames = [
+                h.strip().lower().replace(" ", "_")
+                for h in reader.fieldnames
+            ]
 
             added_count = 0
 
-            for row in csv_reader:
+            for row in reader:
+                # Mandatory checks
+                if not row.get("name") or not row.get("reg_no") or not row.get("dob"):
+                    continue
+
+                reg_no = row["reg_no"].strip()
+
+                # Skip duplicates
+                if Student.objects.filter(reg_no=reg_no).exists():
+                    continue
+
+                # ----------------------------
+                # CREATE LOGIN
+                # ----------------------------
+                password = dob_to_password(row["dob"])
+
+                login = Login(
+                    username=reg_no,
+                    password=password,
+                    userType="student"
+                )
+                login.save()
+
+                # ----------------------------
+                # CREATE STUDENT
+                # ----------------------------
                 Student.objects.create(
-                    name=row["name"],
-                    reg_no=row["reg_no"],
-                    email=row["email"],
-                    phone=row["phone"],
+                    login=login,
+                    name=row["name"].strip(),
+                    reg_no=reg_no,
+                    email=row["email"].strip(),
+                    phone=row.get("phone", "").strip(),
                     dob=row["dob"],
                     department_id=admin_det.department_id,
-                    course_id=row["course_id"],
-                    batch_id=row["batch_id"],
-                    year=1,
+                    course_id=int(row["course_id"]),
+                    batch_id=int(row["batch_id"]),
+                    year=int(row.get("year", 1)),
+                    faculty=None,
+                    student_image=None,
+                    application_form=None,
+                    assessment_file=None
                 )
+
                 added_count += 1
 
-            return HttpResponse(
-                f"<script>alert('{added_count} students uploaded successfully!'); window.location.href='/admin_addStudent'</script>"
-            )
+            return HttpResponse(f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="UTF-8">
+              <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            </head>
+            <body>
+            <script>
+              Swal.fire({{
+                title: "Upload Successful!",
+                text: "{added_count} students uploaded successfully!",
+                icon: "success",
+                confirmButtonColor: "#28a745",
+                allowOutsideClick: false,
+                draggable: true
+              }}).then(() => {{
+                window.location.href = "/admin_addStudent";
+              }});
+            </script>
+            </body>
+            </html>
+            """)
 
         except Exception as e:
             print("CSV Upload Error:", e)
-            return HttpResponse(
-                "<script>alert('Error processing CSV file!');window.history.back();</script>"
-            )
+            return HttpResponse("""
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            </head>
+            <body>
+            <script>
+              Swal.fire({
+                title: "Upload Failed",
+                text: "Error processing CSV file.",
+                icon: "error",
+                confirmButtonColor: "#28a745"
+              }).then(() => {
+                window.history.back();
+              });
+            </script>
+            </body>
+            </html>
+            """)
 
     # =====================================================
     # 🔹 SINGLE STUDENT ADD
@@ -665,37 +781,60 @@ def admin_ViewAssignments(request):
     login_id = request.session.get('login_id')
     if not login_id:
         return redirect('/')
+
     admin = Admin.objects.get(login_id=login_id)
     dept = admin.department_id
+
     faculties = Faculty.objects.filter(department_id=dept)
     batches = Batches.objects.filter(course__department_id=dept)
-    return render(request, './Admin/admin_ViewAssignments.html',
-                  {"faculties": faculties, "batches": batches,"admin":admin}
-    )
 
+    return render(
+        request,
+        "Admin/admin_ViewAssignments.html",
+        {
+            "faculties": faculties,
+            "batches": batches,
+            "admin": admin
+        }
+    )
+    
 #Filtering students based on assignments
 def get_assigned_students(request):
     faculty = request.GET.get("faculty")
     batch = request.GET.get("batch")
-    students = Student.objects.filter(faculty_id=faculty)
+
+    login_id = request.session.get("login_id")
+    admin = Admin.objects.get(login_id=login_id)
+    dept = admin.department_id
+
+    # Base queryset: all department students
+    students = Student.objects.filter(department_id=dept)
+
+    # Optional filters
+    if faculty:
+        students = students.filter(faculty_id=faculty)
 
     if batch:
         students = students.filter(batch_id=batch)
+
     return JsonResponse({
         "students": list(
             students.annotate(
                 course_name=F("course__course_name"),
-                batch_name=F("batch__batch_name")
+                batch_name=F("batch__batch_name"),
+                faculty_name=Coalesce(F("faculty__name"), Value("Unassigned"))
             ).values(
                 "name",
                 "reg_no",
                 "student_image",
                 "course_name",
                 "batch_name",
+                "faculty_name",
             )
         )
     })
-
+    
+    
 #Admin Profile
 def admin_profile(request):
     contents={}
@@ -745,11 +884,6 @@ def admin_StudentDetails(request, s_id):
         return redirect('/admin_ViewStudents')
 
 #Upload students via CSV
-import csv, io
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
-
 def admin_uploadStudents(request):
     try:
         login_id = request.session.get("login_id")
@@ -820,157 +954,103 @@ def admin_uploadStudents(request):
     return redirect("admin_addStudent")
 
 #Reports
-
 def admin_Reports(request):
-    contents={}
-    try:
-        login_id = request.session.get("login_id")
-        if not login_id:
-            return redirect("/")
-        admin=Admin.objects.get(login_id=login_id)
-        faculty = Faculty.objects.filter(department_id=admin.department_id)
-        students = Student.objects.filter(department_id=admin.department_id)
-        batches = Batches.objects.filter(course__department_id=admin.department_id)
+    login_id = request.session.get("login_id")
+    if not login_id:
+        return redirect("/")
 
-        contents = {
-            "admin": admin,
-            "faculty": faculty,
-            "students": students,
-            "batches": batches
-        }
-    except Exception as e:
-        print(f"Error! {e}")
-    return render(request,'./Admin/admin_reports.html',contents)
+    admin = Admin.objects.get(login_id=login_id)
 
-
-from django.db.models import Count
-def filter_sessions(request):
-    report_type = request.GET.get("type")
-    record_id = request.GET.get("id")
-    time_range = request.GET.get("range")
-    start = request.GET.get("start")
-    end = request.GET.get("end")
-
-    sessions = MentoringSession.objects.select_related(
-        "student", "faculty", "student__batch"
-    )
-
-    # ---------- TYPE FILTER ----------
-    if report_type == "student":
-        sessions = sessions.filter(student_id=record_id)
-
-    elif report_type == "faculty":
-        sessions = sessions.filter(faculty_id=record_id)
-
-    elif report_type == "batch":
-        sessions = sessions.filter(student__batch_id=record_id)
-
-    # ---------- DATE FILTER ----------
-    today = date.today()
-
-    if time_range == "daily":
-        sessions = sessions.filter(session_date=today)
-
-    elif time_range == "weekly":
-        start_week = today - timedelta(days=today.weekday())
-        end_week = start_week + timedelta(days=6)
-        sessions = sessions.filter(session_date__range=[start_week, end_week])
-
-    elif time_range == "monthly":
-        sessions = sessions.filter(
-            session_date__month=today.month,
-            session_date__year=today.year
-        )
-
-    elif time_range == "custom" and start and end:
-        sessions = sessions.filter(session_date__range=[start, end])
-
-    # ---------- SUMMARY METRICS ----------
-    total_sessions = sessions.count()
-    unique_students = sessions.values("student_id").distinct().count()
-    unique_faculty = sessions.values("faculty_id").distinct().count()
-
-    avg_sessions_per_student = (
-        round(total_sessions / unique_students, 2)
-        if unique_students else 0
-    )
-
-    # ---------- TREND DATA (CHART) ----------
-    trend = (
-        sessions.values("session_date")
-        .annotate(count=Count("session_id"))
-        .order_by("session_date")
-    )
-
-    trend_labels = [str(t["session_date"]) for t in trend]
-    trend_values = [t["count"] for t in trend]
-
-    # ---------- FACULTY LOAD ----------
-    faculty_load = (
-        sessions.values("faculty__name")
-        .annotate(count=Count("session_id"))
-    )
-
-    # ---------- TABLE DATA ----------
-    table_data = [
-        {
-            "date": str(s.session_date),
-            "student": s.student.name,
-            "faculty": s.faculty.name,
-            "batch": s.student.batch.batch_name,
-            "topics": s.topics_discussed,
-            "remarks": s.remarks or "",
-            "action": s.action_plan or ""
-        }
-        for s in sessions
-    ]
-
-    return JsonResponse({
-        "summary": {
-            "total_sessions": total_sessions,
-            "students": unique_students,
-            "faculty": unique_faculty,
-            "avg_per_student": avg_sessions_per_student
-        },
-        "charts": {
-            "trend_labels": trend_labels,
-            "trend_values": trend_values,
-            "faculty_load": faculty_load
-        },
-        "sessions": table_data
+    return render(request, "Admin/admin_reports.html", {
+        "admin": admin
     })
     
+    
+def search_entities(request):
+    q = request.GET.get("q", "")
+    mode = request.GET.get("mode")
 
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-import json
+    if mode == "student":
+        results = Student.objects.filter(name__icontains=q)[:10]
+        data = [
+            {"id": s.student_id, "label": f"{s.name} ({s.reg_no})"}
+            for s in results
+        ]
 
-def generate_report_pdf(request):
+    elif mode == "faculty":
+        results = Faculty.objects.filter(name__icontains=q)[:10]
+        data = [
+            {"id": f.faculty_id, "label": f.name}
+            for f in results
+        ]
+
+    else:  # batch
+        results = Batches.objects.filter(batch_name__icontains=q)[:10]
+        data = [
+            {"id": b.batch_id, "label": b.batch_name}
+            for b in results
+        ]
+
+    return JsonResponse({"results": data})
+def fetch_report_data(request):
     report_type = request.GET.get("type")
     record_id = request.GET.get("id")
     time_range = request.GET.get("range")
-    start = request.GET.get("start")
-    end = request.GET.get("end")
+    
+    print("TYPE:", report_type)
+    print("RECORD ID (raw):", record_id, type(record_id))
+    print("RANGE:", time_range)
 
     qs = MentoringSession.objects.all()
 
+    # -------- ENTITY FILTER --------
     if report_type == "student":
-        qs = qs.filter(student_id=record_id)
+        qs = qs.filter(student__student_id=int(record_id))
+
     elif report_type == "faculty":
-        qs = qs.filter(faculty_id=record_id)
+        qs = qs.filter(faculty__faculty_id=int(record_id))
+
     elif report_type == "batch":
-        qs = qs.filter(student__batch_id=record_id)
+        qs = qs.filter(student__batch__batch_id=int(record_id))
 
-    today = date.today()
+    # -------- DATE FILTER --------
+    today = today = timezone.localdate()
+
     if time_range == "daily":
-        qs = qs.filter(session_date=today)
-    elif time_range == "monthly":
-        qs = qs.filter(session_date__month=today.month)
-    elif time_range == "custom":
-        qs = qs.filter(session_date__range=[start, end])
+        qs = qs.filter(date__date=localdate())
 
+    elif time_range == "monthly":
+        qs = qs.filter(
+            date__month=today.month,
+            date__year=today.year
+        )
+
+    # -------- METRICS --------
+    total_sessions = qs.count()
+    students = qs.values("student").distinct().count()
+    faculty = qs.values("faculty").distinct().count()
+
+    # -------- CHART DATA --------
+    chart_qs = (
+        qs.values("date")
+        .annotate(count=Count("session_id"))
+        .order_by("date")
+    )
+
+    return JsonResponse({
+        "total_sessions": total_sessions,
+        "total_students": students,
+        "total_faculty": faculty,
+        "avg_sessions": round(
+            total_sessions / max(students, 1), 2
+        ),
+        "chart": {
+            "labels": [str(c["date"]) for c in chart_qs],
+            "values": [c["count"] for c in chart_qs]
+        }
+    })
+    
+def generate_report_pdf(request):
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = "inline; filename=Mentoring_Report.pdf"
 
@@ -978,72 +1058,19 @@ def generate_report_pdf(request):
     styles = getSampleStyleSheet()
     elements = []
 
-    elements.append(Paragraph("<b>MENTORING PROGRAMME REPORT</b>", styles["Title"]))
+    elements.append(
+        Paragraph("<b>MENTORING PROGRAMME REPORT</b>", styles["Title"])
+    )
     elements.append(Spacer(1, 20))
-
-    elements.append(Paragraph(f"Total Sessions: {qs.count()}", styles["Normal"]))
-    elements.append(Paragraph(
-        f"Unique Students Attended: {qs.values('student').distinct().count()}",
-        styles["Normal"]
-    ))
-    elements.append(Paragraph(
-        f"Faculty Involved: {qs.values('faculty').distinct().count()}",
-        styles["Normal"]
-    ))
-
-    elements.append(Spacer(1, 30))
-    elements.append(Paragraph("<i>Generated by Mentor Mentee System</i>", styles["Italic"]))
+    elements.append(
+        Paragraph("Generated by Mentor Mentee System", styles["Normal"])
+    )
+    elements.append(
+        Paragraph(f"Date: {date.today()}", styles["Normal"])
+    )
 
     doc.build(elements)
     return response
-
-
-#Admin fetching report data
-def fetch_report_data(request):
-    report_type = request.GET.get("type")
-    record_id = request.GET.get("id")
-    time_range = request.GET.get("range")
-    start = request.GET.get("start")
-    end = request.GET.get("end")
-
-    qs = MentoringSession.objects.all()
-
-    # ---------- TYPE FILTER ----------
-    if report_type == "student":
-        qs = qs.filter(student_id=record_id)
-
-    elif report_type == "faculty":
-        qs = qs.filter(faculty_id=record_id)
-
-    elif report_type == "batch":
-        qs = qs.filter(student__batch_id=record_id)
-
-    # ---------- DATE FILTER ----------
-    today = date.today()
-
-    if time_range == "daily":
-        qs = qs.filter(date=today)
-
-    elif time_range == "monthly":
-        qs = qs.filter(date__month=today.month)
-
-    elif time_range == "custom" and start and end:
-        qs = qs.filter(date__range=[start, end])
-
-    # ---------- METRICS ----------
-    total_sessions = qs.count()
-    total_students = qs.values("student").distinct().count()
-    total_faculty = qs.values("faculty").distinct().count()
-
-    # ---------- RESPONSE ----------
-    return JsonResponse({
-        "total_sessions": total_sessions,
-        "total_students": total_students,
-        "total_faculty": total_faculty,
-        "start_date": start or str(today),
-        "end_date": end or str(today),
-    })
-
 
 
 #Admin View Sessions
@@ -1064,11 +1091,6 @@ def admin_viewSessions(request):
                   {"batches": batches, "faculties": faculties, "students": students,"admin":admin,"sessions": sessions})
     
 #Admin edit session
-from django.shortcuts import redirect
-from django.http import HttpResponse
-from datetime import date
-from django.core.mail import send_mail
-
 def admin_updateSession(request):
     if request.method == "POST":
         try:
@@ -1180,6 +1202,7 @@ def faculty_dashboard(request):
     )
 
     return render(request, 'Faculty/faculty_dashboard.html', {
+        
         'faculty': faculty,
         'active_sessions': active_sessions,
         'pending_sessions': pending_sessions,
@@ -1230,9 +1253,6 @@ def student_profile(request, student_id):
 
     return render(request, 'Faculty/student_profile.html', context)
 
-
-from django.core.files.storage import FileSystemStorage
-import os
 
 def profile_content(request):
     login_id = request.session.get('login_id')
@@ -1330,7 +1350,6 @@ def student_session(request, id):
         'student_uploads': student_uploads,
     })
 
-from django.contrib import messages
     
 def upload_application(request, id):
     student = get_object_or_404(Student, id=id)
@@ -1353,9 +1372,6 @@ def upload_assessment(request, id):
 
     return redirect('student_session', id=id)
 
-
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 
 def new_session(request, id):
     student = get_object_or_404(Student, student_id=id)
@@ -1442,7 +1458,6 @@ def faculty_session_requests(request):
         'faculty': faculty,
     })
 
-from django.views.decorators.http import require_POST
 
 @require_POST
 def accept_session_request(request, request_id):
@@ -1465,7 +1480,6 @@ def accept_session_request(request, request_id):
 
     return redirect('faculty_session_requests')
 
-from django.views.decorators.http import require_POST
 
 @require_POST
 def reject_session_request(request, request_id):
@@ -1522,6 +1536,52 @@ def faculty_ViewStudents(request):
 
     except Faculty.DoesNotExist:
         return redirect('home')
+    
+
+def faculty_api_get_sessions(request):
+    schedules = Schedule.objects.all()
+    events = []
+
+    colors = {
+        "active": "#4f46e5",
+        "completed": "#16a34a",
+        "incomplete": "#ca8a04",
+        "cancelled": "#dc2626",
+    }
+
+    for s in schedules:
+        events.append({
+            "title": s.batch.batch_name,
+            "start": str(s.start_date),
+            "end": (str(s.end_date + timedelta(days=1))),  # FullCalendar uses end-exclusive
+            "color": colors.get(s.status, "#4f46e5")
+        })
+
+    return JsonResponse(events, safe=False)
+
+def faculty_api_get_day_sessions(request, day):
+    login_id = request.session.get("login_id")
+    faculty = Faculty.objects.filter(login_id=login_id).first()
+
+    if not faculty:
+        return JsonResponse([], safe=False)
+
+    sessions = Schedule.objects.filter(
+        batch__course__department=faculty.department,
+        start_date__lte=day,
+        end_date__gte=day
+    )
+
+    data = []
+    for s in sessions:
+        data.append({
+            "batch": s.batch.batch_name,
+            "status": "Active" if s.start_date <= date.today() <= s.end_date else "Scheduled"
+        })
+
+    return JsonResponse(data, safe=False)
+
+
 
 #==============================================================================================
 
@@ -1771,8 +1831,33 @@ def student_viewSessions(request):
     except Exception as e:
         print("Student requested sessions error:", e)
         return redirect("/")
+    
+#Student edit profile
+def student_update_profile(request):
+    try:
+        login_id = request.session.get("login_id")
+        if not login_id:
+            return redirect("/")
 
+        student = Student.objects.get(login_id=login_id)
+        if request.method == "POST":
+            student = Student.objects.get(login_id=request.session["login_id"])
 
+            student.email = request.POST.get("email")
+            student.phone = request.POST.get("phone")
+            student.dob = request.POST.get("dob")
+
+            if "student_image" in request.FILES:
+                student.student_image = request.FILES["student_image"]
+            student.save()
+            
+            return HttpResponse(
+                "<script>alert('Profile updated successfully!'); window.location.href='/student_profile'</script>")
+    except Exception as e:
+        print(f"Error{e}")
+        return HttpResponse(
+            "<script>alert('Error updating profile!'); window.location.href='/student_profile'</script>")
+    return redirect("/student_profile") 
 
 def test_mail(request):
     try:
@@ -1786,4 +1871,5 @@ def test_mail(request):
         return HttpResponse("Email sent successfully!")
     except Exception as e:
         return HttpResponse(f"Error sending email: {e}")
+    
     

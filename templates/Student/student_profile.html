@@ -1,150 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Profile | Mentor Mentee</title>
+{% load static %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Profile | Mentor Mentee</title>
 
-    <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-    <style>
-        /* GREEN THEME COLORS */
-        :root {
-            --green-light: #dff5e1;
-            --green-dark: #218838;
-            --text-dark: #333;
-            --primary-green: #28a745;
-            --vibrant-green: #28a745;
-            --light-gray: #f8f9fa;
-            --text-color: #000;
-            --border-color: #e0e0e0;
-        }
+<style>
+/* ---------- COLORS ---------- */
+:root{
+  --green:#28a745;
+  --green-dark:#218838;
+  --light:#dff5e1;
+}
 
-        /* PAGE HEADER STYLE */
-        .welcome-section p strong {
-            color: var(--primary-green);
-        }
+/* ---------- PROFILE ---------- */
+.profile-container{display:flex;justify-content:center;margin-top:30px}
+.profile-card{
+  width:80%;background:#fff;padding:30px;border-radius:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,.1)
+}
+.profile-header{display:flex;gap:25px;align-items:center}
+.student-photo{
+  width:120px;height:120px;border-radius:50%;
+  object-fit:cover;border:4px solid var(--green)
+}
 
-        /* PROFILE CARD */
-        .profile-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
+.details-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:18px;margin-top:25px
+}
+.detail-box{
+  background:var(--light);
+  padding:14px;border-left:4px solid var(--green);
+  border-radius:10px
+}
+.detail-title{font-size:13px;color:#166534;font-weight:600}
+.detail-value{font-size:16px;font-weight:600}
 
-        .profile-card {
-            width: 80%;
-            background: white;
-            padding: 30px;
-            border-radius: 18px;
-            box-shadow: 0px 6px 20px rgba(0,0,0,0.10);
-            animation: fadeIn 0.4s ease-out;
-        }
+.edit-btn{
+  background:var(--green);color:#fff;
+  padding:12px 22px;border-radius:8px;
+  font-weight:600;border:none;cursor:pointer;
+  margin-top:25px
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+/* ---------- MODAL ---------- */
+/* ================= MODAL (PROFESSIONAL) ================= */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
 
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-            margin-bottom: 25px;
-        }
+.modal-content{
+  width:440px;
+  background:#fff;
+  border-radius:18px;
+  padding:30px 32px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  animation: modalFade .35s ease;
+}
 
-        .student-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--primary-green);
-            box-shadow: 0px 2px 10px rgba(0,0,0,0.15);
-        }
+@keyframes modalFade{
+  from{opacity:0;transform:translateY(20px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
 
-        .profile-header h2 {
-            font-size: 28px;
-            color: var(--primary-green);
-            font-weight: 700;
-        }
+.modal-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:20px;
+  font-weight:800;
+  color:var(--green);
+  margin-bottom:18px;
+}
 
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 18px 35px;
-            margin-top: 20px;
-        }
+.modal-header i{
+  font-size:22px;
+}
 
-        .detail-box {
-            padding: 14px 15px;
-            background: var(--green-light);
-            border-left: 4px solid var(--primary-green);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
+.modal-body label{
+  display:block;
+  margin-top:14px;
+  font-size:13px;
+  font-weight:600;
+  color:#374151;
+}
 
-        .detail-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            color: var(--green-dark);
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
+.modal-body input[type="email"],
+.modal-body input[type="text"],
+.modal-body input[type="date"]{
+  width:100%;
+  padding:12px 14px;
+  margin-top:6px;
+  border-radius:10px;
+  border:1px solid #d1d5db;
+  font-size:14px;
+  transition:.2s;
+}
 
-        .detail-value {
-            font-size: 16px;
-            color: var(--text-dark);
-            font-weight: 600;
-        }
+.modal-body input:focus{
+  outline:none;
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(40,167,69,.15);
+}
 
-        /* BUTTON */
-        .edit-btn {
-            display: inline-block;
-            background: var(--primary-green);
-            padding: 12px 22px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 15px;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 25px;
-            transition: 0.2s;
-        }
-        .edit-btn:hover {
-            background: var(--green-dark);
-            transform: translateY(-2px);
-        }
-    </style>
+/* ---------- IMAGE UPLOAD ---------- */
+.image-upload{
+  margin-top:15px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.preview-img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid var(--green);
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.file-box{
+  flex:1;
+}
+
+.file-box input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px dashed var(--green);
+  cursor:pointer;
+  background:#f0fdf4;
+}
+
+/* ---------- ACTIONS ---------- */
+.modal-actions{
+  margin-top:25px;
+  display:flex;
+  justify-content:flex-end;
+  gap:12px;
+}
+
+.modal-actions button{
+  padding:10px 18px;
+  border-radius:10px;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  border:none;
+}
+
+.cancel-btn{
+  background:#e5e7eb;
+  color:#374151;
+}
+
+.cancel-btn:hover{
+  background:#d1d5db;
+}
+
+.save-btn{
+  background:var(--green);
+  color:#fff;
+}
+
+.save-btn:hover{
+  background:var(--green-dark);
+}
+
+</style>
 </head>
 
 <body>
 
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-left">
-            <img src="{% static '../static/Assets/logo.png' %}" class="header-logo">
-            <div class="header-title">
-                <h2 class="rcss-title">RCSS</h2>
-                <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
-            </div>
-        </div>
+<!-- HEADER --> <header class="header"> 
+    <div class="header-left"> <img src="{% static '../static/Assets/logo.png' %}" class="header-logo"> 
+        <div class="header-title"> 
+            <h2 class="rcss-title">RCSS</h2> 
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+         </div> 
+        </div> 
+        <h1 class="main-title">MENTOR MENTEE</h1> 
+        <div class="header-right"> <h3>{{student.name}}</h3> 
+            <div class="user-profile-icon"><img src="{{ student.student_image.url }}" alt="Admin">
+            </div> 
+            <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+ </div>
+ </header>
 
-        <h1 class="main-title">MENTOR MENTEE</h1>
-
-        <div class="header-right">
-             <h3>{{student.name}}</h3>
-            <div class="user-profile-icon"><img src="../static/student_images/{{ student.student_image }}" alt="Admin"></div>
-                <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
-        </div>
-    </header>
-
-    <div class="container">
-
-        <!-- SIDEBAR -->
-       <aside class="sidebar">
+<div class="container">
+    <aside class="sidebar">
             <nav class="menu">
 
                 <a class="menu-item" href="/student_dashboard">
@@ -176,86 +233,98 @@
 
             </nav>
         </aside>
+<main class="main-content">
 
-        <!-- PAGE CONTENT -->
-        <main class="main-content">
+<div class="profile-container">
+<div class="profile-card">
 
-            <!-- WELCOME TEXT -->
-            <div class="welcome-section">
-                <!-- <p>Your Profile – <strong>{{ student.name }}</strong></p> -->
-            </div>
-
-            <!-- PROFILE CARD -->
-            <div class="profile-container">
-
-                <div class="profile-card">
-
-                    <div class="profile-header">
-                        <img src="./static/student_images/{{ student.student_image }}" class="student-photo">
-
-                        <div>
-                            <h2>{{ student.name }}</h2>
-                            <p style="color:#666;">Reg. No: <strong>{{ student.reg_no }}</strong></p>
-                        </div>
-                    </div>
-
-                    <div class="details-grid">
-
-                        <div class="detail-box">
-                            <p class="detail-title">Email</p>
-                            <p class="detail-value">{{ student.email }}</p>
-                        </div>
-
-                        <div class="detail-box">
-                            <p class="detail-title">Phone</p>
-                            <p class="detail-value">{{ student.phone }}</p>
-                        </div>
-
-                        <div class="detail-box">
-                            <p class="detail-title">Department</p>
-                            <p class="detail-value">{{ student.department.name }}</p>
-                        </div>
-
-                        <div class="detail-box">
-                            <p class="detail-title">Course</p>
-                            <p class="detail-value">{{ student.course.course_name }}</p>
-                        </div>
-
-                        <div class="detail-box">
-                            <p class="detail-title">Batch</p>
-                            <p class="detail-value">{{ student.batch.batch_name }}</p>
-                        </div>
-
-                        <div class="detail-box">
-                            <p class="detail-title">Year</p>
-                            <p class="detail-value">Year {{ student.year }}</p>
-                        </div>
-
-                        <div class="detail-box">
-                            <p class="detail-title">Mentor</p>
-                            {% if student.faculty %}
-                            <p class="detail-value">{{ student.faculty.name }}</p>
-                            {% else %}
-                            <p class="detail-value">Unassigned</p>
-                            {% endif %}
-                        </div>
-
-                        <div class="detail-box">
-                            <p class="detail-title">Date of Birth</p>
-                            <p class="detail-value">{{ student.dob }}</p>
-                        </div>
-                    </div>
-
-                    <a href="/student_edit_profile" class="edit-btn">
-                        <i class="fas fa-edit"></i> Edit Profile
-                    </a>
-
-                </div>
-            </div>
-
-        </main>
-
+  <div class="profile-header">
+    <img src="{{student.student_image.url}}" class="student-photo" id="profileImg">
+    <div>
+      <h2>{{ student.name }}</h2>
+      <p>Reg No: <strong>{{ student.reg_no }}</strong></p>
     </div>
+  </div>
+
+  <div class="details-grid">
+    <div class="detail-box"><p class="detail-title">Email</p><p class="detail-value">{{ student.email }}</p></div>
+    <div class="detail-box"><p class="detail-title">Phone</p><p class="detail-value">{{ student.phone }}</p></div>
+    <div class="detail-box"><p class="detail-title">Batch</p><p class="detail-value">{{ student.batch.batch_name }}</p></div>
+    <div class="detail-box"><p class="detail-title">Mentor</p>
+      <p class="detail-value">{{ student.faculty.name|default:"Unassigned" }}</p>
+    </div>
+  </div>
+
+  <button class="edit-btn" onclick="openModal()">
+    <i class="fas fa-edit"></i> Edit Profile
+  </button>
+
+</div>
+</div>
+
+</main>
+</div>
+
+<!-- ================= MODAL ================= -->
+<!-- ================= EDIT PROFILE MODAL ================= -->
+<div class="modal" id="editModal">
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <i class="fas fa-user-edit"></i>
+      Edit Profile
+    </div>
+
+    <form method="POST" action="{% url 'student_update_profile' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="modal-body">
+
+        <label>Profile Picture</label>
+        <div class="image-upload">
+          <img id="preview" class="preview-img"
+               src="{{ student.student_image.url }}">
+          <div class="file-box">
+            <input type="file" name="student_image" accept="image/*"
+                   onchange="previewImage(this)">
+          </div>
+        </div>
+
+        <label>Email</label>
+        <input type="email" name="email" value="{{ student.email }}" required>
+
+        <label>Phone</label>
+        <input type="text" name="phone" value="{{ student.phone }}" required>
+
+        <label>Date of Birth</label>
+        <input type="date" name="dob" value="{{ student.dob|date:'Y-m-d' }}">
+
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="save-btn">Save Changes</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+
+<script>
+function openModal(){ document.getElementById("editModal").style.display="flex"; }
+function closeModal(){ document.getElementById("editModal").style.display="none"; }
+
+function previewImage(input){
+  const file = input.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById("preview").src = e.target.result;
+    reader.readAsDataURL(file);
+  }
+}
+</script>
 
 </body>
 </html>

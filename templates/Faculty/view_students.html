@@ -14,17 +14,16 @@
 
             <hr class="menu-divider" />
 
-            <hr class="menu-divider" />
-
-            <a href="{% url 'students-content' %}" class="menu-item">
-                <i class="fas fa-graduation-cap"></i> <span>Students</span>
-            </a>
-
-            <hr class="menu-divider" />
-
-            <a href="{% url 'students-view' %}" class="menu-item active">
-                <i class="fas fa-graduation-cap"></i> <span>All Students</span>
-            </a>
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                <i class="fas fa-graduation-cap"></i><span>Students</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
+                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>View All Students</a>
+                </div>
+            </div>
 
             <hr class="menu-divider" />
 
@@ -45,9 +44,6 @@
 
     <!-- ✅ FILTER + STUDENT LIST -->
     <section class="students-section">
-      <div class="students-header">
-        <h2>Students List</h2>
-      </div>
 
       <!-- ✅ Filters -->
       <div class="students-filters">
@@ -123,15 +119,18 @@
 
 </div>
 
-<!-- ✅ DROPDOWN SCRIPT -->
 <script>
-  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-    toggle.addEventListener('click', function (e) {
-      e.preventDefault();
-      const dropdown = this.closest('.dropdown');
-      dropdown.classList.toggle('open');
+  // Dropdown
+  document.querySelectorAll('.dropdown-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      el.parentNode.classList.toggle('open');
     });
   });
+
+  // Modal
+  const modal = document.getElementById("editModal");
+  document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
+  document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
 </script>
 
 <!-- ✅ FILTERING SCRIPT -->

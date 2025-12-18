@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
 </head>
 
 <body>
@@ -29,13 +30,9 @@
     <h1 class="main-title">MENTOR MENTEE</h1>
 
     <div class="header-right">
-      <!-- COMMON WELCOME TEXT -->
-      <div class="welcome-section">
-        <p><strong>{{ name }}</strong></p>
-      </div>
-      <div class="user-profile-icon">
-        <i class="fas fa-user"></i>
-      </div>
-      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+      <h3>{{faculty.name}}</h3>
+      <div class="user-profile-icon"><img src="{% static 'faculty_images/' %}{{ faculty.faculty_image }}" alt="Faculty">
+</div>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
     </div>
   </header>

@@ -1,9 +1,6 @@
 from django.db import models
-# from django.contrib.auth.models import User
 from django.utils import timezone
 
-    # Create your models here.
-    
     #Login
 class Login (models.Model):
     login_id=models.AutoField(primary_key=True)
@@ -66,7 +63,7 @@ class Student(models.Model):
     reg_no = models.CharField(max_length=10, unique=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="students")
-    student_image = models.CharField(max_length=500,blank=True)
+    student_image = models.FileField(blank=True,null=True,upload_to='student_images/')
     course = models.ForeignKey(Courses, on_delete=models.CASCADE)
     batch = models.ForeignKey(Batches,on_delete=models.CASCADE)
     year = models.IntegerField()
@@ -75,12 +72,12 @@ class Student(models.Model):
     application_form = models.FileField(upload_to='application_forms/', null=True, blank=True)
     assessment_file = models.FileField(upload_to='assessments/', null=True, blank=True)
     
-# Mentoring Session
+    # Mentoring Session
 class MentoringSession(models.Model):
     session_id = models.AutoField(primary_key=True)
     student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='sessions')
     faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE, related_name='sessions')
-    date = models.DateTimeField(default=timezone.now)  # automatically set to now
+    date = models.DateField(default=timezone.now)  # automatically set to now
     title = models.TextField(blank=False, null=True)
     academic_details = models.TextField(blank=False, null=True)
     demography = models.TextField(blank=True, null=True)  # first session only

@@ -1,21 +1,167 @@
 {% include 'Faculty/header.html' %}
 {% load static %}
+    <style>
+        .reject-btn {
+            background: #dc3545;
+            color: #fff;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
 
-<style>
-    .reject-btn {
-    background: #dc3545;
-    color: #fff;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-}
+        .reject-btn:hover {
+            background: #b52a37;
+        }
 
-.reject-btn:hover {
-    background: #b52a37;
-}
-</style>    
+        .session-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 18px;
+            margin-top: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+            min-height: 600px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        /* Table */
+        .styled-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .styled-table thead th {
+            background: #e7f5ea;
+            padding: 14px;
+            font-weight: 700;
+            color: #1c7c31;
+            text-align: left;
+        }
+
+        .styled-table tbody tr {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: 0.25s;
+        }
+
+        .styled-table tbody tr:hover {
+            transform: translateY(-3px);
+            background: #f6fff6;
+        }
+
+        .styled-table td {
+            padding: 16px;
+            font-size: 14px;
+            color: #333;
+        }
+        .styled-table thead {
+            padding: 16px;
+            font-size: 13.5px;
+            color: #333;
+        }        
+
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .accepted { background: #d4f7e1; color: #1c7c31; }
+        .completed { background: #e2e8f0; color: #334155; }
+        .cancelled { background: #fee2e2; color: #991b1b; }
+        .pending { background: #fff3cd; color: #92400e; }
+
+        /* Empty state */
+        .empty-box {
+            text-align: center;
+            padding: 80px;
+            color: #64748b;
+        }
+
+        .empty-box i {
+            font-size: 50px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: #fff;
+            padding: 20px;
+            width: 320px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-box h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .modal-box label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .modal-box input {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .cancel-btn {
+            background: #ccc;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .confirm-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+   
 
 <div class="container">
 
@@ -28,9 +174,16 @@
 
             <hr class="menu-divider" />
 
-            <a href="{% url 'students-content' %}" class="menu-item">
-                <i class="fas fa-graduation-cap"></i> <span>Students</span>
-            </a>
+            <div class="dropdown">
+                <a class="menu-item dropdown-toggle">
+                <i class="fas fa-graduation-cap"></i><span>Students</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'students-content' %}"><i class="fas fa-user"></i>My Students</a>
+                <a class="dropdown-item" href="{% url 'students-view' %}"><i class="fas fa-users"></i>View All Students</a>
+                </div>
+            </div>
 
             <hr class="menu-divider" />
 
@@ -52,65 +205,183 @@
         </nav>
     </aside>
 
+
     <main class="main-content">
 
-        <h2>Session Requests</h2>
+        <div class="session-container">
 
-        {% if requests %}
-        <table class="students-table">
-            <thead>
-                <tr>
-                    <th>Student</th>
-                    <th>Requested On</th>
-                    <th>Comments</th>
-                    <th>Status</th>
-                    <th>Schedule</th>
-                </tr>
-            </thead>
-            <tbody>
+            <h2 class="page-title">Mentoring Requests</h2>
+            <p class="page-subtitle">
+                View details of your mentoring session requests.
+            </p>
+{% if requests %}
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Requested On</th>
+            <th>Faculty</th>
+            <th>Session Date</th>
+            <th>Session Time</th>
+            <th>Status</th>
+            <th>Comments</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in requests %}
+        <tr>
 
-            {% for r in requests %}
-            <tr>
-                <td>{{ r.student.name }}</td>
-                <td>{{ r.request_date }}</td>
-                <td>{{ r.comments|default:"-" }}</td>
-                <td>{{ r.status|title }}</td>
+            <!-- Requested Date -->
+            <td>{{ s.request_date }}</td>
 
-                <td>
-                {% if r.status == "Pending" %}
+            <!-- Faculty -->
+            <td>
+                {% if s.faculty %}
+                    {{ s.faculty.name }}
+                {% else %}
+                    <span style="color:#64748b;font-style:italic;">
+                        Not assigned yet
+                    </span>
+                {% endif %}
+            </td>
+
+            <!-- Session Date -->
+            <td>
+                {% if s.session_date %}
+                    {{ s.session_date }}
+                {% else %}
+                    <span style="color:#64748b;">
+                        To be scheduled
+                    </span>
+                {% endif %}
+            </td>
+
+            <!-- Session Time -->
+            <td>
+                {% if s.session_time %}
+                    {{ s.session_time }}
+                {% else %}
+                    <span style="color:#64748b;">
+                        Not fixed
+                    </span>
+                {% endif %}
+            </td>
+
+            <!-- Status -->
+            <td>
+                <span class="status-badge {{ s.status|lower }}">
+                    {{ s.status|title }}
+                </span>
+            </td>
+
+            <!-- Comments -->
+            <td>
+                {% if s.comments %}
+                    {{ s.comments }}
+                {% else %}
+                    <span style="color:#94a3b8;font-style:italic;">
+                        No remarks
+                    </span>
+                {% endif %}
+            </td>
+
+            <td>
+                {% if s.status == "Pending" %}
                     <div style="display:flex; gap:6px; align-items:center;">
 
-                        <form method="POST"
-                            action="{% url 'accept_session_request' r.request_id %}"
-                            style="display:flex; gap:4px; align-items:center;">
-                            {% csrf_token %}
-                            <input type="date" name="session_date" required>
-                            <input type="time" name="session_time" required>
-                            <button type="submit" class="view-btn">Accept</button>
-                        </form>
+                        <button class="view-btn"
+                                onclick="openSessionModal('{{ s.request_id }}')">
+                            Accept
+                        </button>
+
 
                         <form method="POST"
-                            action="{% url 'reject_session_request' r.request_id %}">
+                            action="{% url 'reject_session_request' s.request_id %}">
                             {% csrf_token %}
-                            <button type="submit" class="reject-btn">Reject</button>
+                            <button type="submit" class="view-btn" style="background-color: #c12020ff;">Reject</button>
                         </form>
 
                     </div>
                 {% else %}
-                    {{ r.session_date|default:"-" }} {{ r.session_time|default:"" }}
+                    {{ s.session_date|default:"-" }} {{ s.session_time|default:"" }}
                 {% endif %}
                 </td>
 
-            </tr>
-            {% endfor %}
 
-            </tbody>
-        </table>
-        {% else %}
-            <p>No session requests.</p>
-        {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-    </main>
+<div id="sessionModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Schedule Session</h3>
+
+    <form method="POST" id="sessionForm">
+      {% csrf_token %}
+
+      <label>Session Date</label>
+      <input type="date" name="session_date" required>
+
+      <label>Session Time</label>
+      <input type="time" name="session_time" required>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" onclick="closeSessionModal()">Cancel</button>
+        <button type="submit" class="confirm-btn">Confirm</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+
+{% else %}
+<div class="empty-box">
+    <i class="fas fa-calendar-times"></i>
+    <h3>No Session Requests Found</h3>
+    <p>You have no requests for mentoring sessions yet.</p>
+</div>
+{% endif %}
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function () {
+            this.closest('.dropdown').classList.toggle('open');
+        });
+    });
+
+    function openSessionModal(requestId) {
+    const modal = document.getElementById("sessionModal");
+    const form = document.getElementById("sessionForm");
+
+    // ✅ MATCHES YOUR urls.py EXACTLY
+    form.action = `/faculty/session-requests/accept/${requestId}/`;
+
+    modal.style.display = "flex";
+    }
+
+    function closeSessionModal() {
+    document.getElementById("sessionModal").style.display = "none";
+    }
+
+</script>
+<script>
+  // Dropdown
+  document.querySelectorAll('.dropdown-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      el.parentNode.classList.toggle('open');
+    });
+  });
+
+  // Modal
+  const modal = document.getElementById("editModal");
+  document.getElementById("openEditModal").onclick = () => modal.style.display = "flex";
+  document.getElementById("closeEditModal").onclick = () => modal.style.display = "none";
+</script>
 
 {% include 'Faculty/footer.html' %}
