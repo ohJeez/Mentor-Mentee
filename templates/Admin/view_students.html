@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Batches | Mentor Mentee</title>
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin_viewStudents.css' %}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+  <!-- ✅ HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+      <div class="header-title">
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+      </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+      <h3>{{admin.name}}</h3>
+      <div class="user-profile-icon">
+        <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
+      </div>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+    </div>
+  </header>
+
+
+  <!-- ✅ PAGE BODY -->
+  <div class="container">
+
+    <!-- ✅ SIDEBAR -->
+    <aside class="sidebar">
+      <nav class="menu">
+
+        <a href="/admin_dashboard" class="menu-item">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown open">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle active">
+            <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu" style="display:flex;">
+            <a href="/admin_addStudent" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Add Student</span>
+            </a>
+
+            <a href="/admin_ViewStudents" class="dropdown-item active">
+              <i class="fas fa-users"></i> <span>View Students</span>
+            </a>
+          </div>
+        </div>
+        <hr class="menu-divider" />
+        <div class="dropdown">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Faculty</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_addFaculty" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Add Faculty</span>
+            </a>
+
+            <a href="/admin_viewFaculty" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Faculty</span>
+            </a>
+          </div>
+        </div>
+         <hr class="menu-divider" />
+        <div class="dropdown">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Assignments</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_AddAssignment" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Assign Student</span>
+            </a>
+
+            <a href="/admin_ViewAssignments" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Assignments</span>
+            </a>
+          </div>
+        </div>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-user"></i> <span>Profile</span>
+        </a>
+
+      </nav>
+    </aside>
+
+
+    <!-- ✅ MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- ✅ BATCH CARDS -->
+      <section class="students-section">
+        <div class="students-header">
+          <h2>Available Batches</h2>
+        </div>
+
+        <div class="batch-grid">
+          {% for b in batches %}
+          <div class="batch-card">
+            <h3>{{ b.batch_name }}</h3>
+            <p>{{ b.course_name }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+
+      <!-- ✅ FILTER + STUDENT LIST -->
+      <section class="students-section">
+        <div class="students-header">
+          <h2>Students List</h2>
+        </div>
+
+        <!-- Filters -->
+        <div class="students-filters">
+          <input type="text" class="students-search" placeholder="Search by name, roll number..." />
+
+          <select class="students-filter">
+            <option value="">Filter by Batch</option>
+            {% for b in batch %}
+            <option value="{{ b.batch_id }}">{{ b.batch_name }}</option>
+            {% endfor %}
+          </select>
+
+          <select class="students-filter">
+            <option value="">Filter by Course</option>
+            {% for c in courses %}
+            <option value="{{ c.course_id }}">{{ c.course_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- ✅ Table -->
+        <div class="students-table-container">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Reg. No</th>
+                <th>Course</th>
+                <th>Batch</th>
+                <th>Assigned To</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for s in students %}
+              <tr>
+                <td><img src="./static/student_images/{{ s.student_image }}" class="student-photo" /></td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.reg_no }}</td>
+                <td>{{ s.course.course_name }}</td>
+                <td>{{ s.batch.batch_name}}</td>
+
+                <!-- ✅ Assigned -->
+                <td>
+                  {% if s.faculty.name %}
+                    {{ s.faculty.name }}
+                  {% else %}
+                    <span style="color: #dc3545; font-weight:600;">Unassigned</span>
+                  {% endif %}
+                </td>
+
+                <!-- ✅ Action Buttons -->
+                <td>
+                  <button class="icon-btn view-btn" onclick="window.location.href='/student/{{ s.id }}'">
+                    <i class="fas fa-eye"></i>
+                  </button>
+
+                  <button class="icon-btn delete-btn" onclick="window.location.href='/delete_student/{{ s.id }}'">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- ✅ FOOTER -->
+  <footer class="footer"></footer>
+
+  <!-- ✅ DROPDOWN SCRIPT -->
+  <script>
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        const dropdown = this.closest('.dropdown');
+        dropdown.classList.toggle('open');
+      });
+    });
+  </script>
+
+</body>
+</html>

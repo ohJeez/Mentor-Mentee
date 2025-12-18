@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentor Mentee | Login</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    :root {
+      --primary-green: #28a745;
+      --dark-green: #218838;
+      --text-dark: #1b1b1b;
+      --border: #dcdcdc;
+      --light-bg: #f8f9fa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: var(--light-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: #fff;
+      width: 100%;
+      max-width: 430px;
+      padding: 2.5rem 2rem;
+      border-radius: 14px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+
+    .login-logo {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .login-logo img {
+      width: 63px;
+      border-radius: 50%;
+    }
+
+    h1 {
+      color: var(--text-dark);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.8rem;
+      letter-spacing: 1px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 1.4rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 15px 48px 15px 18px;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      transition: 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary-green);
+      box-shadow: 0 0 5px rgba(40,167,69,0.4);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: gray;
+      font-size: 1.05rem;
+      cursor: pointer;
+    }
+
+    .forgot-password {
+      text-align: right;
+      margin-bottom: 1.8rem;
+    }
+
+    .forgot-password a {
+      color: var(--primary-green);
+      font-size: 0.9rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary-green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: var(--dark-green);
+    }
+
+    .footer-note {
+      margin-top: 1.8rem;
+      font-size: 0.83rem;
+      color: gray;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-card">
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="login-logo">
+        <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" />
+      </div>
+
+      <h1>MENTOR MENTEE</h1>
+
+      <!-- Username -->
+      <div class="input-group">
+        <input type="text" class="input-field" placeholder="Username" name="uname" required>
+        <i class="fas fa-user input-icon"></i>
+      </div>
+
+      <!-- Password -->
+      <div class="input-group">
+        <input type="password" class="input-field" placeholder="Password" id="password" name="password" required>
+        <i class="fas fa-eye input-icon" id="togglePassword" style="cursor:pointer;"></i>
+      </div>
+
+      <div class="forgot-password">
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Sign In</button>
+
+      <p class="footer-note">Internal use only — secure login required.</p>
+
+    </form>
+  </div>
+
+  <!-- ✅ Password Toggle Script -->
+  <script>
+    const toggle = document.getElementById("togglePassword");
+    const password = document.getElementById("password");
+
+    toggle.addEventListener("click", () => {
+      const type = password.type === "password" ? "text" : "password";
+      password.type = type;
+
+      toggle.classList.toggle("fa-eye");
+      toggle.classList.toggle("fa-eye-slash");
+    });
+  </script>
+
+</body>
+</html>

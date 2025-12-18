@@ -1,0 +1,58 @@
+{% load static %}
+
+{% include 'Faculty/header.html' %}
+
+  <!-- PAGE BODY -->
+  <div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav class="menu">
+        <a href="{% url 'faculty_dashboard' %}" class="menu-item active">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <a href="{% url 'students-content' %}" class="menu-item">
+          <i class="fas fa-graduation-cap"></i> <span>Students</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <a href="{% url 'profile_content' %}" class="menu-item">
+          <i class="fas fa-user"></i> <span>Profile</span>
+        </a>
+
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- CONTENT FRAME WRAPPER -->
+      <div class="content-frame">
+        <!-- DASHBOARD -->
+        <div class="frame-content active" id="dashboard-frame">
+          <div class="welcome-section">
+            <p>Welcome <strong>{{ name }}</strong></p>
+          </div>
+          <h2>Dashboard</h2>
+          <p>This is the dashboard area.</p>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+{% include 'Faculty/footer.html' %}
+
+</body>
+</html>

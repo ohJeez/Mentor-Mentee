@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Student | Mentor Mentee</title>
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}" />
+  <link rel="stylesheet" href="{% static '../static/styles/admin_addStudent.css' %}" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+  <!-- ✅ HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static '../static/Assets/logo.png' %}" alt="RCSS Logo" class="header-logo" />
+      <div class="header-title">
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+      </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+      <h3>{{admin.name}}</h3>
+      <div class="user-profile-icon">
+        <img src="{%static '../static/admin/admin_image/{{admin.admin_image}}}" alt="admin profile">
+      </div>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Log out</button>
+    </div>
+  </header>
+
+
+  <!-- ✅ PAGE BODY -->
+  <div class="container">
+
+    <!-- ✅ SIDEBAR -->
+    <aside class="sidebar">
+      <nav class="menu">
+
+        <a href="/admin_dashboard" class="menu-item">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <div class="dropdown open">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle active">
+            <i class="fas fa-graduation-cap"></i> <span>Students</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu" style="display:flex;">
+            <a href="/admin_addStudent" class="dropdown-item active">
+              <i class="fas fa-user-plus"></i> <span>Add Student</span>
+            </a>
+
+            <a href="/admin_ViewStudents" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Students</span>
+            </a>
+          </div>
+        </div>
+         <hr class="menu-divider" />
+        <div class="dropdown">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Faculty</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_addFaculty" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Add Faculty</span>
+            </a>
+
+            <a href="/admin_viewFaculty" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Faculty</span>
+            </a>
+          </div>
+        </div>
+         <hr class="menu-divider" />
+        <div class="dropdown">
+          <a href="javascript:void(0)" class="menu-item dropdown-toggle">
+            <i class="fas fa-chalkboard-teacher"></i> <span>Assignments</span>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/admin_AddAssignment" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> <span>Assign Student</span>
+            </a>
+
+            <a href="/admin_ViewAssignments" class="dropdown-item">
+              <i class="fas fa-users"></i> <span>View Assignments</span>
+            </a>
+          </div>
+        </div>
+
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+        </a>
+
+        <hr class="menu-divider" />
+
+        <a href="#" class="menu-item">
+          <i class="fas fa-user"></i> <span>Profile</span>
+        </a>
+
+      </nav>
+    </aside>
+
+
+    <!-- ✅ MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- <div class="welcome-section">
+        <p>Welcome <strong>DILJITH K BENNY</strong></p>
+      </div> -->
+
+      <!-- ✅ ADD STUDENT FORM (CLEAN & UNCHANGED) -->
+      <div class="student-form-container">
+
+        <h2>Add New Student</h2>
+
+        <form id="studentForm" method="post" enctype="multipart/form-data" action="/admin_addStudent">
+          {% csrf_token %}
+          <div class="form-grid">
+
+            <div class="form-group full-width">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+              <label for="roll">Reg. Number</label>
+              <input type="text" id="roll" name="roll" required>
+            </div>
+
+            <div class="form-group">
+              <label for="department">Course</label>
+              <select id="department" name="department" required>
+                <option value="">Select Course</option>
+                {% for i in courses %}
+                <option value="{{i.course_id}}">{{i.course_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+              <label for="batch">Batch</label>
+              <select id="batch" name="batch" required>
+                <option value="">Select Batch</option>
+                {% for i in batch %}
+                <option value="{{i.batch_id}}">{{i.batch_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="text" id="phone" name="phone" required>
+            </div>
+
+            <div class="form-group">
+              <label for="dob">Date of Birth</label>
+              <input type="date" id="dob" name="dob" required>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="photo">Student Photo</label>
+              <div class="photo-upload-wrapper">
+                <input type="file" id="photo" name="photo" accept="image/*" required class="photo-input">
+                <div class="photo-upload-area">
+                  <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <p class="upload-text">Click to upload or drag and drop</p>
+                  <p class="upload-hint">PNG, JPG, GIF up to 5MB</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <button class="save-btn" type="submit">Save Student</button>
+
+        </form>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ✅ FOOTER -->
+  <footer class="footer">
+    <!-- Your footer content here -->
+  </footer>
+
+  <script src="{% static '../static/script/admin_addStudent.js' %}"></script>
+
+  <!-- ✅ DROPDOWN SCRIPT -->
+  <script>
+  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const dropdown = this.closest('.dropdown');
+      dropdown.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>

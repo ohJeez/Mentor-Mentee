@@ -1,0 +1,190 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+/* BODY */
+body {
+  background: #f6f9f5;   /* soft greenish background */
+  display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #0b8a3b;   /* RCSS green */
+  height: 100vh;
+  padding: 25px 20px;
+  border-right: 1px solid #0a7a35;
+  color: white;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 12px 15px;
+  color: white;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.sidebar nav a i {
+  margin-right: 10px;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background: #ffffff33; /* subtle white overlay */
+  color: #fff;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  padding: 25px;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 20px;
+}
+
+.top-right i {
+  color: #0b8a3b;    /* green icons */
+}
+
+.admin-name {
+  font-size: 14px;
+  color: #0b8a3b;
+  font-weight: 600;
+}
+
+/* STAT CARDS */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 4px solid #0b8a3b; /* green accent */
+}
+
+.card p {
+  color: #7a7a7a;
+  font-size: 14px;
+}
+
+.card h1 {
+  margin-top: 5px;
+  font-size: 30px;
+  color: #0b8a3b; /* green heading */
+}
+
+.card .up {
+  color: #0b8a3b;
+}
+
+/* GRID LAYOUT */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* BOXES */
+.box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.box h3 {
+  color: #0b8a3b;
+  font-weight: 700;
+}
+
+.chart-placeholder {
+  height: 230px;
+  background: #f0f6f2;
+  border-radius: 12px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #777;
+}
+
+/* ACTIVITY FEED */
+.activity-list {
+  margin-top: 15px;
+  list-style: none;
+}
+
+.activity-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.activity-list li span {
+  font-size: 12px;
+  color: #777;
+  margin-right: 10px;
+}
+
+/* BUTTONS */
+.bottom-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: #dfeee6; /* light green */
+  color: #0b8a3b;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.btn:hover {
+  background: #cfe7d9;
+}
+
+.btn.primary {
+  background: #0b8a3b;
+  color: white;
+}
+
+.btn.primary:hover {
+  background: #0a7a35;
+}

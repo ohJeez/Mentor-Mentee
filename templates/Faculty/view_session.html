@@ -1,0 +1,61 @@
+{% load static %}
+{% include 'Faculty/header.html' %}
+
+<link rel="stylesheet" href="{% static 'css/session_details.css' %}">
+
+<div class="container">
+      <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="menu">
+      <a href="{% url 'faculty_dashboard' %}" class="menu-item">
+        <i class="fas fa-th-large"></i> <span>Dashboard</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="{% url 'students-content' %}" class="menu-item active">
+        <i class="fas fa-graduation-cap"></i> <span>Students</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="#" class="menu-item" data-frame="session-notes">
+        <i class="fas fa-file-alt"></i> <span>Session Notes</span>
+      </a>
+
+      <hr class="menu-divider" />
+
+      <a href="{% url 'profile_content' %}" class="menu-item">
+        <i class="fas fa-user"></i> <span>Profile</span>
+      </a>
+
+    </nav>
+  </aside>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <div class="session-card">
+            <h2 class="title">Session Details for {{ session.student.name }}</h2>
+
+            <div class="session-row">
+                <span class="label">Date:</span>
+                <span class="value">{{ session.date }}</span>
+            </div>
+
+            <div class="section">
+                <span class="label">Summary:</span>
+                <p class="text">{{ session.summary|default:"No summary provided." }}</p>
+            </div>
+
+            <div class="section">
+                <span class="label">Details:</span>
+                <p class="text">{{ session.details|default:"No details provided." }}</p>
+            </div>
+
+            <a href="{% url 'student_session' session.student.student_id %}" class="btn-back">Back to Sessions</a>
+        </div>
+
+    </main>
+</div>
+
+{% include 'Faculty/footer.html' %}
