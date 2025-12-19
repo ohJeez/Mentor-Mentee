@@ -1689,7 +1689,44 @@ def signup(request):
                         application_form=application_form,
                         )
             res2.save()
-            return HttpResponse("<script>alert('Account created successfully. Login to continue :)'); window.location.href='/'</script>")
+            res3=StudentUploads(
+                student_id=res2,
+                upload_file=application_form,
+                description='Application Form',
+                file_name="Application_Form"
+                )
+            res3.save()
+            return HttpResponse("""
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Success</title>
+
+                    <!-- SweetAlert2 CDN -->
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                </head>
+                <body>
+
+                <script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Account Created!',
+                        text: 'Redirecting to login...',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                </script>
+
+                </body>
+                </html>
+                """)
+
             
     except Exception as e:
         print(f"Error! {e}")
