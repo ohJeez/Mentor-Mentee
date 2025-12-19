@@ -1671,23 +1671,6 @@ def signup(request):
             if password != confirm_password:
                  return HttpResponse("<script>alert('Passwords Unmatch!'); window.location.href='/signup'</script>")
             
-            #Student Image
-            photo_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'static',
-                'student_images'
-            )
-            fs = FileSystemStorage(location=photo_path, base_url='../static/student_images/')
-            st_image = fs.save(photo.name, photo)
-            
-            #Application Form
-            # app_path = os.path.join(
-            #     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            #     'static',
-            #     'Application_Forms'
-            # )
-            # fs = FileSystemStorage(location=app_path, base_url='../static/Application_Forms/')
-            # app_form = fs.save(application_form.name, application_form)
             #Login
             res1=Login(username=reg_no,password=password,userType='student')
             res1.save()
@@ -1702,7 +1685,7 @@ def signup(request):
                         batch_id=batch,
                         year=1,
                         dob=dob,
-                        student_image=st_image,
+                        student_image=photo,
                         application_form=application_form,
                         )
             res2.save()
@@ -1813,6 +1796,34 @@ def student_RequestSession(request):
                 comments = reason
                 )
             res.save()
+            send_mail(
+                subject=f"Mentoring Session Request by {student.name}",
+                message=f"""
+Respected {student.faculty.name},
+
+A new mentoring session request has been submitted by your assigned student through the Mentor Mentee Portal.
+
+Student Details
+
+Name: {student.name}
+Register Number: {student.reg_no}
+Course & Batch: {student.course.course_name} – {student.batch.batch_name}
+
+Session Details
+
+Requested Date: {request_date_str}
+
+You are requested to review and respond to this session request at your earliest convenience.
+
+Thank you for your continued support in student mentoring.
+
+Warm regards,
+Mentor Mentee System
+Rajagiri College of Social Sciences (Autonomous)""",
+                from_email="noreply.mentor_mentee@gmail.com",
+                recipient_list=[student.faculty.email],
+                fail_silently=False,
+            )
             return HttpResponse(
             "<script>alert('Request sent successfully'); window.location.href='/student_dashboard'</script>")
     except Exception as e:
@@ -2043,9 +2054,3 @@ def test_mail(request):
         return HttpResponse("Email sent successfully!")
     except Exception as e:
         return HttpResponse(f"Error sending email: {e}")
-    
-def sample_view(request):
-    return HttpResponse("This is a sample view.")
-
-
-

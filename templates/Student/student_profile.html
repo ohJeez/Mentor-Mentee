@@ -309,7 +309,11 @@
         </div> 
         <h1 class="main-title">MENTOR MENTEE</h1> 
         <div class="header-right"> <h3>{{student.name}}</h3> 
-            <div class="user-profile-icon"><img src="{{ student.student_image.url }}" alt="Admin">
+          {% if student.student_image %}
+            <div class="user-profile-icon"><img src="{{ student.student_image.url }}" alt="Student">
+              {% else %}
+            <div class="user-profile-icon"><i class="fas fa-user-circle"></i></div>
+            {% endif %}
             </div> 
             <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
  </div>
@@ -354,7 +358,11 @@
 <div class="profile-card">
 
   <div class="profile-header">
+    {% if student.student_image %}
     <img src="{{student.student_image.url}}" class="student-photo" id="profileImg">
+    {% else %}
+    <img src="{% static 'Assets/default_profile.png' %}" class="student-photo" id="profileImg">
+    {% endif %}
     <div>
       <h2>{{ student.name }}</h2>
       <p>Reg No: <strong>{{ student.reg_no }}</strong></p>
@@ -402,8 +410,13 @@
 
         <label>Profile Picture</label>
         <div class="image-upload">
+          {% if student.student_image %}
           <img id="preview" class="preview-img"
                src="{{ student.student_image.url }}">
+          {% else %}
+          <img id="preview" class="preview-img"
+               src="{% static 'Assets/default_profile.png' %}">
+          {% endif %}
           <div class="file-box">
             <input type="file" name="student_image" accept="image/*"
                    onchange="previewImage(this)">

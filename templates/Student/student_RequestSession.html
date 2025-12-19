@@ -191,7 +191,11 @@
 
         <div class="header-right">
              <h3>{{student.name}}</h3>
+                {% if student.student_image %}
             <div class="user-profile-icon"><img src="{{ student.student_image.url }}" alt="Admin"></div>
+            {% else %}
+            <div class="user-profile-icon"><i class="fas fa-user-circle"></i></div>
+            {% endif %}
                 <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
         </div>
     </header>
