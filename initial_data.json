@@ -177,7 +177,7 @@
             "name": "Computer Science",
             "code": "CS",
             "hod_name": "Dr. Bindhya M Varghese",
-            "email": "bindhya@rajagiri.edu",
+            "email": "cs@rajagiri.edu",
             "created_at": "2025-11-26T01:06:22Z"
         }
     },
@@ -424,6 +424,21 @@
             "designation": "Assistant Professor",
             "faculty_image": "sunu-abraham.jpg",
             "is_hod": false,
+            "is_admin": false
+        }
+    },
+    {
+        "model": "MentorMentee.faculty",
+        "pk": 13,
+        "fields": {
+            "login": 16,
+            "name": "Dr.Bindiya M Varghese",
+            "email": "bindiya@rajagiri.edu",
+            "phone": null,
+            "department": 1,
+            "designation": "Dean",
+            "faculty_image": "bindhya.jpg",
+            "is_hod": true,
             "is_admin": false
         }
     },
@@ -901,7 +916,7 @@
             "course": 1,
             "batch": 1,
             "year": 1,
-            "faculty": 3,
+            "faculty": 8,
             "dob": null,
             "application_form": "",
             "assessment_file": ""
@@ -2501,65 +2516,29 @@
     },
     {
         "model": "MentorMentee.assignment",
-        "pk": 1,
+        "pk": 8,
         "fields": {
-            "student": 1,
-            "faculty": 2,
-            "status": "pending"
+            "student": 91,
+            "faculty": 8,
+            "status": "approved"
         }
     },
     {
         "model": "MentorMentee.assignment",
-        "pk": 2,
+        "pk": 14,
         "fields": {
-            "student": 4,
-            "faculty": 2,
-            "status": "pending"
+            "student": 24,
+            "faculty": 8,
+            "status": "approved"
         }
     },
     {
         "model": "MentorMentee.assignment",
-        "pk": 3,
-        "fields": {
-            "student": 27,
-            "faculty": 2,
-            "status": "pending"
-        }
-    },
-    {
-        "model": "MentorMentee.assignment",
-        "pk": 4,
-        "fields": {
-            "student": 56,
-            "faculty": 2,
-            "status": "pending"
-        }
-    },
-    {
-        "model": "MentorMentee.assignment",
-        "pk": 5,
-        "fields": {
-            "student": 53,
-            "faculty": 2,
-            "status": "pending"
-        }
-    },
-    {
-        "model": "MentorMentee.assignment",
-        "pk": 6,
+        "pk": 15,
         "fields": {
             "student": 63,
-            "faculty": 2,
-            "status": "pending"
-        }
-    },
-    {
-        "model": "MentorMentee.assignment",
-        "pk": 7,
-        "fields": {
-            "student": 66,
-            "faculty": 5,
-            "status": "pending"
+            "faculty": 8,
+            "status": "approved"
         }
     },
     {
