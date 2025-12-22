@@ -1,262 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <title>My Mentoring Sessions | Mentor Mentee</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% load static %}
+<meta charset="UTF-8">
+<title>My Mentoring Sessions | Mentor Mentee</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Base Styles -->
-    <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-    <style>
-        .session-container {
-            background: #fff;
-            padding: 30px;
-            border-radius: 18px;
-            margin-top: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.09);
-            min-height: 600px;
-        }
+<style>
 
-        .page-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: #28a745;
-            margin-bottom: 10px;
-        }
+/* ================= SESSION CONTAINER ================= */
+.session-container{
+    background:#fff;
+    padding:24px;
+    border-radius:18px;
+    margin-top:20px;
+    box-shadow:0 8px 24px rgba(0,0,0,.09);
+    height: calc(100vh - 170px);
+    display:flex;
+    flex-direction:column;
+}
 
-        .page-subtitle {
-            color: #64748b;
-            margin-bottom: 25px;
-        }
+/* ================= GRID ================= */
+.sessions-layout{
+    display:grid;
+    grid-template-columns: 1fr 320px; /* ✅ CENTER + RIGHT */
+    gap:24px;
+    flex:1;
+    min-height:0;
+}
 
-        /* Table */
-        .styled-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 12px;
-        }
+/* ================= LEFT (NOW RIGHT PANEL) ================= */
+.session-list-card{
+    background:#f8fafc;
+    border-radius:16px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
 
-        .styled-table thead th {
-            background: #e7f5ea;
-            padding: 14px;
-            font-weight: 700;
-            color: #1c7c31;
-            text-align: left;
-        }
+/* ================= LEFT SECTIONS ================= */
+.session-section{
+    background:#ffffff;
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:14px;
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    min-height:0;
+    box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
 
-        .styled-table tbody tr {
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transition: 0.25s;
-        }
+.session-section:last-child{ margin-bottom:0; }
 
-        .styled-table tbody tr:hover {
-            transform: translateY(-3px);
-            background: #f6fff6;
-        }
+.session-section h3{
+    font-size:15px;
+    font-weight:700;
+    color:#1c7c31;
+    margin-bottom:10px;
+}
 
-        .styled-table td {
-            padding: 16px;
-            font-size: 15px;
-            color: #333;
-        }
+/* ================= SCROLLABLE CONTENT ================= */
+.scroll-section{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    padding-right:6px;
+}
 
-        /* Status Badges */
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            display: inline-block;
-        }
+/* ================= SCROLLBAR STYLE ================= */
+.scroll-section::-webkit-scrollbar{ width:6px; }
+.scroll-section::-webkit-scrollbar-thumb{
+    background:#cbd5e1;
+    border-radius:10px;
+}
+.scroll-section::-webkit-scrollbar-thumb:hover{
+    background:#94a3b8;
+}
 
-        .accepted { background: #d4f7e1; color: #1c7c31; }
-        .completed { background: #e2e8f0; color: #334155; }
-        .cancelled { background: #fee2e2; color: #991b1b; }
-        .pending { background: #fff3cd; color: #92400e; }
+/* ================= SESSION ITEMS ================= */
+.session-item{
+    background:#f9fafb;
+    padding:12px 14px;
+    border-radius:12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    border:1px solid #eef2f7;
+}
 
-        /* Empty state */
-        .empty-box {
-            text-align: center;
-            padding: 80px;
-            color: #64748b;
-        }
+.session-item:hover{ background:#f0fdf4; }
 
-        .empty-box i {
-            font-size: 50px;
-            color: #cbd5e1;
-            margin-bottom: 10px;
-        }
-    </style>
+.session-item.active{
+    border-left:4px solid #22c55e;
+    background:#ecfdf5;
+}
+
+.session-date{ font-weight:700; color:#14532d; }
+.session-sub{ font-size:13px; color:#64748b; }
+
+/* ================= CENTER PANEL ================= */
+.details-card{
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(0,0,0,.06);
+}
+
+.details-card h2{
+    font-size:22px;
+    margin-bottom:16px;
+    color:#1c7c31;
+}
+
+.detail-row{
+    margin-bottom:14px;
+    font-size:15px;
+}
+
+.detail-label{
+    font-weight:700;
+    width:160px;
+    display:inline-block;
+}
+
+/* ================= STATUS ================= */
+.status-badge{
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:600;
+}
+.accepted{background:#d4f7e1;color:#1c7c31}
+.rejected{background:#fee2e2;color:#991b1b}
+.pending{background:#fff3cd;color:#92400e}
+.completed{background:#e2e8f0;color:#334155}
+
+/* ================= EMPTY ================= */
+.empty-preview{
+    text-align:center;
+    color:#94a3b8;
+    margin:auto;
+}
+
+</style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
 <header class="header">
     <div class="header-left">
         <img src="{% static 'Assets/logo.png' %}" class="header-logo">
-        <div class="header-title">
+        <div>
             <h2 class="rcss-title">RCSS</h2>
-            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES</p>
         </div>
     </div>
-
     <h1 class="main-title">MENTOR MENTEE</h1>
-
     <div class="header-right">
         <h3>{{ student.name }}</h3>
         <div class="user-profile-icon">
-            <img src="{{ student.student_image.url }}" alt="Admin">
+            {% if student.student_image %}
+            <img src="{{ student.student_image.url }}">
+            {% else %}
+            <i class="fas fa-user-circle"></i>
+            {% endif %}
         </div>
-        <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        <button onclick="location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
     </div>
 </header>
 
 <div class="container">
 
-    <!-- ================= SIDEBAR ================= -->
-    <aside class="sidebar">
-            <nav class="menu">
+<aside class="sidebar">
+<nav class="menu">
+<a class="menu-item" href="/student_dashboard"><i class="fas fa-th-large"></i>Dashboard</a>
+<hr class="menu-divider">
+<a class="menu-item" href="/student_uploads"><i class="fas fa-folder-open"></i>My Uploads</a>
+<hr class="menu-divider">
+<a class="menu-item active" href="/student_viewSessions"><i class="fas fa-file-alt"></i>My Sessions</a>
+<hr class="menu-divider">
+<a class="menu-item" href="/student_RequestSession"><i class="fas fa-calendar-plus"></i>Request Session</a>
+<hr class="menu-divider">
+<a class="menu-item" href="/student_profile"><i class="fas fa-user"></i>Profile</a>
+</nav>
+</aside>
 
-                <a class="menu-item " href="/student_dashboard">
-                    <i class="fas fa-th-large"></i><span>Dashboard</span>
-                </a>
-                <hr class="menu-divider">
+<main class="main-content">
+<div class="session-container">
 
-                <a class="menu-item" href="/student_uploads">
-                    <i class="fas fa-folder-open"></i><span>My Uploads</span>
-                </a>
+<h2 class="page-title just">My Mentoring Activity</h2><br>
 
-                <hr class="menu-divider">
+<div class="sessions-layout">
 
-                <a class="menu-item active" href="/student_viewSessions">
-                    <i class="fas fa-file-alt"></i><span>My Sessions</span>
-                </a>
-
-                <hr class="menu-divider">
-
-                <a class="menu-item" href="/student_RequestSession">
-                    <i class="fas fa-calendar-plus"></i><span>Request Session</span>
-                </a>
-
-                <hr class="menu-divider">
-
-                <a class="menu-item" href="/student_profile">
-                    <i class="fas fa-user"></i><span>Profile</span>
-                </a>
-
-            </nav>
-        </aside>
-
-    <!-- ================= MAIN CONTENT ================= -->
-    <main class="main-content">
-
-        <div class="session-container">
-
-            <h2 class="page-title">My Mentoring Sessions</h2>
-            <p class="page-subtitle">
-                View the status and details of your mentoring session requests.
-            </p>
-{% if requests %}
-<table class="styled-table">
-    <thead>
-        <tr>
-            <th>Requested On</th>
-            <th>Faculty</th>
-            <th>Session Date</th>
-            <th>Session Time</th>
-            <th>Status</th>
-            <th>Comments</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for s in requests %}
-        <tr>
-
-            <!-- Requested Date -->
-            <td>{{ s.request_date }}</td>
-
-            <!-- Faculty -->
-            <td>
-                {% if s.faculty %}
-                    {{ s.faculty.name }}
-                {% else %}
-                    <span style="color:#64748b;font-style:italic;">
-                        Not assigned yet
-                    </span>
-                {% endif %}
-            </td>
-
-            <!-- Session Date -->
-            <td>
-                {% if s.session_date %}
-                    {{ s.session_date }}
-                {% else %}
-                    <span style="color:#64748b;">
-                        To be scheduled
-                    </span>
-                {% endif %}
-            </td>
-
-            <!-- Session Time -->
-            <td>
-                {% if s.session_time %}
-                    {{ s.session_time }}
-                {% else %}
-                    <span style="color:#64748b;">
-                        Not fixed
-                    </span>
-                {% endif %}
-            </td>
-
-            <!-- Status -->
-            <td>
-                <span class="status-badge {{ s.status|lower }}">
-                    {{ s.status|title }}
-                </span>
-            </td>
-
-            <!-- Comments -->
-            <td>
-                {% if s.comments %}
-                    {{ s.comments }}
-                {% else %}
-                    <span style="color:#94a3b8;font-style:italic;">
-                        No remarks
-                    </span>
-                {% endif %}
-            </td>
-
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% else %}
-<div class="empty-box">
-    <i class="fas fa-calendar-times"></i>
-    <h3>No Session Requests Found</h3>
-    <p>You have not requested any mentoring sessions yet.</p>
+<!-- CENTER -->
+<div class="details-card" id="detailsPanel">
+  <div class="empty-preview">
+    <i class="fas fa-calendar-alt fa-3x"></i>
+    <p>Select a session to view details</p>
+  </div>
 </div>
-{% endif %}
 
+<!-- RIGHT -->
+<div class="session-list-card">
 
+  <div class="session-section">
+    <h3>Session Requests</h3>
+    <div class="scroll-section">
+      {% for s in requests %}
+      <div class="session-item"
+        onclick="showDetails(this)"
+        data-title="Session Request"
+        data-date="{{ s.request_date }}"
+        data-faculty="{{ s.faculty.name|default:'Not assigned yet' }}"
+        data-status="{{ s.status }}"
+        data-comments="{{ s.comments|default:'No remarks' }}">
+        <div class="session-date">{{ s.request_date }}</div>
+        <div class="session-sub">Status: {{ s.status|title }}</div>
+      </div>
+      {% empty %}
+      <p class="session-sub">No requests</p>
+      {% endfor %}
+    </div>
+  </div>
 
-        </div>
-    </main>
+  <div class="session-section">
+    <h3>Mentoring Sessions</h3>
+    <div class="scroll-section">
+      {% for s in sessions %}
+      <div class="session-item"
+        onclick="showDetails(this)"
+        data-title="Mentoring Session"
+        data-date="{{ s.date }}"
+        data-time="{{ s.session_time }}"
+        data-faculty="{{ s.faculty.name }}"
+        data-comments="{{ s.followup_actions|default:'No remarks' }}">
+        <div class="session-date">{{ s.date }}</div>
+        <div class="session-sub">{{ s.faculty.name }}</div>
+      </div>
+      {% empty %}
+      <p class="session-sub">No sessions</p>
+      {% endfor %}
+    </div>
+  </div>
 
+</div>
+</div>
+</div>
+</main>
 </div>
 
 <script>
-    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-        toggle.addEventListener('click', function () {
-            this.closest('.dropdown').classList.toggle('open');
-        });
-    });
+function showDetails(el){
+document.querySelectorAll('.session-item').forEach(i=>i.classList.remove('active'));
+el.classList.add('active');
+
+document.getElementById('detailsPanel').innerHTML=`
+<h2>${el.dataset.title}</h2>
+<div class="detail-row"><span class="detail-label">Date:</span>${el.dataset.date}</div>
+${el.dataset.time ? `<div class="detail-row"><span class="detail-label">Time:</span>${el.dataset.time}</div>` : ``}
+<div class="detail-row"><span class="detail-label">Faculty:</span>${el.dataset.faculty}</div>
+${el.dataset.status ? `<div class="detail-row"><span class="detail-label">Status:</span>
+<span class="status-badge ${el.dataset.status.toLowerCase()}">${el.dataset.status}</span></div>` : ``}
+<div class="detail-row"><span class="detail-label">Comments:</span>${el.dataset.comments}</div>`;
+}
 </script>
 
 </body>

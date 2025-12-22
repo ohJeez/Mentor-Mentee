@@ -1,0 +1,234 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HOD | Add Faculty Admin</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f3f5f9;
+    }
+
+    .main-wrapper {
+      margin-left: 2px;
+      /* THIS IS THE KEY */
+      padding: 36px 40px;
+      background: #f4f6f9;
+      min-height: calc(100vh - 80px);
+    }
+
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-header h2 {
+      color: #222;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      background: #1e9e44;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: #157a33;
+    }
+
+    /* Popup Overlay */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup-content {
+      width: 420px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      animation: fadeIn .3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .popup-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .save-btn {
+      background: #1e9e44;
+      padding: 10px 18px;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .cancel-btn {
+      background: #777;
+      padding: 10px 18px;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    thead {
+      background: #1e9e44;
+      color: white;
+    }
+
+    th,
+    td {
+      padding: 14px;
+      text-align: left;
+    }
+
+    tr:nth-child(even) {
+      background: #f4faf4;
+    }
+
+    .delete-btn {
+      background: #d93025;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .delete-btn:hover {
+      background: #a72018;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="header-left">
+      <img src="{% static 'Assets/logo.png' %}" class="header-logo">
+      <div>
+        <h2 class="rcss-title">RCSS</h2>
+        <p class="rcss-subtitle">Rajagiri College of Social Sciences</p>
+      </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+      <h4>{{faculty.name}}</h4>
+      <div class="user-profile-icon"><img src="{% static 'faculty_images/' %}{{ faculty.faculty_image }}" alt="HOD">
+    </div>
+      <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    {% load static %}
+
+    <aside class="sidebar">
+      <nav class="menu">
+
+        <!-- DASHBOARD -->
+        <a href="{% url 'hod_dashboard' %}" class="menu-item">
+          <i class="fas fa-th-large"></i> Dashboard
+        </a>
+
+        <hr class="menu-divider">
+
+        <!-- COURSES -->
+        <a href="{% url 'manage_courses' %}" class="menu-item">
+          <i class="fas fa-book"></i> Courses
+        </a>
+
+        <hr class="menu-divider">
+
+        <!-- BATCHES -->
+        <a href="{% url 'hod_batches' %}" class="menu-item">
+          <i class="fas fa-layer-group"></i> Batches
+        </a>
+
+        <hr class="menu-divider">
+
+        <!-- FACULTY ADMINS -->
+        <a href="{% url 'manage_faculty' %}" class="menu-item">
+          <i class="fas fa-user-tie"></i> Faculty Admins
+        </a>
+
+        <hr class="menu-divider">
+
+        <a href="{% url 'pending_assignments' %}" class="menu-item">
+          <i class="fas fa-user-tie"></i> Pending Assignments
+        </a>
+        
+
+      </nav>
+    </aside>

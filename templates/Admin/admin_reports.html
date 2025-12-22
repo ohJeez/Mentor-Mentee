@@ -292,6 +292,14 @@
 <div class="report-header">
   <h1>Mentoring Reports</h1>
   <p>Search → Preview → Download</p>
+  <div style="text-align:right;margin-top:10px">
+  <button class="tab"
+          style="max-width:220px"
+          onclick="downloadPDF()">
+    <i class="fas fa-file-pdf"></i> Download PDF
+  </button>
+</div>
+
 </div>
 
 <div class="report-tabs">
@@ -333,14 +341,10 @@ let reportType="student", selectedId=null;
 function setType(t,el){
   reportType=t;
   selectedId=null;
-
-  document.querySelectorAll('.tab')
-    .forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   el.classList.add('active');
-
   search.value="";
   suggestions.innerHTML="";
-
   reportSheet.innerHTML=`
     <h2 class="report-title">MENTORING PROGRAMME REPORT</h2>
     <p style="text-align:center;color:#64748b">
@@ -348,10 +352,10 @@ function setType(t,el){
     </p>`;
 }
 
+
 function searchEntity(){
   const q=search.value;
   if(q.length<2) return;
-
   fetch(`/api/search_entities/?mode=${reportType}&q=${q}`)
     .then(r=>r.json())
     .then(d=>{
@@ -359,12 +363,16 @@ function searchEntity(){
       d.results.forEach(x=>{
         const div=document.createElement("div");
         div.innerText=x.label;
-        div.onclick=()=>{
-          selectedId=x.id;
-          search.value=x.label;
-          suggestions.innerHTML="";
-          loadReport();
-        }
+        div.onclick = () => {
+  selectedId = parseInt(x.id);   // ✅ ensure number
+  search.value = x.label;
+  suggestions.innerHTML = "";
+
+  // ✅ defer execution to next event loop
+  setTimeout(() => {
+    loadReport();
+  }, 0);
+};
         suggestions.appendChild(div);
       });
     });
@@ -377,52 +385,68 @@ function loadReport(){
     .then(r=>r.json())
     .then(d=>{
       reportSheet.innerHTML=`
-        <h2 class="report-title">MENTORING PROGRAMME REPORT</h2>
+      <h2 class="report-title">MENTORING PROGRAMME REPORT</h2>
 
-        <div class="report-meta">
-          <div class="meta-box"><label>Category</label><span>${reportType.toUpperCase()}</span></div>
-          <div class="meta-box"><label>Period</label><span>${range.options[range.selectedIndex].text}</span></div>
-          <div class="meta-box"><label>Date</label><span>${new Date().toLocaleDateString()}</span></div>
-        </div>
+      <div class="report-meta">
+        <div class="meta-box"><label>Category</label><span>${reportType.toUpperCase()}</span></div>
+        <div class="meta-box"><label>Period</label><span>${d.period_label}</span></div>
+        <div class="meta-box"><label>Generated</label><span>${new Date().toLocaleDateString()}</span></div>
+      </div>
 
-        <h3 style="margin-top:40px">Summary Overview</h3>
+      <h3 style="margin-top:35px">Executive Summary</h3>
+      <p class="report-text">
+        During the selected period, the mentoring programme recorded
+        <b>${d.current.total_sessions}</b> sessions compared to
+        <b>${d.previous.total_sessions}</b> in the previous period,
+        indicating a <b>${d.comparison.session_change}%</b>
+        ${d.comparison.session_trend}.
+      </p>
 
-        <div class="kpi-grid">
-          <div class="kpi"><h2>${d.total_sessions}</h2><p>Total Sessions</p></div>
-          <div class="kpi"><h2>${d.total_students}</h2><p>Students Covered</p></div>
-          <div class="kpi"><h2>${d.total_faculty}</h2><p>Faculty Involved</p></div>
-          <div class="kpi"><h2>${d.avg_sessions}</h2><p>Avg Sessions / Student</p></div>
-        </div>
+      <div class="kpi-grid">
+        <div class="kpi"><h2>${d.current.total_sessions}</h2><p>Sessions</p></div>
+        <div class="kpi"><h2>${d.current.students}</h2><p>Students</p></div>
+        <div class="kpi"><h2>${d.current.faculty}</h2><p>Faculty</p></div>
+        <div class="kpi"><h2>${d.current.avg_sessions}</h2><p>Avg / Student</p></div>
+      </div>
 
-        <h3 style="margin-top:45px">Session Analysis</h3>
+      <h3 style="margin-top:40px">Comparative Analysis</h3>
 
-        <table class="report-table">
-          <tr><th>Date</th><th>Sessions</th></tr>
-          ${
-            d.chart.labels.length
-            ? d.chart.labels.map((x,i)=>`
-              <tr><td>${x}</td><td>${d.chart.values[i]}</td></tr>
-            `).join("")
-            : `<tr><td colspan="2" style="text-align:center">No data available</td></tr>`
-          }
-        </table>
+      <table class="report-table">
+        <tr>
+          <th>Metric</th>
+          <th>Previous</th>
+          <th>Current</th>
+          <th>Change</th>
+        </tr>
+        <tr>
+          <td>Total Sessions</td>
+          <td>${d.previous.total_sessions}</td>
+          <td>${d.current.total_sessions}</td>
+          <td>${d.comparison.session_change}%</td>
+        </tr>
+        <tr>
+          <td>Students Covered</td>
+          <td>${d.previous.students}</td>
+          <td>${d.current.students}</td>
+          <td>${d.comparison.student_change}%</td>
+        </tr>
+      </table>
 
-        <h3 style="margin-top:45px">Observations</h3>
-        <p class="report-text">
-          The mentoring programme reflects active academic and personal
-          guidance with ${d.total_sessions} sessions conducted during the
-          selected period. Continuous mentoring ensures student progress
-          and faculty engagement.
-        </p>
+      <h3 style="margin-top:40px">Observations</h3>
+      <p class="report-text">
+        The mentoring engagement shows a
+        <b>${d.comparison.session_trend}</b> trend.
+        Continuous mentoring activities are recommended to sustain
+        student development and faculty involvement.
+      </p>
 
-        <div class="report-footer">
-          <span>Generated by Mentor–Mentee System</span>
-          <span>Authorized by {{ admin.name }}</span>
-        </div>
+      <div class="report-footer">
+        <span>Generated by Mentor–Mentee System</span>
+        <span>Authorized by {{ admin.name }}</span>
+      </div>
       `;
     });
 }
-
 document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
         toggle.addEventListener('click', function (e) {
       e.preventDefault();
@@ -430,6 +454,11 @@ document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
       dropdown.classList.toggle('open');
     });
   });
+
+  function downloadPDF(){
+  if(!selectedId) return alert("Generate report first");
+  window.open(`/admin_report_pdf/?type=${reportType}&id=${selectedId}&range=${range.value}`);
+}
 </script>
 
 </body>

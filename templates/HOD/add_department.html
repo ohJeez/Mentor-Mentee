@@ -1,0 +1,104 @@
+{% include 'HOD/hod_header_sidebar.html' %}
+
+<style>
+.main-wrapper {
+    margin-left: 260px;
+    padding: 36px 40px;
+    background: #f4f6f9;
+    min-height: calc(100vh - 70px);
+}
+
+.main-wrapper h4 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #111827;
+}
+
+.main-wrapper form {
+    background: white;
+    padding: 28px 32px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    max-width: 700px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.col-4 {
+    flex: 0 0 30%;
+    font-weight: 600;
+    color: #374151;
+}
+
+.col-8 {
+    flex: 0 0 70%;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #1e9e44;
+}
+
+.btn-custom {
+    background: #1e9e44;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.btn-custom:hover {
+    background: #17823a;
+}
+
+.mt-3 {
+    margin-top: 20px;
+}
+</style>
+
+<div class="main-wrapper">
+    <h4>Add Department</h4>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="row mb-2">
+            <div class="col-4"><label>Name</label></div>
+            <div class="col-8"><input type="text" name="name" required class="form-control"></div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-4"><label>Code</label></div>
+            <div class="col-8"><input type="text" name="code" required class="form-control"></div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-4"><label>HOD Name</label></div>
+            <div class="col-8"><input type="text" name="hod" class="form-control"></div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-4"><label>Email</label></div>
+            <div class="col-8"><input type="email" name="email" class="form-control"></div>
+        </div>
+
+        <button class="btn btn-custom mt-3">Save</button>
+    </form>
+</div>

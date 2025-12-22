@@ -34,7 +34,6 @@ class Batches(models.Model):
     #Admin
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     login=models.ForeignKey(Login,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=150,db_index=False)
@@ -52,7 +51,8 @@ class Faculty(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="faculties")
     designation = models.CharField(max_length=100, blank=True, null=True)
     faculty_image = models.CharField(max_length=500,blank=True)
-    # created_at = models.DateTimeField(auto_now_add=True)
+    is_hod = models.BooleanField(default=False)  # HOD
+    is_admin = models.BooleanField(default=False)       # Admin
     
     #Student
 class Student(models.Model):
@@ -157,3 +157,16 @@ class Assignment(models.Model):
         ],
         default='pending'
     )
+    
+class HOD(models.Model):
+    hod_id = models.AutoField(primary_key=True)
+    login = models.ForeignKey(Login, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    admin_image = models.ImageField(
+        upload_to="superadmin/", default="default.png"
+    )
+
+    def __str__(self):
+        return self.name
+    

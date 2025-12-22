@@ -84,7 +84,7 @@
 
         .accepted { background: #d4f7e1; color: #1c7c31; }
         .completed { background: #e2e8f0; color: #334155; }
-        .cancelled { background: #fee2e2; color: #991b1b; }
+        .rejected { background: #fee2e2; color: #991b1b; }
         .pending { background: #fff3cd; color: #92400e; }
 
         /* Empty state */
@@ -212,7 +212,7 @@
     <thead>
         <tr>
             <th>Requested On</th>
-            <th>Faculty</th>
+            <th>Student Name</th>
             <th>Session Date</th>
             <th>Session Time</th>
             <th>Status</th>
@@ -229,13 +229,7 @@
 
             <!-- Faculty -->
             <td>
-                {% if s.faculty %}
-                    {{ s.faculty.name }}
-                {% else %}
-                    <span style="color:#64748b;font-style:italic;">
-                        Not assigned yet
-                    </span>
-                {% endif %}
+                {{ s.student.name }}
             </td>
 
             <!-- Session Date -->

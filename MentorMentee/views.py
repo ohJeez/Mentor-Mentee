@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+from django.db.models import Q
 
 # Django decorators
 from django.views.decorators.csrf import csrf_exempt
@@ -69,6 +71,13 @@ def home(request):
                 request.session['user_type'] = 'student'
 
                 return redirect('student_dashboard')
+            
+            elif res and res.userType == 'hod':
+                hod = HOD.objects.get(login_id=res.login_id)
+
+                request.session['login_id'] = res.login_id
+                request.session['user_type'] = 'hod'
+                return redirect('hod_dashboard')
 
             else:
                 return HttpResponse("""
@@ -900,7 +909,9 @@ def admin_profile(request):
         if not login_id:
             return redirect('/')
         admin=Admin.objects.get(login_id=login_id)
-        contents={'admin':admin}
+        total_students=Student.objects.filter(department_id=admin.department_id).count()
+        total_faculty=Faculty.objects.filter(department_id=admin.department_id).count()
+        contents={'admin':admin,'total_students':total_students,'total_faculty':total_faculty}
         
         #Editing data
         if request.method == 'POST':
@@ -1048,61 +1059,86 @@ def search_entities(request):
         ]
 
     return JsonResponse({"results": data})
+
+
 def fetch_report_data(request):
     report_type = request.GET.get("type")
-    record_id = request.GET.get("id")
+    record_id = int(request.GET.get("id"))
     time_range = request.GET.get("range")
-    
-    print("TYPE:", report_type)
-    print("RECORD ID (raw):", record_id, type(record_id))
-    print("RANGE:", time_range)
 
-    qs = MentoringSession.objects.all()
+    today = timezone.localdate()
 
-    # -------- ENTITY FILTER --------
-    if report_type == "student":
-        qs = qs.filter(student__student_id=int(record_id))
+    # -------- DATE RANGES --------
+    if time_range == "monthly":
+        start_current = today.replace(day=1)
 
-    elif report_type == "faculty":
-        qs = qs.filter(faculty__faculty_id=int(record_id))
+        last_month_last_day = start_current - timedelta(days=1)
+        start_previous = last_month_last_day.replace(day=1)
+        end_previous = last_month_last_day
 
-    elif report_type == "batch":
-        qs = qs.filter(student__batch__batch_id=int(record_id))
+        period_label = today.strftime("%B %Y")
 
-    # -------- DATE FILTER --------
-    today = today = timezone.localdate()
+    else:  # daily
+        start_current = today
+        start_previous = today - timedelta(days=1)
+        end_previous = start_previous
 
-    if time_range == "daily":
-        qs = qs.filter(date__date=localdate())
+        period_label = today.strftime("%d %B %Y")
 
-    elif time_range == "monthly":
-        qs = qs.filter(
-            date__month=today.month,
-            date__year=today.year
-        )
+    # -------- BASE QUERYSET --------
+    def base_qs():
+        qs = MentoringSession.objects.all()
+
+        if report_type == "student":
+            qs = qs.filter(student_id=record_id)
+
+        elif report_type == "faculty":
+            qs = qs.filter(faculty_id=record_id)
+
+        else:  # batch
+            qs = qs.filter(student__batch_id=record_id)
+
+        return qs
+
+    # ✅ CORRECT DateField filtering
+    current_qs = base_qs().filter(date__gte=start_current)
+    previous_qs = base_qs().filter(date__range=(start_previous, end_previous))
 
     # -------- METRICS --------
-    total_sessions = qs.count()
-    students = qs.values("student").distinct().count()
-    faculty = qs.values("faculty").distinct().count()
+    def metrics(qs):
+        sessions = qs.count()
+        students = qs.values("student").distinct().count()
+        faculty = qs.values("faculty").distinct().count()
+        avg = round(sessions / max(students, 1), 2)
+        return sessions, students, faculty, avg
 
-    # -------- CHART DATA --------
-    chart_qs = (
-        qs.values("date")
-        .annotate(count=Count("session_id"))
-        .order_by("date")
-    )
+    cs, cstu, cfac, cavg = metrics(current_qs)
+    ps, pstu, pfac, _ = metrics(previous_qs)
 
+    def change(curr, prev):
+        return round(((curr - prev) / max(prev, 1)) * 100, 2)
+
+    # -------- RESPONSE --------
     return JsonResponse({
-        "total_sessions": total_sessions,
-        "total_students": students,
-        "total_faculty": faculty,
-        "avg_sessions": round(
-            total_sessions / max(students, 1), 2
-        ),
-        "chart": {
-            "labels": [str(c["date"]) for c in chart_qs],
-            "values": [c["count"] for c in chart_qs]
+        "period_label": period_label,
+
+        "current": {
+            "total_sessions": cs,
+            "students": cstu,
+            "faculty": cfac,
+            "avg_sessions": cavg
+        },
+
+        "previous": {
+            "total_sessions": ps,
+            "students": pstu,
+            "faculty": pfac
+        },
+
+        "comparison": {
+            "session_change": change(cs, ps),
+            "student_change": change(cstu, pstu),
+            "session_trend": "increase" if cs >= ps else "decrease"
         }
     })
     
@@ -1114,16 +1150,18 @@ def generate_report_pdf(request):
     styles = getSampleStyleSheet()
     elements = []
 
-    elements.append(
-        Paragraph("<b>MENTORING PROGRAMME REPORT</b>", styles["Title"])
-    )
-    elements.append(Spacer(1, 20))
-    elements.append(
-        Paragraph("Generated by Mentor Mentee System", styles["Normal"])
-    )
-    elements.append(
-        Paragraph(f"Date: {date.today()}", styles["Normal"])
-    )
+    elements.append(Paragraph("<b>MENTORING PROGRAMME REPORT</b>", styles["Title"]))
+    elements.append(Spacer(1,20))
+    elements.append(Paragraph(
+        "This report presents a comparative analysis of mentoring activities, "
+        "highlighting trends, participation levels, and institutional engagement.",
+        styles["Normal"]
+    ))
+    elements.append(Spacer(1,20))
+    elements.append(Paragraph(
+        f"Generated on: {timezone.now().strftime('%d %B %Y')}",
+        styles["Normal"]
+    ))
 
     doc.build(elements)
     return response
@@ -1227,8 +1265,15 @@ Mentor-Mentee Coordination Team
     return redirect('/admin_viewSessions')
 
 
-#===============================================================================================
 
+
+
+
+
+
+
+
+#===============================================================================================
 
 ##FACULTY SIDE VIEWS##
 
@@ -1642,10 +1687,16 @@ def faculty_api_get_day_sessions(request, day):
 
 
 
-#==============================================================================================
 
 
-# Student Views
+
+
+
+
+
+#===============================================================================================
+
+##STUDENT VIEWS##
 
 def signup(request):
     contents={}
@@ -1669,25 +1720,32 @@ def signup(request):
             application_form = request.FILES['application_form']
             #Password and EMail Validation
             if password != confirm_password:
-                 return HttpResponse("<script>alert('Passwords Unmatch!'); window.location.href='/signup'</script>")
+                return HttpResponse("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Password Mismatch</title>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        </head>
+        <body>
+
+        <script>
+            Swal.fire({
+                icon: "error",
+                title: "Password Mismatch",
+                text: "Password and Confirm Password do not match.",
+                confirmButtonColor: "#28a745",
+                allowOutsideClick: false
+            }).then(() => {
+                window.location.href = "/signup";
+            });
+        </script>
+
+        </body>
+        </html> """)
+
             
-            #Student Image
-            photo_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'static',
-                'student_images'
-            )
-            fs = FileSystemStorage(location=photo_path, base_url='../static/student_images/')
-            st_image = fs.save(photo.name, photo)
-            
-            #Application Form
-            # app_path = os.path.join(
-            #     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            #     'static',
-            #     'Application_Forms'
-            # )
-            # fs = FileSystemStorage(location=app_path, base_url='../static/Application_Forms/')
-            # app_form = fs.save(application_form.name, application_form)
             #Login
             res1=Login(username=reg_no,password=password,userType='student')
             res1.save()
@@ -1702,11 +1760,48 @@ def signup(request):
                         batch_id=batch,
                         year=1,
                         dob=dob,
-                        student_image=st_image,
+                        student_image=photo,
                         application_form=application_form,
                         )
             res2.save()
-            return HttpResponse("<script>alert('Account created successfully. Login to continue :)'); window.location.href='/'</script>")
+            res3=StudentUploads(
+                student_id=res2.student_id,
+                upload_file=application_form,
+                description='Application Form',
+                file_name="Application_Form",
+                )
+            res3.save()
+            return HttpResponse("""
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Success</title>
+
+                    <!-- SweetAlert2 CDN -->
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                </head>
+                <body>
+
+                <script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Account Created!',
+                        text: 'Redirecting to login...',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                </script>
+
+                </body>
+                </html>
+                """)
+
             
     except Exception as e:
         print(f"Error! {e}")
@@ -1813,6 +1908,34 @@ def student_RequestSession(request):
                 comments = reason
                 )
             res.save()
+            send_mail(
+                subject=f"Mentoring Session Request by {student.name}",
+                message=f"""
+Respected {student.faculty.name},
+
+A new mentoring session request has been submitted by your assigned student through the Mentor Mentee Portal.
+
+Student Details
+
+Name: {student.name}
+Register Number: {student.reg_no}
+Course & Batch: {student.course.course_name} – {student.batch.batch_name}
+
+Session Details
+
+Requested Date: {request_date_str}
+
+You are requested to review and respond to this session request at your earliest convenience.
+
+Thank you for your continued support in student mentoring.
+
+Warm regards,
+Mentor Mentee System
+Rajagiri College of Social Sciences (Autonomous)""",
+                from_email="noreply.mentor_mentee@gmail.com",
+                recipient_list=[student.faculty.email],
+                fail_silently=False,
+            )
             return HttpResponse(
             "<script>alert('Request sent successfully'); window.location.href='/student_dashboard'</script>")
     except Exception as e:
@@ -1864,6 +1987,18 @@ def student_uploads(request):
         print(f"Error! {e}")
     return render(request,'./Student/student_uploads.html',contents)
 
+#Student Delete Uploads
+def student_delete_upload(request, id):
+    try:
+        if request.method == "POST":
+                upload = StudentUploads.objects.get(upload_id=id)
+                upload.upload_file.delete()
+                upload.delete()
+                return HttpResponse(status=200)
+    except Exception as e:
+        print(f"Error! {e}")
+        return HttpResponse(status=500)
+
 # Student – View Sessions
 def student_viewSessions(request):
     login_id = request.session.get("login_id")
@@ -1875,10 +2010,14 @@ def student_viewSessions(request):
 
         requests = SessionRequest.objects.filter(
             student=student).select_related("faculty").order_by("request_date")
+        
+        sessions = MentoringSession.objects.filter(
+            student=student).select_related("faculty").order_by("-date")
 
         context = {
             "student": student,
-            "requests": requests
+            "requests": requests,
+            "sessions": sessions
         }
 
         return render(
@@ -2031,21 +2170,378 @@ def verify_otp(request):
     return JsonResponse({"status": "error"}, status=400)
 
 
-def test_mail(request):
-    try:
-        send_mail(
-            subject="Mail from Mentor-Mentee System",
-            message="Gentle reminder. This is to inform you that you have not completed your 1st mentoring session yet. You are asked to meet your mentor now itself along with a apology letter. Avoidance will result in expelling you from the institution.",
-            from_email="noreply.mentormentee@gmail.com",   # SAME as EMAIL_HOST_USER
-            recipient_list=["mca2531@rajagiri.edu"],  # you will receive the test mail
-            fail_silently=False,
-        )
-        return HttpResponse("Email sent successfully!")
-    except Exception as e:
-        return HttpResponse(f"Error sending email: {e}")
+
+
+
+
+
+
+
+
+#===============================================================================================
+
+##HOD VIEWS##
+def _require_hod_session(request):
+    login_id = request.session.get("login_id")
+    user_type = request.session.get("user_type")
+
+    if not login_id or user_type != "hod":
+        return None
+    return login_id
+
+
+# SUPER ADMIN DASHBOARD
+def hod_dashboard(request):
+    if not _require_hod_session(request):
+        return redirect('/')
     
-def sample_view(request):
-    return HttpResponse("This is a sample view.")
+    context = {
+        'total_departments': Department.objects.count(),
+        'total_courses': Courses.objects.count(),
+        'total_batches': Batches.objects.count(),
+        'total_faculty': Faculty.objects.count(),
+        'current_admin': Faculty.objects.filter(is_admin=True).first(),
+        'faculty': Faculty.objects.filter(is_hod=True).first(),
+    }
+    return render(request, 'HOD/dashboard.html', context)
+
+
+# DEPARTMENT MANAGEMENT
+def manage_departments(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    departments = Department.objects.all().order_by('name')
+    return render(request, 'HOD/manage_departments.html', {'departments': departments,})
+
+
+def add_department(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    if request.method == 'POST':
+        Department.objects.create(
+            name=request.POST['name'],
+            code=request.POST['code'],
+            hod_name=request.POST['hod'],
+            email=request.POST['email']
+        )
+        return redirect('manage_departments')
+
+    return render(request, 'HOD/add_department.html')
+
+
+def delete_department(request, id):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    get_object_or_404(Department, dept_id=id).delete()
+    return redirect('manage_departments')
+
+
+# COURSE MANAGEMENT
+def manage_courses(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    return render(request, 'HOD/manage_courses.html', {
+        'courses': Courses.objects.select_related('department').all(),
+        'departments': Department.objects.all(),
+        'faculty': Faculty.objects.filter(is_hod=True).first(),
+    })
+
+
+def add_course(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    if request.method == 'POST':
+        Courses.objects.create(
+            course_name=request.POST.get('course_name'),
+            department_id=request.POST.get('department')
+        )
+        return redirect('manage_courses')
+    # GET: show add course form
+    return render(request, 'HOD/add_course.html', {
+        'departments': Department.objects.all()
+    })
+
+
+def delete_course(request, course_id):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    get_object_or_404(Courses, course_id=course_id).delete()
+    return redirect('manage_courses')
+def add_course(request):
+    if request.method == "POST":
+        course_id = request.POST.get("course_id")
+        course_name = request.POST.get("course_name")
+        department_id = request.POST.get("department_id")
+
+        department = Department.objects.get(dept_id=department_id)
+
+        if course_id:
+            # EDIT
+            course = Courses.objects.get(course_id=course_id)
+            course.course_name = course_name
+            course.department = department
+            course.save()
+        else:
+            # ADD
+            Courses.objects.create(
+                course_name=course_name,
+                department=department
+            )
+
+        return redirect("manage_courses")
+
+
+# HOD - BATCHES
+from .models import Batches, Department, Courses
+
+
+def _hod_batches_context():
+    """Shared context for the batches page."""
+    return {
+        'batches': Batches.objects.select_related('course').all(),
+        'departments': Department.objects.all(),
+        'courses': Courses.objects.all(),
+        'batches_count': Batches.objects.count(),
+        'faculty': Faculty.objects.filter(is_hod=True).first(),
+    }
+
+
+def hod_batches(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    return render(request, 'HOD/hod_batches.html', _hod_batches_context())
+
+
+def hod_add_batch(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    if request.method == 'POST':
+        batch_name = request.POST.get('batch_name')
+        course_id = request.POST.get('course_id')
+
+        if batch_name and course_id:
+            Batches.objects.create(batch_name=batch_name, course_id=course_id)
+            return redirect('hod_batches')
+
+        return HttpResponse("<script>alert('Batch name and course are required.'); window.location.href='/hod_batches'</script>")
+
+    # Fallback GET renders the batches page with full context
+    return render(request, 'HOD/hod_batches.html', _hod_batches_context())
 
 
 
+def hod_delete_batch(request, id):
+    if 'login_id' not in request.session:
+        return redirect('/')
+
+    Batches.objects.filter(batch_id=id).delete()
+    return redirect('hod_batches')
+
+
+
+# ADMIN MANAGEMENT
+def hod_admins(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    return render(request, "HOD/hod_admins.html", {
+        "admins": Admin.objects.select_related("department").all(),
+        "departments": Department.objects.all(),
+        'faculty': Faculty.objects.filter(is_hod=True).first(),
+    })
+
+
+def hod_add_admin(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    if request.method == "POST":
+        department = Department.objects.get(dept_id=request.POST.get("department_id"))
+
+        login = Login.objects.create(
+            username=request.POST.get("email"),
+            password="admin123",
+            userType="admin"
+        )
+
+        Admin.objects.create(
+            name=request.POST.get("name"),
+            email=request.POST.get("email"),
+            department=department,
+            login_id=login.login_id
+        )
+
+    return redirect("hod_admins")
+
+
+def hod_delete_admin(request, id):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    Admin.objects.filter(admin_id=id).delete()
+    return redirect("hod_admins")
+
+
+# FACULTY MANAGEMENT
+def manage_faculty(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    faculties = Faculty.objects.select_related('department').all()
+    departments = Department.objects.all()
+
+    search = request.GET.get('search')
+    dept = request.GET.get('department')
+    role = request.GET.get('admin')
+
+    if search:
+        faculties = faculties.filter(
+            Q(name__icontains=search) |
+            Q(email__icontains=search) |
+            Q(department__name__icontains=search)
+        )
+
+    if dept:
+        faculties = faculties.filter(department_id=dept)
+
+    if role == "admin":
+        faculties = faculties.filter(is_admin=True)
+    elif role == "faculty":
+        faculties = faculties.filter(is_admin=False)
+
+    return render(request, 'HOD/manage_faculty.html', {
+        'faculty_list': faculties,
+        'departments': departments,
+        'faculty': Faculty.objects.filter(is_hod=True).first(),
+    })
+
+
+
+def add_faculty(request):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    departments = Department.objects.all()
+
+    if request.method == 'POST':
+        login = Login.objects.create(
+            username=request.POST['username'],
+            password=request.POST['password'],
+            userType='faculty'
+        )
+
+        image = request.FILES.get('faculty_image')
+        img_path = None
+
+        if image:
+            fs = FileSystemStorage(location=f"{settings.MEDIA_ROOT}/faculty_images/")
+            filename = fs.save(image.name, image)
+            img_path = f"faculty_images/{filename}"
+
+        Faculty.objects.create(
+            login=login,
+            name=request.POST['name'],
+            email=request.POST['email'],
+            phone=request.POST['phone'],
+            designation=request.POST['designation'],
+            department_id=request.POST['department'],
+            faculty_image=img_path
+        )
+        return redirect('manage_faculty')
+
+    return render(request, 'HOD/add_faculty.html', {'departments': departments})
+
+
+def delete_faculty(request, faculty_id):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
+    Login.objects.filter(login_id=faculty.login.login_id).delete()
+    faculty.delete()
+    return redirect('manage_faculty')
+
+
+# FACULTY PROFILE
+def view_faculty(request, faculty_id):
+    if not _require_hod_session(request):
+        return redirect('/')
+
+    faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
+    students = Student.objects.filter(faculty=faculty)
+
+    return render(request, 'HOD/view_faculty.html', {
+        'faculty': faculty,
+        'students': students,
+        'faculty': Faculty.objects.filter(is_hod=True).first(),
+    })
+
+
+# ADMIN ASSIGNMENT
+def make_faculty_admin(request, faculty_id):
+    Faculty.objects.update(is_admin=False)
+    faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
+    faculty.is_admin = True
+    faculty.save()
+    return redirect('manage_faculty')
+
+
+def remove_faculty_admin(request, faculty_id):
+    faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
+    faculty.is_admin = False
+    faculty.save()
+    return redirect('manage_faculty')
+
+# STUDENT-FACULTY ASSIGNMENTS 
+def pending_assignments(request):
+    assignments = Assignment.objects.filter(status='pending')
+    return render(request, 'HOD/pending_assignments.html', {
+        'assignments': assignments,
+        'faculty': Faculty.objects.filter(is_hod=True).first(),
+    })
+
+
+def approve_assignment(request, assignment_id):
+    a = get_object_or_404(Assignment, assignment_id=assignment_id)
+    a.status = 'approved'
+    a.student.faculty = a.faculty
+    a.student.save()
+    a.save()
+
+    send_mail(
+        'Mentor Assigned',
+        f'Your mentor for this academic year is {a.faculty.name}.',
+        settings.EMAIL_HOST_USER,
+        [a.student.email],
+        fail_silently=True
+    )
+
+    return redirect('pending_assignments')
+
+
+def bulk_approve_assignments(request):
+    if request.method == 'POST':
+        ids = request.POST.getlist('assignment_ids')
+        for a in Assignment.objects.filter(assignment_id__in=ids):
+            a.status = 'approved'
+            a.student.faculty = a.faculty
+            a.student.save()
+            a.save()
+
+            send_mail(
+                'Mentor Assigned',
+                f'Your mentor for this academic year is {a.faculty.name}.',
+                settings.EMAIL_HOST_USER,
+                [a.student.email],
+                fail_silently=True
+            )
+
+    return redirect('pending_assignments')

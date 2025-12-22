@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HOD | Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ================= GLOBAL ================= */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f5f7fa;
+}
+
+/* ================= MAIN CONTENT ================= */
+.dashboard-container {
+    /* MUST match sidebar width */
+    width: calc(100% - 240px);          /* 🔥 THIS IS THE KEY */
+    padding: 32px;
+    background: #f4f6f9;
+    min-height: calc(100vh - 70px);
+}
+
+/* ================= TITLE ================= */
+.dashboard-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 28px;
+}
+
+/* ================= GRID ================= */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);   /* FORCE 3 cards */
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* ================= CARD ================= */
+.dashboard-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.dashboard-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+    transition: .25s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.15);
+}
+
+/* ICON */
+.icon-box {
+    width: 58px;
+    height: 58px;
+    background: #1e9e44;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-box i {
+    color: white;
+    font-size: 24px;
+}
+
+
+/* TEXT */
+.card-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.card-text h3 {
+    margin: 6px 0 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: #111;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin-left: 0;
+        width: 100%;
+        padding: 24px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+
+{% include 'HOD/hod_header_sidebar.html' %}
+
+<!-- <div class="main-wrapper"> -->
+
+    <div class="dashboard-container">
+
+        <h2 class="dashboard-title">Dashboard Overview</h2>
+
+        <div class="dashboard-grid">
+            
+
+            <!-- Courses -->
+            <a href="/manage_courses/" class="dashboard-link">
+                <div class="dashboard-card">
+                    <div class="icon-box">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="card-text">
+                        <p>Total Courses</p>
+                        <h3>{{ total_courses }}</h3>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Batches -->
+            <a href="/hod_batches/" class="dashboard-link">
+                <div class="dashboard-card">
+                    <div class="icon-box">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="card-text">
+                        <p>Total Batches</p>
+                        <h3>{{ total_batches }}</h3>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Faculty -->
+            <a href="/manage_faculty/" class="dashboard-link">
+                <div class="dashboard-card">
+                    <div class="icon-box">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="card-text">
+                        <p>Total Faculty</p>
+                        <h3>{{ total_faculty }}</h3>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

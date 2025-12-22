@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static '../static/styles/admin.css' %}">
     <link rel="stylesheet" href="{% static '../static/styles/student_uploads.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- PDF.js Lite CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
@@ -31,7 +32,11 @@
 
     <div class="header-right">
              <h3>{{student.name}}</h3>
+             {% if student.student_image %}
             <div class="user-profile-icon"><img src="{{ student.student_image.url }}" alt="Admin"></div>
+            {% else %}
+            <div class="user-profile-icon"><i class="fas fa-user-circle"></i></div>
+            {% endif %}
                 <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
         </div>
 </header>
@@ -92,17 +97,31 @@
 
                 {% if uploads %}
                     {% for file in uploads %}
-                        <div class="upload-item"
-                             onclick="loadPreview('{{ file.upload_file.url }}', '{{ file.file_type }}')">
+                        <div class="upload-item">
 
-                            {% if file.file_type == 'pdf' %}
-                                <i class="fas fa-file-pdf" style="color:#d9534f;"></i>
-                            {% else %}
-                                <i class="fas fa-file-image" style="color:#28a745;"></i>
-                            {% endif %}
+    <!-- FILE INFO (clickable) -->
+    <div class="file-info"
+         onclick="loadPreview('{{ file.upload_file.url }}', '{{ file.file_type }}')">
 
-                            {{ file.file_name }}
-                        </div>
+        {% if file.file_type == 'pdf' %}
+            <i class="fas fa-file-pdf file-icon pdf"></i>
+        {% else %}
+            <i class="fas fa-file-image file-icon image"></i>
+        {% endif %}
+
+        <span class="file-name">{{ file.file_name }}</span>
+    </div>
+
+    <!-- DELETE ACTION -->
+    <button class="delete-btn"
+            title="Delete file"
+            onclick="deleteUpload('{{ file.upload_id }}')">
+        <i class="fas fa-trash"></i>
+    </button>
+
+</div>
+
+
                     {% endfor %}
                 {% else %}
                     <p>No uploaded files yet.</p>
@@ -210,6 +229,58 @@ function renderPDF(url) {
         }
     });
 }
+
+function deleteUpload(id) {
+
+    Swal.fire({
+        title: 'Delete File?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Yes, delete',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+
+        if (!result.isConfirmed) return;
+
+        fetch(`/student_delete_upload/${id}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        })
+        .then(res => {
+            if (res.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: 'Your file has been deleted.',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed!',
+                    text: 'Unable to delete the file. Please try again.'
+                });
+            }
+        })
+        .catch(() => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error',
+                text: 'Please check your internet connection.'
+            });
+        });
+
+    });
+}
+
 </script>
 
 </body>

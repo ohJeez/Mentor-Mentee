@@ -1,0 +1,76 @@
+{% include 'HOD/hod_header_sidebar.html' %}
+{% block content %}
+
+<h2 class="fw-bold mb-4">Pending Mentor Assignments</h2>
+
+<form method="post" action="{% url 'bulk_approve_assignments' %}">
+    {% csrf_token %}
+
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll">
+                        </th>
+                        <th>Student</th>
+                        <th>Faculty</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for a in assignments %}
+                    <tr>
+                        <td>
+                            <input type="checkbox"
+                                   name="assignment_ids"
+                                   value="{{ a.assignment_id }}">
+                        </td>
+                        <td>{{ a.student.name }}</td>
+                        <td>{{ a.faculty.name }}</td>
+                        <td>{{ a.student.department.name }}</td>
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'approve_assignment' a.assignment_id %}"
+                               class="btn btn-success btn-sm"
+                               onclick="return confirm('Approve this assignment?');">
+                                Approve
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            No pending assignments found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary mt-3"
+            onclick="return confirm('Approve selected assignments?');">
+        Bulk Approve Selected
+    </button>
+</form>
+
+<script>
+document.getElementById("selectAll").onclick = function () {
+    document.querySelectorAll(
+        'input[name="assignment_ids"]'
+    ).forEach(cb => cb.checked = this.checked);
+};
+</script>
+
+{% endblock %}

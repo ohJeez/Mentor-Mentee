@@ -5,17 +5,18 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-
-    # ✅ No login in URL
     path('logout', views.logout, name='logout'),
+
+#===============================================================================================
+
+##ADMIN SIDE URLS##
+    
     path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('admin_addStudent', views.add_Student, name='admin_addStudent'),
     path('admin_ViewStudents', views.admin_ViewStudents),
     path('login_send_otp/', views.login_send_otp, name='login_send_otp'),
     path('login_verify_otp/', views.login_verify_otp, name='login_verify_otp'),
     path('reset_password/', views.reset_password, name='reset_password'),
-    
-    # path('admin_addFaculty', views.admin_addFaculty),
     path('admin_addBatch', views.admin_addBatch),
     path('admin_viewBatches', views.admin_viewBatches),
     path('admin_viewFaculty', views.admin_viewFaculty),
@@ -34,9 +35,14 @@ urlpatterns = [
     path("api/report_pdf/", views.generate_report_pdf, name="generate_report_pdf"),
     path('admin_viewSessions',views.admin_viewSessions),
     path("admin_updateSession",views.admin_updateSession,name="admin_updateSession"),
-    path('admin_createSession',views.admin_createSession),
+    path('admin_createSession',views.admin_createSession), 
     
-    ##Faculty URL's
+    
+    
+#===============================================================================================
+
+##FACULTY SIDE URLS##  
+
     path('faculty/', views.faculty_dashboard, name='faculty_dashboard'),
     path('students/', views.students_content, name='students-content'),
     path('student/<int:student_id>/', views.student_profile, name='student_profile'),
@@ -56,11 +62,12 @@ urlpatterns = [
     path("faculty/get_sessions/", views.faculty_api_get_sessions, name="faculty_get_sessions"),
     path("faculty/get_day_sessions/<str:day>/", views.faculty_api_get_day_sessions),
 
-    #Dashboard calendar
     path("api/get_sessions/", views.api_get_sessions),
     path("api/get_day_sessions/<date_str>", views.api_get_day_sessions),
     
-    #Student url's
+#===============================================================================================
+
+##STUDENT SIDE URLS##
     path('signup', views.signup, name='signup'),
     path('student_dashboard/', views.student_dashboard, name='student_dashboard'),
     path('student_api_get_sessions',views.student_api_get_sessions),
@@ -69,16 +76,44 @@ urlpatterns = [
     path('student_RequestSession',views.student_RequestSession),
     path('student_profile',views.student_Profile),
     path('student_uploads',views.student_uploads),
+    path("student_delete_upload/<int:id>/", views.student_delete_upload),
     path('student_viewSessions',views.student_viewSessions),
     path("student_update_profile", views.student_update_profile, name="student_update_profile"),
     path("verify-current-password/", views.verify_current_password, name="verify_current_password"),
     path('update_password/',views.update_password,name='update_password'),
     path('verify_otp/',views.verify_otp,name='verify_otp'),
     path('send_otp/',views.send_otp,name='send_otp'),
+
+
+#===============================================================================================
+
+##HOD SIDE URLS##
+    path('hod_dashboard/', views.hod_dashboard, name='hod_dashboard'),
+
+    path('manage_departments/', views.manage_departments, name='manage_departments'),
+    path('add_department/', views.add_department, name='add_department'),
+    path('delete_department/<int:id>/', views.delete_department, name='delete_department'),
+
+    path('manage_courses/', views.manage_courses, name='manage_courses'),
+    path('add_course/', views.add_course, name='add_course'),
+    path('delete_course/<int:course_id>/', views.delete_course, name='delete_course'),
+
+    path("hod_batches/", views.hod_batches, name="hod_batches"),
+    path("hod_add_batch/", views.hod_add_batch, name="hod_add_batch"),
+    path("hod_delete_batch/<int:id>/", views.hod_delete_batch, name="hod_delete_batch"),
+
+    path('manage_faculty/', views.manage_faculty, name='manage_faculty'),
+    path('add_faculty/', views.add_faculty, name='add_faculty'),
+    path('delete_faculty/<int:faculty_id>/', views.delete_faculty, name='delete_faculty'),
+
+    path('view_faculty/<int:faculty_id>/', views.view_faculty, name='view_faculty'),
+    path('make_faculty_admin/<int:faculty_id>/', views.make_faculty_admin, name='make_faculty_admin'),
+    path('remove_faculty_admin/<int:faculty_id>/', views.remove_faculty_admin, name='remove_faculty_admin'),
+
+    path('pending_assignments/', views.pending_assignments, name='pending_assignments'),
+    path('approve_assignment/<int:assignment_id>/', views.approve_assignment, name='approve_assignment'),
+    path('bulk_approve_assignments/', views.bulk_approve_assignments, name='bulk_approve_assignments'),
     
-
-    path('test-mail/', views.test_mail),
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     
     

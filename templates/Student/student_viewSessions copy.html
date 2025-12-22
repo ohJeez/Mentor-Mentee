@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>My Mentoring Sessions | Mentor Mentee</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="{% static 'styles/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+        .session-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 18px;
+            margin-top: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+            min-height: 600px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        /* Table */
+        .styled-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .styled-table thead th {
+            background: #e7f5ea;
+            padding: 14px;
+            font-weight: 700;
+            color: #1c7c31;
+            text-align: left;
+        }
+
+        .styled-table tbody tr {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: 0.25s;
+        }
+
+        .styled-table tbody tr:hover {
+            transform: translateY(-3px);
+            background: #f6fff6;
+        }
+
+        .styled-table td {
+            padding: 16px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .accepted { background: #d4f7e1; color: #1c7c31; }
+        .completed { background: #e2e8f0; color: #334155; }
+        .rejected { background: #fee2e2; color: #991b1b; }
+        .pending { background: #fff3cd; color: #92400e; }
+
+        /* Empty state */
+        .empty-box {
+            text-align: center;
+            padding: 80px;
+            color: #64748b;
+        }
+
+        .empty-box i {
+            font-size: 50px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+    <div class="header-left">
+        <img src="{% static 'Assets/logo.png' %}" class="header-logo">
+        <div class="header-title">
+            <h2 class="rcss-title">RCSS</h2>
+            <p class="rcss-subtitle">RAJAGIRI COLLEGE OF SOCIAL SCIENCES (AUTONOMOUS)</p>
+        </div>
+    </div>
+
+    <h1 class="main-title">MENTOR MENTEE</h1>
+
+    <div class="header-right">
+        <h3>{{ student.name }}</h3>
+        <div class="user-profile-icon">
+            {% if student.student_image %}
+            <img src="{{ student.student_image.url }}" alt="Student">
+            {% else %}
+            <i class="fas fa-user-circle"></i>
+            {% endif %}
+        </div>
+        <button onclick="window.location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+            <nav class="menu">
+
+                <a class="menu-item " href="/student_dashboard">
+                    <i class="fas fa-th-large"></i><span>Dashboard</span>
+                </a>
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_uploads">
+                    <i class="fas fa-folder-open"></i><span>My Uploads</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item active" href="/student_viewSessions">
+                    <i class="fas fa-file-alt"></i><span>My Sessions</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_RequestSession">
+                    <i class="fas fa-calendar-plus"></i><span>Request Session</span>
+                </a>
+
+                <hr class="menu-divider">
+
+                <a class="menu-item" href="/student_profile">
+                    <i class="fas fa-user"></i><span>Profile</span>
+                </a>
+
+            </nav>
+        </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main-content">
+
+        <div class="session-container">
+
+            <h2 class="page-title">My Sessions Requests</h2>
+            <p class="page-subtitle">
+                View the status and details of your mentoring session requests.
+            </p>
+{% if requests %}
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Requested On</th>
+            <th>Faculty</th>
+            <th>Session Date</th>
+            <th>Session Time</th>
+            <th>Status</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in requests %}
+        <tr>
+
+            <!-- Requested Date -->
+            <td>{{ s.request_date }}</td>
+
+            <!-- Faculty -->
+            <td>
+                {% if s.faculty %}
+                    {{ s.faculty.name }}
+                {% else %}
+                    <span style="color:#64748b;font-style:italic;">
+                        Not assigned yet
+                    </span>
+                {% endif %}
+            </td>
+
+            <!-- Session Date -->
+            <td>
+                {% if s.session_date %}
+                    {{ s.session_date }}
+                {% else %}
+                    <span style="color:#64748b;">
+                        To be scheduled
+                    </span>
+                {% endif %}
+            </td>
+
+            <!-- Session Time -->
+            <td>
+                {% if s.session_time %}
+                    {{ s.session_time }}
+                {% else %}
+                    <span style="color:#64748b;">
+                        Not fixed
+                    </span>
+                {% endif %}
+            </td>
+
+            <!-- Status -->
+            <td>
+                <span class="status-badge {{ s.status|lower }}">
+                    {{ s.status|title }}
+                </span>
+            </td>
+
+            <!-- Comments -->
+            <td>
+                {% if s.comments %}
+                    {{ s.comments }}
+                {% else %}
+                    <span style="color:#94a3b8;font-style:italic;">
+                        No remarks
+                    </span>
+                {% endif %}
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<div class="empty-box">
+    <i class="fas fa-calendar-times"></i>
+    <h3>No Session Requests Found</h3>
+    <p>You have not requested any mentoring sessions yet.</p>
+</div>
+{% endif %}
+
+
+            </div>
+
+            <div class="session-container">
+
+                <h2 class="page-title">My Mentoring Sessions</h2>
+                <p class="page-subtitle">
+                    View the details of your mentoring sessions.
+                </p>
+    {% if sessions %}
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Session Date</th>
+                <th>Faculty</th>
+                <!-- <th>Session Date</th> -->
+                <th>FollowUp Actions</th>
+                <th>Status</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sessions %}
+            <tr>
+
+                <!-- Requested Date -->
+                <td>{{ s.request_date }}</td>
+
+                <!-- Faculty -->
+                <td>
+                    {% if s.faculty %}
+                        {{ s.faculty.name }}
+                    {% else %}
+                        <span style="color:#64748b;font-style:italic;">
+                            Not assigned yet
+                        </span>
+                    {% endif %}
+                </td>
+
+                <!-- Session Date -->
+                <td>
+                    {% if s.session_date %}
+                        {{ s.session_date }}
+                    {% else %}
+                        <span style="color:#64748b;">
+                            To be scheduled
+                        </span>
+                    {% endif %}
+                </td>
+
+                <!-- Session Time -->
+                <td>
+                    {% if s.session_time %}
+                        {{ s.session_time }}
+                    {% else %}
+                        <span style="color:#64748b;">
+                            Not fixed
+                        </span>
+                    {% endif %}
+                </td>
+
+                <!-- Status -->
+                <td>
+                    <span class="status-badge {{ s.status|lower }}">
+                        {{ s.status|title }}
+                    </span>
+                </td>
+
+                <!-- Comments -->
+                <td>
+                    {% if s.comments %}
+                        {{ s.comments }}
+                    {% else %}
+                        <span style="color:#94a3b8;font-style:italic;">
+                            No remarks
+                        </span>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <div class="empty-box">
+        <i class="fas fa-calendar-times"></i>
+        <h3>No Session Data Found</h3>
+        <p>You have not attended any mentoring sessions yet.</p>
+    </div>
+    {% endif %}
+        </div>
+    </main>
+
+</div>
+
+<script>
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function () {
+            this.closest('.dropdown').classList.toggle('open');
+        });
+    });
+</script>
+
+</body>
+</html>
